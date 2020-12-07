@@ -9,7 +9,8 @@ import Foundation
 
 typealias TaskID = UUID
 
-struct Task: Identifiable {
+struct Task: Identifiable, Hashable, Equatable {
+    
     let id: TaskID
     
     var column: Column
@@ -32,5 +33,13 @@ struct Task: Identifiable {
         self.labels = labels
         self.description = description
         self.cost = cost
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(self.id)
+    }
+    
+    static func == (lhs: Task, rhs: Task) -> Bool {
+        lhs.id == rhs.id
     }
 }

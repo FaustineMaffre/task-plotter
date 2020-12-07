@@ -53,16 +53,18 @@ struct CreateVersionButton: View {
     }
     
     func create() {
-        // create new version
-        let newVersion = Version(number: self.tempVersionNumber)
-        self.project.versions.append(newVersion)
-        
-        // select it
-        self.userDefaults.selectedVersionId = newVersion.id
-        
-        // close sheet and reset text
-        self.isVersionCreationSheetPresented = false
-        self.tempVersionNumber = ""
+        if !self.tempVersionNumber.isEmpty {
+            // create new version
+            let newVersion = Version(number: self.tempVersionNumber)
+            self.project.versions.append(newVersion)
+            
+            // select it
+            self.userDefaults.selectedVersionId = newVersion.id
+            
+            // close sheet and reset text
+            self.isVersionCreationSheetPresented = false
+            self.tempVersionNumber = ""
+        }
     }
     
     func cancel() {

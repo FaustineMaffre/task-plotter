@@ -13,30 +13,57 @@ struct ProjectView: View {
     
     @State var isVersionCreationSheetPresented: Bool = false
     
-    var selectedVersion: Version? {
-        self.project.versions.first { $0.id == self.userDefaults.selectedVersionId }
-    }
-    
     var body: some View {
         NavigationView {
-            List {
-                ForEach(self.project.versions) { version in
-                    Text(version.number)
+            // versions
+            VStack(spacing: 0) {
+                HStack {
+                    Text("Versions")
+                        .font(.title2)
+                        .padding(10)
+                    
+                    Spacer()
                 }
                 
-                CreateVersionButton(project: self.$project)
-            }
-            .navigationTitle("Versions")
-            
-            if let selectedVersion = self.selectedVersion {
                 List {
-                    ForEach(selectedVersion.tasks) { task in
-                        Text(task.title)
+                    ForEach(self.project.versions) { version in
+                        HStack {
+                            Text(version.number)
+                            Spacer()
+                        }
+                        .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            self.userDefaults.selectedVersionId = version.id
+                        }
+                        .listRowInsets(EdgeInsets())
+                        .listRowBackground(RoundedRectangle(cornerRadius: 8)
+                                            .fill(self.project.selectedVersion == version ? Color.accentColor : Color.clear))
+                    }
+                    
+                    CreateVersionButton(project: self.$project)
+                }
+            }
+            
+            // tasks
+            if let selectedVersion = self.project.selectedVersion {
+                VStack(spacing: 0) {
+                    HStack {
+                        Text("Tasks")
+                            .font(.title2)
+                            .padding(10)
+                        
+                        Spacer()
+                    }
+                    
+                    List {
+                        ForEach(selectedVersion.tasks) { task in
+                            Text(task.title)
+                        }
                     }
                 }
-                .navigationTitle("Tasks")
             } else {
-                Text("Create or select version")
+                Text("Create or select a version")
             }
         }
     }

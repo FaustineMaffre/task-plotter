@@ -9,15 +9,41 @@ import Foundation
 
 typealias ProjectID = UUID
 
-struct Project: Identifiable {
+struct Project: Identifiable, Hashable, Equatable {
     let id: ProjectID
     
     var name: String
     var versions: [Version] = []
     
+    var selectedVersion: Version? {
+        let versions = self.versions
+        
+        if versions.isEmpty {
+            // no version: no selected version
+            return nil
+        } else {
+            if let selectedVersion = versions.first(where: { $0.id == UserDefaultsConfig.shared.selectedVersionId }) {
+                // selected version
+                return selectedVersion
+            } else {
+                // no version selected: select first version
+                UserDefaultsConfig.shared.selectedVersionId = versions[0].id
+                return versions[0]
+            }
+        }
+    }
+    
     init(id: ProjectID = UUID(),
          name: String) {
         self.id = id
         self.name = name
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(self.id)
+    }
+    
+    static func == (lhs: Project, rhs: Project) -> Bool {
+        lhs.id == rhs.id
     }
 }

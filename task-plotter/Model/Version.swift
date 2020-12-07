@@ -9,7 +9,7 @@ import Foundation
 
 typealias VersionID = UUID
 
-struct Version: Identifiable {
+struct Version: Identifiable, Hashable, Equatable {
     let id: VersionID
     
     var number: String
@@ -32,5 +32,13 @@ struct Version: Identifiable {
         self.pointsPerDay = pointsPerDay
         self.workingDays = workingDays
         self.excludedDates = excludedDates
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(self.id)
+    }
+    
+    static func == (lhs: Version, rhs: Version) -> Bool {
+        lhs.id == rhs.id
     }
 }

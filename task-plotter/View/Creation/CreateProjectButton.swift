@@ -53,16 +53,18 @@ struct CreateProjectButton: View {
     }
     
     func create() {
-        // create new project
-        let newProject = Project(name: self.tempProjectName)
-        self.repository.projects.append(newProject)
-        
-        // select it
-        self.userDefaults.selectedProjectId = newProject.id
-        
-        // close sheet and reset text
-        self.isProjectCreationSheetPresented = false
-        self.tempProjectName = ""
+        if !self.tempProjectName.isEmpty {
+            // create new project
+            let newProject = Project(name: self.tempProjectName)
+            self.repository.projects.append(newProject)
+            
+            // select it
+            self.userDefaults.selectedProjectId = newProject.id
+            
+            // close sheet and reset text
+            self.isProjectCreationSheetPresented = false
+            self.tempProjectName = ""
+        }
     }
     
     func cancel() {

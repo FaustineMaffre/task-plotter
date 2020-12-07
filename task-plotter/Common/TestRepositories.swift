@@ -20,11 +20,12 @@ class TestRepositories {
                      Task(column: .done, title: "Scene camera", labels: [labelUiUx], description: "", cost: 2),
                      Task(column: .done, title: "Cushion effect", labels: [labelModel, labelUiUx, labelGraphics], description: "", cost: 1)]
         
-        var version = Version(number: "1.0", pointsPerDay: 4, workingDays: Day.all, excludedDates: [])
-        version.tasks = tasks
+        var version10 = Version(number: "1.0", pointsPerDay: 4, workingDays: Day.all, excludedDates: [])
+        version10.tasks = tasks
+        let version11 = Version(number: "1.1")
         
         var project = Project(name: "Ardoise")
-        project.versions = [version]
+        project.versions = [version10, version11]
         
         return Repository(labels: labels, projects: [project])
     }()
