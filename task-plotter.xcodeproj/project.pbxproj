@@ -21,6 +21,9 @@
 		9D0C2BF7257E5363006F3D89 /* UserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D0C2BF6257E5363006F3D89 /* UserDefaults.swift */; };
 		9D0C2BFC257E6AB7006F3D89 /* EmptyProjectsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D0C2BFB257E6AB7006F3D89 /* EmptyProjectsView.swift */; };
 		9D0C2C00257E6AF8006F3D89 /* TestRepositories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D0C2BFF257E6AF8006F3D89 /* TestRepositories.swift */; };
+		9D5709BD257E87CE00B5C5B7 /* ProjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D5709BC257E87CE00B5C5B7 /* ProjectView.swift */; };
+		9D5709C5257EBD6400B5C5B7 /* CreateProjectButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D5709C4257EBD6400B5C5B7 /* CreateProjectButton.swift */; };
+		9D5709CA257EBF2C00B5C5B7 /* ProjectMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D5709C9257EBF2C00B5C5B7 /* ProjectMenu.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,6 +44,9 @@
 		9D0C2BF6257E5363006F3D89 /* UserDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaults.swift; sourceTree = "<group>"; };
 		9D0C2BFB257E6AB7006F3D89 /* EmptyProjectsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyProjectsView.swift; sourceTree = "<group>"; };
 		9D0C2BFF257E6AF8006F3D89 /* TestRepositories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestRepositories.swift; sourceTree = "<group>"; };
+		9D5709BC257E87CE00B5C5B7 /* ProjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectView.swift; sourceTree = "<group>"; };
+		9D5709C4257EBD6400B5C5B7 /* CreateProjectButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateProjectButton.swift; sourceTree = "<group>"; };
+		9D5709C9257EBF2C00B5C5B7 /* ProjectMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectMenu.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -127,10 +133,21 @@
 		9D0C2BFA257E6A99006F3D89 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				9D5709C8257EBF1F00B5C5B7 /* Creation */,
 				9D0C2BFB257E6AB7006F3D89 /* EmptyProjectsView.swift */,
+				9D5709C9257EBF2C00B5C5B7 /* ProjectMenu.swift */,
+				9D5709BC257E87CE00B5C5B7 /* ProjectView.swift */,
 				9D0C2BCC257E3CCE006F3D89 /* ContentView.swift */,
 			);
 			path = View;
+			sourceTree = "<group>";
+		};
+		9D5709C8257EBF1F00B5C5B7 /* Creation */ = {
+			isa = PBXGroup;
+			children = (
+				9D5709C4257EBD6400B5C5B7 /* CreateProjectButton.swift */,
+			);
+			path = Creation;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -211,9 +228,12 @@
 				9D0C2BE8257E3E72006F3D89 /* Task.swift in Sources */,
 				9D0C2BF7257E5363006F3D89 /* UserDefaults.swift in Sources */,
 				9D0C2BDD257E3DC3006F3D89 /* Column.swift in Sources */,
+				9D5709CA257EBF2C00B5C5B7 /* ProjectMenu.swift in Sources */,
+				9D5709C5257EBD6400B5C5B7 /* CreateProjectButton.swift in Sources */,
 				9D0C2BEE257E4091006F3D89 /* Project.swift in Sources */,
 				9D0C2BFC257E6AB7006F3D89 /* EmptyProjectsView.swift in Sources */,
 				9D0C2BF1257E51FF006F3D89 /* Repository.swift in Sources */,
+				9D5709BD257E87CE00B5C5B7 /* ProjectView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

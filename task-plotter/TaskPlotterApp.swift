@@ -11,7 +11,7 @@ import SwiftUI
 struct TaskPlotterApp: App {    
     var body: some Scene {
         WindowGroup {
-            ContentView(repository: Repository(labels: [], projects: [])) // TODO read from file/document
+            ContentView(repository: TestRepositories.repository) // TODO read from file/document
                 .environmentObject(UserDefaultsConfig.shared)
         }
     }

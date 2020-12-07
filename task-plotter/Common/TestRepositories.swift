@@ -26,6 +26,6 @@ class TestRepositories {
         var project = Project(name: "Ardoise")
         project.versions = [version]
         
-        return Repository(labels: labels, projects: [])
+        return Repository(labels: labels, projects: [project])
     }()
 }
