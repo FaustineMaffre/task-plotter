@@ -8,15 +8,16 @@
 import SwiftUI
 
 struct ContentView: View {
+    @EnvironmentObject var userDefaults: UserDefaultsConfig
     @ObservedObject var repository: Repository
     
     var body: some View {
-        if let selectedProject = self.repository.selectedProject {
+        if self.repository.selectedProject != nil {
             VStack(spacing: 0) {
                 ProjectMenu(repository: self.repository)
                     .padding(10)
                 
-                ProjectView(project: selectedProject)
+                ProjectView(repository: self.repository)
             }
         } else {
             // no projects

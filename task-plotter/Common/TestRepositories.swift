@@ -24,9 +24,11 @@ class TestRepositories {
         version10.tasks = tasks
         let version11 = Version(number: "1.1")
         
-        var project = Project(name: "Ardoise")
-        project.versions = [version10, version11]
+        var project1 = Project(name: "Ardoise")
+        project1.versions = [version10, version11]
         
-        return Repository(labels: labels, projects: [project])
+        var project2 = Project(name: "Project 2")
+        
+        return Repository(labels: labels, projects: [project1, project2])
     }()
 }

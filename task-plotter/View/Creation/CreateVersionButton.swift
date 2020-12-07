@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CreateVersionButton: View {
     @EnvironmentObject var userDefaults: UserDefaultsConfig
-    @Binding var project: Project
+    @ObservedObject var repository: Repository
     
     @State var isVersionCreationSheetPresented: Bool = false
     @State var tempVersionNumber: String = ""
@@ -53,10 +53,11 @@ struct CreateVersionButton: View {
     }
     
     func create() {
-        if !self.tempVersionNumber.isEmpty {
+        if !self.tempVersionNumber.isEmpty,
+           let selectedProjectIndex = self.repository.selectedProjectIndex {
             // create new version
             let newVersion = Version(number: self.tempVersionNumber)
-            self.project.versions.append(newVersion)
+            self.repository.projects[selectedProjectIndex].versions.append(newVersion)
             
             // select it
             self.userDefaults.selectedVersionId = newVersion.id

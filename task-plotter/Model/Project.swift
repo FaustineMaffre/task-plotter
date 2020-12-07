@@ -15,21 +15,29 @@ struct Project: Identifiable, Hashable, Equatable {
     var name: String
     var versions: [Version] = []
     
-    var selectedVersion: Version? {
+    var selectedVersionIndex: Int? {
         let versions = self.versions
         
         if versions.isEmpty {
             // no version: no selected version
             return nil
         } else {
-            if let selectedVersion = versions.first(where: { $0.id == UserDefaultsConfig.shared.selectedVersionId }) {
+            if let selectedVersionIndex = versions.firstIndex(where: { $0.id == UserDefaultsConfig.shared.selectedVersionId }) {
                 // selected version
-                return selectedVersion
+                return selectedVersionIndex
             } else {
                 // no version selected: select first version
                 UserDefaultsConfig.shared.selectedVersionId = versions[0].id
-                return versions[0]
+                return 0
             }
+        }
+    }
+    
+    var selectedVersion: Version? {
+        if let selectedVersionIndex = self.selectedVersionIndex {
+            return self.versions[selectedVersionIndex]
+        } else {
+            return nil
         }
     }
     

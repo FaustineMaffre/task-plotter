@@ -14,6 +14,7 @@ struct ProjectMenu: View {
     var body: some View {
         if let selectedProject = self.repository.selectedProject {
             HStack(spacing: 16) {
+                // projects menu
                 MenuButton(selectedProject.name) {
                     ForEach(self.repository.projects) { project in
                         Button(project.name) {
@@ -23,6 +24,7 @@ struct ProjectMenu: View {
                 }
                 .frame(width: 200)
                 
+                // create project
                 CreateProjectButton(repository: self.repository)
                 
                 Spacer()

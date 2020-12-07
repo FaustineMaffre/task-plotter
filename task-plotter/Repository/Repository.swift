@@ -12,21 +12,29 @@ class Repository: ObservableObject {
     
     @Published var projects: [Project]
     
-    var selectedProject: Project? {
+    var selectedProjectIndex: Int? {
         let projects = self.projects
         
         if projects.isEmpty {
             // no project: no selected project
             return nil
         } else {
-            if let selectedProject = projects.first(where: { $0.id == UserDefaultsConfig.shared.selectedProjectId }) {
+            if let selectedProjectIndex = projects.firstIndex(where: { $0.id == UserDefaultsConfig.shared.selectedProjectId }) {
                 // selected project
-                return selectedProject
+                return selectedProjectIndex
             } else {
                 // no project selected: select first project
                 UserDefaultsConfig.shared.selectedProjectId = projects[0].id
-                return projects[0]
+                return 0
             }
+        }
+    }
+    
+    var selectedProject: Project? {
+        if let selectedProjectIndex = self.selectedProjectIndex {
+            return self.projects[selectedProjectIndex]
+        } else {
+            return nil
         }
     }
     
