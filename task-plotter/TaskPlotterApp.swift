@@ -8,10 +8,11 @@
 import SwiftUI
 
 @main
-struct TaskPlotterApp: App {
+struct TaskPlotterApp: App {    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(repository: Repository(labels: [], projects: [])) // TODO read from file/document
+                .environmentObject(UserDefaultsConfig.shared)
         }
     }
 }
