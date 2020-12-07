@@ -16,7 +16,7 @@ struct Version: Identifiable {
     
     var dueDate: Date?
     
-    var pointsPerDay: Float
+    var pointsPerDay: Float?
     var workingDays: [Day]
     var excludedDates: [Date]
     
@@ -25,7 +25,7 @@ struct Version: Identifiable {
     init(id: VersionID = UUID(),
          number: String,
          dueDate: Date? = nil,
-         pointsPerDay: Float, workingDays: [Day] = Day.all, excludedDates: [Date] = []) {
+         pointsPerDay: Float? = nil, workingDays: [Day] = Day.all, excludedDates: [Date] = []) {
         self.id = id
         self.number = number
         self.dueDate = dueDate

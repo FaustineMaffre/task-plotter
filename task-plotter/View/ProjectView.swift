@@ -24,18 +24,7 @@ struct ProjectView: View {
                     Text(version.number)
                 }
                 
-                Button {
-                    self.isVersionCreationSheetPresented = true
-                } label: {
-                    HStack(spacing: 4) {
-                        Image(systemName: "plus")
-                            .imageScale(.large)
-                        Text("Create a version")
-                    }
-                    .padding()
-                    .contentShape(Rectangle())
-                }
-                .buttonStyle(PlainButtonStyle())
+                CreateVersionButton(project: self.$project)
             }
             .navigationTitle("Versions")
             
