@@ -12,29 +12,12 @@ struct ProjectView: View {
     
     var body: some View {
         NavigationView {
-            // versions
+            // versions on the left
             VersionsView(repository: self.repository)
             
-            // tasks
-            VStack(spacing: 0) {
-                HStack {
-                    Text("Tasks")
-                        .titleStyle()
-                        .padding(10)
-                    
-                    Spacer()
-                }
-                
-                if let selectedVersion = self.repository.ҩselectedProject?.ҩselectedVersion {
-                    List {
-                        ForEach(selectedVersion.tasks) { task in
-                            Text(task.title)
-                        }
-                    }
-                } else {
-                    Spacer()
-                }
-            }
+            // tasks on the right
+            TasksView(repository: self.repository)
         }
+        .navigationViewStyle(DoubleColumnNavigationViewStyle())
     }
 }
