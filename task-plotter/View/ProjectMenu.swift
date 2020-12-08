@@ -13,7 +13,7 @@ struct ProjectMenu: View {
     
     var body: some View {
         if let selectedProject = self.repository.selectedProject {
-            HStack(spacing: 16) {
+            HStack(spacing: 4) {
                 // projects menu
                 MenuButton(selectedProject.name) {
                     ForEach(self.repository.projects) { project in
