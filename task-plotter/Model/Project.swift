@@ -15,36 +15,30 @@ struct Project: Identifiable, Hashable, Equatable {
     var name: String
     var versions: [Version] = []
     
-    var selectedVersionIndex: Int? {
-        let versions = self.versions
-        
-        if versions.isEmpty {
-            // no version: no selected version
-            return nil
+    var selectedVersionId: VersionID?
+    
+    var ҩselectedVersionIndex: Int? {
+        if let selectedVersionId = self.selectedVersionId {
+            return self.versions.firstIndex { $0.id == selectedVersionId }
         } else {
-            if let selectedVersionIndex = versions.firstIndex(where: { $0.id == UserDefaultsConfig.shared.selectedVersionId }) {
-                // selected version
-                return selectedVersionIndex
-            } else {
-                // no version selected: select first version
-                UserDefaultsConfig.shared.selectedVersionId = versions[0].id
-                return 0
-            }
+            return nil
         }
     }
     
-    var selectedVersion: Version? {
-        if let selectedVersionIndex = self.selectedVersionIndex {
-            return self.versions[selectedVersionIndex]
+    var ҩselectedVersion: Version? {
+        if let selectedVersionId = self.selectedVersionId {
+            return self.versions.first { $0.id == selectedVersionId }
         } else {
             return nil
         }
     }
     
     init(id: ProjectID = UUID(),
-         name: String) {
+         name: String,
+         selectedVersionId: VersionID? = nil) {
         self.id = id
         self.name = name
+        self.selectedVersionId = selectedVersionId
     }
     
     func hash(into hasher: inout Hasher) {
@@ -63,13 +57,13 @@ struct Project: Identifiable, Hashable, Equatable {
             
             // select it if required
             if selectIt {
-                UserDefaultsConfig.shared.selectedVersionId = newVersion.id
+                self.selectedVersionId = newVersion.id
             }
         }
     }
     
     mutating func deleteSelectedVersion() {
-        if let selectedVersionIndex = self.selectedVersionIndex {
+        if let selectedVersionIndex = self.ҩselectedVersionIndex {
             self.versions.remove(at: selectedVersionIndex)
         }
     }

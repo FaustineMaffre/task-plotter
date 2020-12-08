@@ -32,14 +32,14 @@ struct DeleteVersionButton: View {
         .buttonStyle(PlainButtonStyle())
         .alert(isPresented: self.$isVersionDeletionAlertPresented) {
             Alert(title: Text("Delete the version"),
-                  message: Text("Are you sure you want to delete version \"\(self.repository.selectedProject?.selectedVersion?.number ?? "")\"?"),
+                  message: Text("Are you sure you want to delete version \"\(self.repository.ҩselectedProject?.ҩselectedVersion?.number ?? "")\"?"),
                   primaryButton: .destructive(Text("Delete"), action: self.delete),
                   secondaryButton: .cancel())
         }
     }
     
     func delete() {
-        if let selectedProjectIndex = self.repository.selectedProjectIndex {
+        if let selectedProjectIndex = self.repository.ҩselectedProjectIndex {
             self.repository.projects[selectedProjectIndex].deleteSelectedVersion()
         }
     }

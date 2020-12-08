@@ -28,7 +28,7 @@ struct DeleteProjectButton: View {
         .buttonStyle(PlainButtonStyle())
         .alert(isPresented: self.$isProjectDeletionAlertPresented) {
             Alert(title: Text("Delete the project"),
-                  message: Text("Are you sure you want to delete project \"\(self.repository.selectedProject?.name ?? "")\"?"),
+                  message: Text("Are you sure you want to delete project \"\(self.repository.ҩselectedProject?.name ?? "")\"?"),
                   primaryButton: .destructive(Text("Delete"), action: self.delete),
                   secondaryButton: .cancel())
         }

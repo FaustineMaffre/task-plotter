@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct CreateVersionButton: View {
-    @EnvironmentObject var userDefaults: UserDefaultsConfig
     @ObservedObject var repository: Repository
     
     @State var isVersionCreationSheetPresented: Bool = false
@@ -60,7 +59,7 @@ struct CreateVersionButton: View {
     
     func create() {
         if !self.tempVersionNumber.isEmpty,
-           let selectedProjectIndex = self.repository.selectedProjectIndex {
+           let selectedProjectIndex = self.repository.ҩselectedProjectIndex {
             self.repository.projects[selectedProjectIndex].addVersion(number: self.tempVersionNumber, selectIt: true)
             
             // close sheet and reset text

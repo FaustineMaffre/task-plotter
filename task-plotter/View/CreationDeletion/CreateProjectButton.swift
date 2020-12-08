@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct CreateProjectButton: View {
-    @EnvironmentObject var userDefaults: UserDefaultsConfig
     @ObservedObject var repository: Repository
     
     @State var isProjectCreationSheetPresented: Bool = false

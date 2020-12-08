@@ -8,11 +8,10 @@
 import SwiftUI
 
 struct ContentView: View {
-    @EnvironmentObject var userDefaults: UserDefaultsConfig
     @ObservedObject var repository: Repository
     
     var body: some View {
-        if self.repository.selectedProject != nil {
+        if self.repository.ҩselectedProject != nil {
             VStack(spacing: 0) {
                 ProjectMenu(repository: self.repository)
                     .padding(EdgeInsets(top: 4, leading: 10, bottom: 4, trailing: 10))
@@ -31,7 +30,6 @@ struct ContentView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView(repository: TestRepositories.repository)
-            .environmentObject(UserDefaultsConfig.shared)
             .previewLayout(.fixed(width: 800, height: 600))
     }
 }

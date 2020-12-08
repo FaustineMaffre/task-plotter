@@ -12,35 +12,41 @@ class Repository: ObservableObject {
     
     @Published var projects: [Project]
     
-    var selectedProjectIndex: Int? {
-        let projects = self.projects
-        
-        if projects.isEmpty {
-            // no project: no selected project
-            return nil
-        } else {
-            if let selectedProjectIndex = projects.firstIndex(where: { $0.id == UserDefaultsConfig.shared.selectedProjectId }) {
-                // selected project
-                return selectedProjectIndex
-            } else {
-                // no project selected: select first project
-                UserDefaultsConfig.shared.selectedProjectId = projects[0].id
-                return 0
-            }
+    @Published var selectedProjectId: ProjectID? {
+        didSet {
+            self.defaultSelect()
         }
     }
     
-    var selectedProject: Project? {
-        if let selectedProjectIndex = self.selectedProjectIndex {
-            return self.projects[selectedProjectIndex]
+    var ҩselectedProjectIndex: Int? {
+        if let selectedProjectId = self.selectedProjectId {
+            return self.projects.firstIndex { $0.id == selectedProjectId }
         } else {
             return nil
         }
     }
     
-    required init(labels: [Label], projects: [Project]) {
+    var ҩselectedProject: Project? {
+        if let selectedProjectId = self.selectedProjectId {
+            return self.projects.first { $0.id == selectedProjectId }
+        } else {
+            return nil
+        }
+    }
+    
+    required init(labels: [Label], projects: [Project],
+                  selectedProjectId: ProjectID? = nil) {
         self.labels = labels
         self.projects = projects
+        self.selectedProjectId = selectedProjectId
+        
+        self.defaultSelect()
+    }
+    
+    func defaultSelect() {
+        if self.selectedProjectId == nil && !self.projects.isEmpty {
+            self.selectedProjectId = self.projects[0].id
+        }
     }
     
     func addProject(name: String, selectIt: Bool) {
@@ -51,13 +57,13 @@ class Repository: ObservableObject {
             
             // select it if required
             if selectIt {
-                UserDefaultsConfig.shared.selectedProjectId = newProject.id
+                self.selectedProjectId = newProject.id
             }
         }
     }
     
     func deleteSelectedProject() {
-        if let selectedProjectIndex = self.selectedProjectIndex {
+        if let selectedProjectIndex = self.ҩselectedProjectIndex {
             self.projects.remove(at: selectedProjectIndex)
         }
     }

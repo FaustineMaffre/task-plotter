@@ -8,17 +8,16 @@
 import SwiftUI
 
 struct ProjectView: View {
-    @EnvironmentObject var userDefaults: UserDefaultsConfig
     @ObservedObject var repository: Repository
     
     var body: some View {
-        if let selectedProject = self.repository.selectedProject {
+        if let selectedProject = self.repository.ҩselectedProject {
             NavigationView {
                 // versions
                 VersionsView(repository: self.repository)
                 
                 // tasks
-                if let selectedVersion = selectedProject.selectedVersion {
+                if let selectedVersion = selectedProject.ҩselectedVersion {
                     VStack(spacing: 0) {
                         HStack {
                             Text("Tasks")

@@ -8,17 +8,16 @@
 import SwiftUI
 
 struct ProjectMenu: View {
-    @EnvironmentObject var userDefaults: UserDefaultsConfig
     @ObservedObject var repository: Repository
     
     var body: some View {
-        if let selectedProject = self.repository.selectedProject {
+        if let selectedProject = self.repository.ҩselectedProject {
             HStack(spacing: 4) {
                 // projects menu
                 MenuButton(selectedProject.name) {
                     ForEach(self.repository.projects) { project in
                         Button(project.name) {
-                            self.userDefaults.selectedProjectId = project.id
+                            self.repository.selectedProjectId = project.id
                         }
                     }
                 }

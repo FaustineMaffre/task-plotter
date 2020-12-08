@@ -43,23 +43,4 @@ class UserDefaultsConfig: ObservableObject {
     /// Singleton.
     static let shared: UserDefaultsConfig = UserDefaultsConfig()
     private init() { }
-    
-    // MARK: - Selected project/version
-    
-    private static let stringToUuid = { (storedValue: String) -> UUID? in UUID(uuidString: storedValue) }
-    private static let uuidToString = { (value: UUID?) -> String in if let value = value { return value.uuidString } else { return "" } }
-    
-    @UserDefault("selected_project_id", defaultValue: nil, toValue: stringToUuid, toStoredValue: uuidToString)
-    var selectedProjectId: ProjectID? {
-        willSet {
-            self.objectWillChange.send()
-        }
-    }
-    
-    @UserDefault("selected_version_id", defaultValue: nil, toValue: stringToUuid, toStoredValue: uuidToString)
-    var selectedVersionId: VersionID? {
-        willSet {
-            self.objectWillChange.send()
-        }
-    }
 }
