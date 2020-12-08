@@ -42,4 +42,23 @@ class Repository: ObservableObject {
         self.labels = labels
         self.projects = projects
     }
+    
+    func addProject(name: String, selectIt: Bool) {
+        if !name.isEmpty {
+            // create new project
+            let newProject = Project(name: name)
+            self.projects.append(newProject)
+            
+            // select it if required
+            if selectIt {
+                UserDefaultsConfig.shared.selectedProjectId = newProject.id
+            }
+        }
+    }
+    
+    func deleteSelectedProject() {
+        if let selectedProjectIndex = self.selectedProjectIndex {
+            self.projects.remove(at: selectedProjectIndex)
+        }
+    }
 }

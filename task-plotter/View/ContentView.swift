@@ -17,6 +17,8 @@ struct ContentView: View {
                 ProjectMenu(repository: self.repository)
                     .padding(10)
                 
+                Divider()
+                
                 ProjectView(repository: self.repository)
             }
         } else {

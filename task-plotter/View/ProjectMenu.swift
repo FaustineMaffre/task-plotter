@@ -24,10 +24,13 @@ struct ProjectMenu: View {
                 }
                 .frame(width: 200)
                 
-                // create project
-                CreateProjectButton(repository: self.repository)
+                // delete project
+                DeleteProjectButton(repository: self.repository)
                 
                 Spacer()
+                
+                // create project
+                CreateProjectButton(repository: self.repository)
             }
         }
     }

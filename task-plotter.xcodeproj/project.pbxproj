@@ -25,6 +25,7 @@
 		9D5709C5257EBD6400B5C5B7 /* CreateProjectButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D5709C4257EBD6400B5C5B7 /* CreateProjectButton.swift */; };
 		9D5709CA257EBF2C00B5C5B7 /* ProjectMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D5709C9257EBF2C00B5C5B7 /* ProjectMenu.swift */; };
 		9D5709CE257EC2E500B5C5B7 /* CreateVersionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D5709CD257EC2E500B5C5B7 /* CreateVersionButton.swift */; };
+		9DC0F16D257F792000C80701 /* DeleteProjectButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC0F16C257F792000C80701 /* DeleteProjectButton.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,6 +50,7 @@
 		9D5709C4257EBD6400B5C5B7 /* CreateProjectButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateProjectButton.swift; sourceTree = "<group>"; };
 		9D5709C9257EBF2C00B5C5B7 /* ProjectMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectMenu.swift; sourceTree = "<group>"; };
 		9D5709CD257EC2E500B5C5B7 /* CreateVersionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateVersionButton.swift; sourceTree = "<group>"; };
+		9DC0F16C257F792000C80701 /* DeleteProjectButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteProjectButton.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -135,7 +137,7 @@
 		9D0C2BFA257E6A99006F3D89 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				9D5709C8257EBF1F00B5C5B7 /* Creation */,
+				9D5709C8257EBF1F00B5C5B7 /* CreationDeletion */,
 				9D0C2BFB257E6AB7006F3D89 /* EmptyProjectsView.swift */,
 				9D5709C9257EBF2C00B5C5B7 /* ProjectMenu.swift */,
 				9D5709BC257E87CE00B5C5B7 /* ProjectView.swift */,
@@ -144,13 +146,14 @@
 			path = View;
 			sourceTree = "<group>";
 		};
-		9D5709C8257EBF1F00B5C5B7 /* Creation */ = {
+		9D5709C8257EBF1F00B5C5B7 /* CreationDeletion */ = {
 			isa = PBXGroup;
 			children = (
 				9D5709C4257EBD6400B5C5B7 /* CreateProjectButton.swift */,
 				9D5709CD257EC2E500B5C5B7 /* CreateVersionButton.swift */,
+				9DC0F16C257F792000C80701 /* DeleteProjectButton.swift */,
 			);
-			path = Creation;
+			path = CreationDeletion;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -238,6 +241,7 @@
 				9D0C2BFC257E6AB7006F3D89 /* EmptyProjectsView.swift in Sources */,
 				9D0C2BF1257E51FF006F3D89 /* Repository.swift in Sources */,
 				9D5709BD257E87CE00B5C5B7 /* ProjectView.swift in Sources */,
+				9DC0F16D257F792000C80701 /* DeleteProjectButton.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
