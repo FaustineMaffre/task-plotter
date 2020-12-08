@@ -25,10 +25,10 @@ struct ProjectMenu: View {
             Spacer()
             
             // create project
-            CreateProjectButton(repository: self.repository)
+            CreateProjectButton(repository: self.repository, showText: true)
             
             // delete project
-            DeleteProjectButton(repository: self.repository)
+            DeleteProjectButton(repository: self.repository, showText: true)
         }
     }
 }

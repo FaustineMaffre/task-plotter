@@ -13,4 +13,10 @@ extension Text {
             .font(.title2)
             .bold()
     }
+    
+    func smallTitleStyle() -> Text {
+        self
+            .font(.title3)
+            .bold()
+    }
 }

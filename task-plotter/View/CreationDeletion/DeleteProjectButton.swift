@@ -12,6 +12,8 @@ struct DeleteProjectButton: View {
     
     @State var isProjectDeletionAlertPresented: Bool = false
     
+    let showText: Bool
+    
     var body: some View {
         Button {
             self.isProjectDeletionAlertPresented = true
@@ -21,7 +23,9 @@ struct DeleteProjectButton: View {
                     .imageScale(.large)
                     .frame(width: 30, height: 30)
                 
-                Text("Delete the project")
+                if self.showText {
+                    Text("Delete the project")
+                }
             }
             .contentShape(Rectangle())
         }

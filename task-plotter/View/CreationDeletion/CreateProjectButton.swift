@@ -13,6 +13,8 @@ struct CreateProjectButton: View {
     @State var isProjectCreationSheetPresented: Bool = false
     @State var tempProjectName: String = ""
     
+    let showText: Bool
+    
     var body: some View {
         Button {
             self.isProjectCreationSheetPresented = true
@@ -22,7 +24,9 @@ struct CreateProjectButton: View {
                     .imageScale(.large)
                     .frame(width: 30, height: 30)
                 
-                Text("Create a project")
+                if self.showText {
+                    Text("Create a project")
+                }
             }
             .contentShape(Rectangle())
         }
