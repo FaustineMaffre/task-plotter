@@ -54,4 +54,23 @@ struct Project: Identifiable, Hashable, Equatable {
     static func == (lhs: Project, rhs: Project) -> Bool {
         lhs.id == rhs.id
     }
+    
+    mutating func addVersion(number: String, selectIt: Bool) {
+        if !number.isEmpty {
+            // create new version
+            let newVersion = Version(number: number)
+            self.versions.append(newVersion)
+            
+            // select it if required
+            if selectIt {
+                UserDefaultsConfig.shared.selectedVersionId = newVersion.id
+            }
+        }
+    }
+    
+    mutating func deleteSelectedVersion() {
+        if let selectedVersionIndex = self.selectedVersionIndex {
+            self.versions.remove(at: selectedVersionIndex)
+        }
+    }
 }

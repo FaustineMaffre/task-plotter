@@ -41,8 +41,14 @@ struct ProjectView: View {
                             .listRowBackground(RoundedRectangle(cornerRadius: 8)
                                                 .fill(selectedProject.selectedVersion == version ? Color.accentColor : Color.clear))
                         }
-                        
-                        CreateVersionButton(repository: self.repository)
+                    }
+                    
+                    Divider()
+                    
+                    HStack(spacing: 0) {
+                        Spacer() 
+                        CreateVersionButton(repository: self.repository, showText: false)
+                        DeleteVersionButton(repository: self.repository, showText: false)
                     }
                 }
                 

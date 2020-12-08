@@ -16,9 +16,11 @@ struct DeleteProjectButton: View {
         Button {
             self.isProjectDeletionAlertPresented = true
         } label: {
-            HStack(spacing: 4) {
-                Image(systemName: "multiply")
+            HStack(spacing: 0) {
+                Image(systemName: "minus")
                     .imageScale(.large)
+                    .frame(width: 30, height: 30)
+                
                 Text("Delete the project")
             }
             .contentShape(Rectangle())

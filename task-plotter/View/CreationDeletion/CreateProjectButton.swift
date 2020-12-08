@@ -18,9 +18,11 @@ struct CreateProjectButton: View {
         Button {
             self.isProjectCreationSheetPresented = true
         } label: {
-            HStack(spacing: 4) {
+            HStack(spacing: 0) {
                 Image(systemName: "plus")
                     .imageScale(.large)
+                    .frame(width: 30, height: 30)
+                
                 Text("Create a project")
             }
             .contentShape(Rectangle())

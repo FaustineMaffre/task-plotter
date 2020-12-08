@@ -15,7 +15,7 @@ struct ContentView: View {
         if self.repository.selectedProject != nil {
             VStack(spacing: 0) {
                 ProjectMenu(repository: self.repository)
-                    .padding(10)
+                    .padding(EdgeInsets(top: 4, leading: 10, bottom: 4, trailing: 10))
                 
                 Divider()
                 

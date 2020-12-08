@@ -14,6 +14,8 @@ struct CreateVersionButton: View {
     @State var isVersionCreationSheetPresented: Bool = false
     @State var tempVersionNumber: String = ""
     
+    let showText: Bool
+    
     var body: some View {
         Button {
             self.isVersionCreationSheetPresented = true
@@ -21,7 +23,11 @@ struct CreateVersionButton: View {
             HStack(spacing: 4) {
                 Image(systemName: "plus")
                     .imageScale(.large)
-                Text("Add a version")
+                    .frame(width: 30, height: 30)
+                
+                if self.showText {
+                    Text("Add a version")
+                }
             }
             .contentShape(Rectangle())
         }
@@ -55,12 +61,7 @@ struct CreateVersionButton: View {
     func create() {
         if !self.tempVersionNumber.isEmpty,
            let selectedProjectIndex = self.repository.selectedProjectIndex {
-            // create new version
-            let newVersion = Version(number: self.tempVersionNumber)
-            self.repository.projects[selectedProjectIndex].versions.append(newVersion)
-            
-            // select it
-            self.userDefaults.selectedVersionId = newVersion.id
+            self.repository.projects[selectedProjectIndex].addVersion(number: self.tempVersionNumber, selectIt: true)
             
             // close sheet and reset text
             self.isVersionCreationSheetPresented = false
