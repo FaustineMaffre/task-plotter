@@ -11,18 +11,13 @@ struct ContentView: View {
     @ObservedObject var repository: Repository
     
     var body: some View {
-        if self.repository.ҩselectedProject != nil {
-            VStack(spacing: 0) {
-                ProjectMenu(repository: self.repository)
-                    .padding(EdgeInsets(top: 4, leading: 10, bottom: 4, trailing: 10))
-                
-                Divider()
-                
-                ProjectView(repository: self.repository)
-            }
-        } else {
-            // no projects
-            EmptyProjectsView(repository: self.repository)
+        VStack(spacing: 0) {
+            ProjectMenu(repository: self.repository)
+                .padding(EdgeInsets(top: 4, leading: 10, bottom: 4, trailing: 10))
+            
+            Divider()
+            
+            ProjectView(repository: self.repository)
         }
     }
 }

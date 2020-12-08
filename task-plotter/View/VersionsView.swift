@@ -11,17 +11,17 @@ struct VersionsView: View {
     @ObservedObject var repository: Repository
     
     var body: some View {
-        if let selectedProjectIndex = self.repository.ҩselectedProjectIndex,
-            let selectedProject = self.repository.ҩselectedProject {
-            VStack(spacing: 0) {
-                HStack {
-                    Text("Versions")
-                        .titleStyle()
-                        .padding(10)
-                    
-                    Spacer()
-                }
+        VStack(spacing: 0) {
+            HStack {
+                Text("Versions")
+                    .titleStyle()
+                    .padding(10)
                 
+                Spacer()
+            }
+            
+            if let selectedProjectIndex = self.repository.ҩselectedProjectIndex,
+               let selectedProject = self.repository.ҩselectedProject {
                 ScrollView {
                     VStack(spacing: 0) {
                         ForEach(selectedProject.versions) { version in
@@ -46,6 +46,8 @@ struct VersionsView: View {
                     CreateVersionButton(repository: self.repository, showText: false)
                     DeleteVersionButton(repository: self.repository, showText: false)
                 }
+            } else {
+                Spacer()
             }
         }
     }

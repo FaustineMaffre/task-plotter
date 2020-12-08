@@ -11,28 +11,28 @@ struct ProjectView: View {
     @ObservedObject var repository: Repository
     
     var body: some View {
-        if let selectedProject = self.repository.ҩselectedProject {
-            NavigationView {
-                // versions
-                VersionsView(repository: self.repository)
+        NavigationView {
+            // versions
+            VersionsView(repository: self.repository)
+            
+            // tasks
+            VStack(spacing: 0) {
+                HStack {
+                    Text("Tasks")
+                        .titleStyle()
+                        .padding(10)
+                    
+                    Spacer()
+                }
                 
-                // tasks
-                if let selectedVersion = selectedProject.ҩselectedVersion {
-                    VStack(spacing: 0) {
-                        HStack {
-                            Text("Tasks")
-                                .titleStyle()
-                                .padding(10)
-                            
-                            Spacer()
-                        }
-                        
-                        List {
-                            ForEach(selectedVersion.tasks) { task in
-                                Text(task.title)
-                            }
+                if let selectedVersion = self.repository.ҩselectedProject?.ҩselectedVersion {
+                    List {
+                        ForEach(selectedVersion.tasks) { task in
+                            Text(task.title)
                         }
                     }
+                } else {
+                    Spacer()
                 }
             }
         }
