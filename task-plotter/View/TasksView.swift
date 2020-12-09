@@ -33,7 +33,7 @@ struct TasksView: View {
                             }
                             
                             ScrollView {
-                                VStack(spacing: 0) {
+                                VStack(spacing: 4) {
                                     ForEach(tasks) { task in
                                         TaskView(task: task)
                                     }
@@ -49,7 +49,7 @@ struct TasksView: View {
                         .frame(width: 300)
                         .background(RoundedRectangle(cornerRadius: 8)
                                         .fillAndStroke(fill: Color(NSColor.underPageBackgroundColor),
-                                                       stroke: Color(NSColor.white).opacity(0.1)))
+                                                       stroke: Color.white.opacity(0.1)))
                     }
                 }
                 .padding(10)

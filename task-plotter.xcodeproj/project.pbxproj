@@ -20,6 +20,7 @@
 		9D0C2BF1257E51FF006F3D89 /* Repository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D0C2BF0257E51FF006F3D89 /* Repository.swift */; };
 		9D0C2BF7257E5363006F3D89 /* UserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D0C2BF6257E5363006F3D89 /* UserDefaults.swift */; };
 		9D0C2C00257E6AF8006F3D89 /* TestRepositories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D0C2BFF257E6AF8006F3D89 /* TestRepositories.swift */; };
+		9D2B316B25802332001280AD /* Color+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D2B316A25802332001280AD /* Color+.swift */; };
 		9D5709BD257E87CE00B5C5B7 /* ProjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D5709BC257E87CE00B5C5B7 /* ProjectView.swift */; };
 		9D5709C5257EBD6400B5C5B7 /* CreateProjectButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D5709C4257EBD6400B5C5B7 /* CreateProjectButton.swift */; };
 		9D5709CA257EBF2C00B5C5B7 /* ProjectMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D5709C9257EBF2C00B5C5B7 /* ProjectMenu.swift */; };
@@ -51,6 +52,7 @@
 		9D0C2BF0257E51FF006F3D89 /* Repository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Repository.swift; sourceTree = "<group>"; };
 		9D0C2BF6257E5363006F3D89 /* UserDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaults.swift; sourceTree = "<group>"; };
 		9D0C2BFF257E6AF8006F3D89 /* TestRepositories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestRepositories.swift; sourceTree = "<group>"; };
+		9D2B316A25802332001280AD /* Color+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+.swift"; sourceTree = "<group>"; };
 		9D5709BC257E87CE00B5C5B7 /* ProjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectView.swift; sourceTree = "<group>"; };
 		9D5709C4257EBD6400B5C5B7 /* CreateProjectButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateProjectButton.swift; sourceTree = "<group>"; };
 		9D5709C9257EBF2C00B5C5B7 /* ProjectMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectMenu.swift; sourceTree = "<group>"; };
@@ -140,6 +142,7 @@
 		9D0C2BF5257E5357006F3D89 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				9D2B316A25802332001280AD /* Color+.swift */,
 				9D0C2BF6257E5363006F3D89 /* UserDefaults.swift */,
 				9D0C2BFF257E6AF8006F3D89 /* TestRepositories.swift */,
 			);
@@ -252,6 +255,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9D0C2BCD257E3CCE006F3D89 /* ContentView.swift in Sources */,
+				9D2B316B25802332001280AD /* Color+.swift in Sources */,
 				9D0C2BCB257E3CCE006F3D89 /* TaskPlotterApp.swift in Sources */,
 				9D0C2BE1257E3DEB006F3D89 /* Day.swift in Sources */,
 				9D0C2BE4257E3E3C006F3D89 /* Label.swift in Sources */,
