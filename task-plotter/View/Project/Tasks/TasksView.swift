@@ -7,6 +7,13 @@
 
 import SwiftUI
 
+// TODO delete task
+// TODO move task
+
+// TODO due date
+// TODO points per day, working days, excluded dates
+// TODO compute dates per task 
+
 struct TasksView: View {
     @Binding var version: Version
     

@@ -33,16 +33,19 @@ struct CreateTaskButton: View {
         }
         .buttonStyle(PlainButtonStyle())
         .sheet(isPresented: self.$isTaskCreationSheetPresented) {
-            VStack(spacing: 20) {
-                Spacer()
-                
+            VStack(spacing: 0) {
                 Text("Add a new task")
                     .font(.headline)
                 
-                HStack {
-                    Text("Task title:")
+                Spacer()
+                    .frame(height: 20)
+                
+                HStack(spacing: 20) {
+                    Text("Title")
                     TextField("", text: self.$tempTaskTitle)
                 }
+                
+                Spacer()
                 
                 HStack {
                     Button("Cancel", action: self.cancel)
@@ -52,8 +55,6 @@ struct CreateTaskButton: View {
                         .keyboardShortcut(.defaultAction)
                         .disabled(self.tempTaskTitle.isEmpty)
                 }
-                
-                Spacer()
             }
             .padding()
             .frame(width: 300, height: 130) 

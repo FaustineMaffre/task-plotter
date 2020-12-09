@@ -7,6 +7,12 @@
 
 import SwiftUI
 
+let costFormatter: NumberFormatter = {
+    var res = NumberFormatter()
+    res.numberStyle = .decimal
+    return res
+}()
+
 struct LabelView: View {
     @State var label: Label
     
@@ -22,17 +28,11 @@ struct LabelView: View {
 }
 
 struct TaskCostView: View {
-    @State var cost: Float?
-    
-    static let costFormatter: NumberFormatter = {
-        var res = NumberFormatter()
-        res.numberStyle = .decimal
-        return res
-    }()
+    @Binding var task: Task
     
     var body: some View {
-        if let cost = self.cost,
-           let formattedCost = Self.costFormatter.string(from: NSNumber(value: cost)) {
+        if let cost = self.task.cost,
+           let formattedCost = costFormatter.string(from: NSNumber(value: cost)) {
             Text(formattedCost)
                 .font(.callout)
                 .frame(width: 22, height: 22)
@@ -43,19 +43,18 @@ struct TaskCostView: View {
 }
 
 struct TaskDueDateView: View {
-    @State var column: Column
-    @State var dueDate: Date?
+    @Binding var task: Task
     
     var ҩbackgroundColor: Color {
         let now = Date()
         
-        guard let dueDate = self.dueDate else {
+        guard let dueDate = self.task.expectedDueDate else {
             return Color.clear
         }
         
         let oneHour = TimeInterval(60*60)
         
-        if self.column == .done {
+        if self.task.column == .done {
             // done
             return Color.green.opacity(0.5)
             
@@ -84,7 +83,7 @@ struct TaskDueDateView: View {
     }()
     
     var body: some View {
-        if let dueDate = self.dueDate {
+        if let dueDate = self.task.expectedDueDate {
             Text(Self.dueDateFormatter.string(from: dueDate))
                 .padding(EdgeInsets(top: 2, leading: 10, bottom: 2, trailing: 10))
                 .background(RoundedRectangle(cornerRadius: 8).fill(self.ҩbackgroundColor))
@@ -98,18 +97,44 @@ struct TaskEditionView: View {
     @Binding var task: Task
     
     @State var tempTaskTitle: String = ""
+    @State var tempTaskDescription: String = ""
+    
+    @State var tempTaskCost: Float? = nil
+    
+    static let labelsWidth: CGFloat = 80
     
     var body: some View {
-        VStack(spacing: 20) {
-            Spacer()
-            
+        VStack(spacing: 0) {
             Text("Edit task")
                 .font(.headline)
             
-            HStack {
-                Text("Task title:")
-                TextField("", text: self.$tempTaskTitle)
+            Spacer()
+                .frame(height: 20)
+            
+            VStack(spacing: 6) {
+                HStack(spacing: 20) {
+                    Text("Title")
+                        .frame(width: Self.labelsWidth, alignment: .leading)
+                    TextField("", text: self.$tempTaskTitle)
+                }
+                
+                HStack(alignment: .top, spacing: 20) {
+                    Text("Description")
+                        .frame(width: Self.labelsWidth, alignment: .leading)
+                    TextEditor(text: self.$tempTaskDescription)
+                        .font(.body)
+                }
+                
+                // TODO labels
+                
+                HStack(spacing: 20) {
+                    Text("Estimated cost")
+                        .frame(width: Self.labelsWidth, alignment: .leading)
+                    TextField("", value: self.$tempTaskCost, formatter: costFormatter)
+                }
             }
+            
+            Spacer()
             
             HStack {
                 Button("Cancel", action: self.cancel)
@@ -119,19 +144,21 @@ struct TaskEditionView: View {
                     .keyboardShortcut(.defaultAction)
                     .disabled(self.tempTaskTitle.isEmpty)
             }
-            
-            Spacer()
         }
         .padding()
-        .frame(width: 300, height: 130)
+        .frame(width: 400, height: 300)
         .onAppear {
             self.tempTaskTitle = self.task.title
+            self.tempTaskDescription = self.task.description
+            self.tempTaskCost = self.task.cost
         }
     }
     
     func edit() {
         if !self.tempTaskTitle.isEmpty {
             self.task.title = self.tempTaskTitle
+            self.task.description = self.tempTaskDescription
+            self.task.cost = self.tempTaskCost
             
             // close sheet and reset text
             self.presentationMode.wrappedValue.dismiss()
@@ -146,6 +173,8 @@ struct TaskEditionView: View {
     }
 }
 
+// TODO show icon when description non-empty
+
 struct TaskView: View {
     @Binding var task: Task
     
@@ -155,7 +184,7 @@ struct TaskView: View {
         HStack {
             VStack(spacing: 4) {
                 if !self.task.labels.isEmpty {
-                    // TODO new line
+                    // TODO wrap
                     HStack(spacing: 3) {
                         ForEach(self.task.labels, id: \.name) {
                             LabelView(label: $0)
@@ -174,14 +203,14 @@ struct TaskView: View {
                     .frame(height: 2)
                 
                 HStack {
-                    TaskDueDateView(column: task.column, dueDate: self.task.expectedDueDate)
+                    TaskDueDateView(task: self.$task)
                     Spacer()
                 }
             }
             
             Spacer()
             
-            TaskCostView(cost: self.task.cost)
+            TaskCostView(task: self.$task)
         }
         .padding(EdgeInsets(top: 8, leading: 10, bottom: 8, trailing: 10))
         .frame(width: 280)

@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+// TODO edit version
+
 struct CreateVersionButton: View {
     @Binding var project: Project
     
@@ -32,16 +34,19 @@ struct CreateVersionButton: View {
         }
         .buttonStyle(PlainButtonStyle())
         .sheet(isPresented: self.$isVersionCreationSheetPresented) {
-            VStack(spacing: 20) {
-                Spacer()
-                
+            VStack(spacing: 0) {
                 Text("Add a new version")
                     .font(.headline)
                 
-                HStack {
-                    Text("Version number:")
+                Spacer()
+                    .frame(height: 20)
+                
+                HStack(spacing: 20) {
+                    Text("Number")
                     TextField("", text: self.$tempVersionNumber)
                 }
+                
+                Spacer()
                 
                 HStack {
                     Button("Cancel", action: self.cancel)
@@ -51,8 +56,6 @@ struct CreateVersionButton: View {
                         .keyboardShortcut(.defaultAction)
                         .disabled(self.tempVersionNumber.isEmpty)
                 }
-                
-                Spacer()
             }
             .padding()
             .frame(width: 300, height: 130)

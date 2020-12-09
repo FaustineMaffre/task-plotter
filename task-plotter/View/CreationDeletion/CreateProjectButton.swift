@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+// TODO edit project?
+
 struct CreateProjectButton: View {
     @ObservedObject var repository: Repository
     
@@ -32,16 +34,19 @@ struct CreateProjectButton: View {
         }
         .buttonStyle(PlainButtonStyle())
         .sheet(isPresented: self.$isProjectCreationSheetPresented) {
-            VStack(spacing: 20) {
-                Spacer()
-                
+            VStack(spacing: 0) {
                 Text("Create a new project")
                     .font(.headline)
                 
-                HStack {
-                    Text("Project name:")
+                Spacer()
+                    .frame(height: 20)
+                
+                HStack(spacing: 20) {
+                    Text("Name")
                     TextField("", text: self.$tempProjectName)
                 }
+                
+                Spacer()
                 
                 HStack {
                     Button("Cancel", action: self.cancel)
@@ -51,8 +56,6 @@ struct CreateProjectButton: View {
                         .keyboardShortcut(.defaultAction)
                         .disabled(self.tempProjectName.isEmpty)
                 }
-                
-                Spacer()
             }
             .padding()
             .frame(width: 300, height: 130)
