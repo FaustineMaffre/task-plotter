@@ -8,8 +8,7 @@
 import SwiftUI
 
 struct CreateTaskButton: View {
-    @ObservedObject var repository: Repository
-    
+    @Binding var version: Version
     let column: Column
     
     @State var isTaskCreationSheetPresented: Bool = false
@@ -62,10 +61,8 @@ struct CreateTaskButton: View {
     }
     
     func create() {
-        if !self.tempTaskTitle.isEmpty,
-           let selectedProjectIndex = self.repository.ҩselectedProjectIndex,
-           let selectedVersionIndex = self.repository.projects[selectedProjectIndex].ҩselectedVersionIndex {
-            self.repository.projects[selectedProjectIndex].versions[selectedVersionIndex].addTask(column: self.column, title: self.tempTaskTitle)
+        if !self.tempTaskTitle.isEmpty {
+            self.version.addTask(column: self.column, title: self.tempTaskTitle)
             
             // close sheet and reset text
             self.isTaskCreationSheetPresented = false

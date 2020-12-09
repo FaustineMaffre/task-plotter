@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct DeleteVersionButton: View {
-    @ObservedObject var repository: Repository
+    @Binding var project: Project
     
     @State var isVersionDeletionAlertPresented: Bool = false
     
@@ -32,15 +32,13 @@ struct DeleteVersionButton: View {
         .buttonStyle(PlainButtonStyle())
         .alert(isPresented: self.$isVersionDeletionAlertPresented) {
             Alert(title: Text("Delete the version"),
-                  message: Text("Are you sure you want to delete version \"\(self.repository.ҩselectedProject?.ҩselectedVersion?.number ?? "")\"?"),
+                  message: Text("Are you sure you want to delete version \"\(self.project.ҩselectedVersion?.number ?? "")\"?"),
                   primaryButton: .destructive(Text("Delete"), action: self.delete),
                   secondaryButton: .cancel())
         }
     }
     
     func delete() {
-        if let selectedProjectIndex = self.repository.ҩselectedProjectIndex {
-            self.repository.projects[selectedProjectIndex].deleteSelectedVersion()
-        }
+        self.project.deleteSelectedVersion()
     }
 }

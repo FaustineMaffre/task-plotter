@@ -22,16 +22,16 @@ struct Version: Identifiable, Hashable, Equatable {
     
     var tasks: [Task] = []
     
-    var ҩtaskByColumn: [(column: Column, tasks: [Task])] {
+    var ҩtaskIndicesByColumn: [(column: Column, taskIndices: [Int])] {
         // create an array for each column, even if it is going to be empty
-        var res = Column.allCases.map { (column: $0, tasks: [Task]()) }
+        var res = Column.allCases.map { (column: $0, taskIndices: [Int]()) }
         
         // index of each column to find it quicker
         let columnsOrdered = Dictionary(uniqueKeysWithValues: res.enumerated().map { ($0.element.0, $0.offset) })
         
-        self.tasks.forEach {
-            if let columnIndex = columnsOrdered[$0.column] {
-                res[columnIndex].tasks.append($0)
+        self.tasks.indices.forEach { index in
+            if let columnIndex = columnsOrdered[self.tasks[index].column] {
+                res[columnIndex].taskIndices.append(index)
             }
         }
         

@@ -154,14 +154,46 @@
 			children = (
 				9DC0F190257FB4B500C80701 /* Common */,
 				9D5709C8257EBF1F00B5C5B7 /* CreationDeletion */,
-				9D5709C9257EBF2C00B5C5B7 /* ProjectMenu.swift */,
-				9DC0F195257FB59600C80701 /* VersionsView.swift */,
-				9DC0F19E257FC67900C80701 /* TaskView.swift */,
-				9DC0F19A257FC3D400C80701 /* TasksView.swift */,
-				9D5709BC257E87CE00B5C5B7 /* ProjectView.swift */,
+				9D376F0D258123F900F45533 /* Menu */,
+				9D376F112581244900F45533 /* Project */,
 				9D0C2BCC257E3CCE006F3D89 /* ContentView.swift */,
 			);
 			path = View;
+			sourceTree = "<group>";
+		};
+		9D376F0D258123F900F45533 /* Menu */ = {
+			isa = PBXGroup;
+			children = (
+				9D5709C9257EBF2C00B5C5B7 /* ProjectMenu.swift */,
+			);
+			path = Menu;
+			sourceTree = "<group>";
+		};
+		9D376F0E2581240700F45533 /* Versions */ = {
+			isa = PBXGroup;
+			children = (
+				9DC0F195257FB59600C80701 /* VersionsView.swift */,
+			);
+			path = Versions;
+			sourceTree = "<group>";
+		};
+		9D376F0F2581241C00F45533 /* Tasks */ = {
+			isa = PBXGroup;
+			children = (
+				9DC0F19E257FC67900C80701 /* TaskView.swift */,
+				9DC0F19A257FC3D400C80701 /* TasksView.swift */,
+			);
+			path = Tasks;
+			sourceTree = "<group>";
+		};
+		9D376F112581244900F45533 /* Project */ = {
+			isa = PBXGroup;
+			children = (
+				9D5709BC257E87CE00B5C5B7 /* ProjectView.swift */,
+				9D376F0E2581240700F45533 /* Versions */,
+				9D376F0F2581241C00F45533 /* Tasks */,
+			);
+			path = Project;
 			sourceTree = "<group>";
 		};
 		9D5709C8257EBF1F00B5C5B7 /* CreationDeletion */ = {
