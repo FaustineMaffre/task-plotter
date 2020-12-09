@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Label {
+struct Label: Hashable, Equatable {
     let name: String
     let color: String
 }

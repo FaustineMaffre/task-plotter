@@ -16,6 +16,7 @@ import SwiftUI
 
 struct TasksView: View {
     @Binding var version: Version
+    let labels: [Label]
     
     var body: some View {
         VStack(spacing: 0) {
@@ -41,7 +42,7 @@ struct TasksView: View {
                         ScrollView {
                             VStack(spacing: 4) {
                                 ForEach(tasksIndices, id: \.self) { taskIndex in
-                                    TaskView(task: self.generateTaskBinding(taskIndex: taskIndex))
+                                    TaskView(task: self.generateTaskBinding(taskIndex: taskIndex), labels: self.labels)
                                 }
                                 
                                 HStack {

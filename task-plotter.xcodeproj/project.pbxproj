@@ -25,6 +25,9 @@
 		9D5709C5257EBD6400B5C5B7 /* CreateProjectButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D5709C4257EBD6400B5C5B7 /* CreateProjectButton.swift */; };
 		9D5709CA257EBF2C00B5C5B7 /* ProjectMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D5709C9257EBF2C00B5C5B7 /* ProjectMenu.swift */; };
 		9D5709CE257EC2E500B5C5B7 /* CreateVersionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D5709CD257EC2E500B5C5B7 /* CreateVersionButton.swift */; };
+		9D7850612581631100D5F485 /* TaskEditionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D7850602581631100D5F485 /* TaskEditionView.swift */; };
+		9D7850652581638800D5F485 /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D7850642581638800D5F485 /* Common.swift */; };
+		9D7850692581663600D5F485 /* Collection+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D7850682581663600D5F485 /* Collection+.swift */; };
 		9DC0F16D257F792000C80701 /* DeleteProjectButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC0F16C257F792000C80701 /* DeleteProjectButton.swift */; };
 		9DC0F170257F7FA400C80701 /* DeleteVersionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC0F16F257F7FA400C80701 /* DeleteVersionButton.swift */; };
 		9DC0F192257FB4CA00C80701 /* TitleStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC0F191257FB4CA00C80701 /* TitleStyle.swift */; };
@@ -57,6 +60,9 @@
 		9D5709C4257EBD6400B5C5B7 /* CreateProjectButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateProjectButton.swift; sourceTree = "<group>"; };
 		9D5709C9257EBF2C00B5C5B7 /* ProjectMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectMenu.swift; sourceTree = "<group>"; };
 		9D5709CD257EC2E500B5C5B7 /* CreateVersionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateVersionButton.swift; sourceTree = "<group>"; };
+		9D7850602581631100D5F485 /* TaskEditionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskEditionView.swift; sourceTree = "<group>"; };
+		9D7850642581638800D5F485 /* Common.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Common.swift; sourceTree = "<group>"; };
+		9D7850682581663600D5F485 /* Collection+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Collection+.swift"; sourceTree = "<group>"; };
 		9DC0F16C257F792000C80701 /* DeleteProjectButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteProjectButton.swift; sourceTree = "<group>"; };
 		9DC0F16F257F7FA400C80701 /* DeleteVersionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteVersionButton.swift; sourceTree = "<group>"; };
 		9DC0F191257FB4CA00C80701 /* TitleStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleStyle.swift; sourceTree = "<group>"; };
@@ -142,9 +148,11 @@
 		9D0C2BF5257E5357006F3D89 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				9D7850682581663600D5F485 /* Collection+.swift */,
 				9D2B316A25802332001280AD /* Color+.swift */,
 				9D0C2BF6257E5363006F3D89 /* UserDefaults.swift */,
 				9D0C2BFF257E6AF8006F3D89 /* TestRepositories.swift */,
+				9D7850642581638800D5F485 /* Common.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -180,6 +188,7 @@
 		9D376F0F2581241C00F45533 /* Tasks */ = {
 			isa = PBXGroup;
 			children = (
+				9D7850602581631100D5F485 /* TaskEditionView.swift */,
 				9DC0F19E257FC67900C80701 /* TaskView.swift */,
 				9DC0F19A257FC3D400C80701 /* TasksView.swift */,
 			);
@@ -287,6 +296,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				9D0C2BCD257E3CCE006F3D89 /* ContentView.swift in Sources */,
+				9D7850612581631100D5F485 /* TaskEditionView.swift in Sources */,
+				9D7850652581638800D5F485 /* Common.swift in Sources */,
 				9D2B316B25802332001280AD /* Color+.swift in Sources */,
 				9D0C2BCB257E3CCE006F3D89 /* TaskPlotterApp.swift in Sources */,
 				9D0C2BE1257E3DEB006F3D89 /* Day.swift in Sources */,
@@ -295,6 +306,7 @@
 				9D0C2BEB257E3F49006F3D89 /* Version.swift in Sources */,
 				9D0C2C00257E6AF8006F3D89 /* TestRepositories.swift in Sources */,
 				9DC0F1A3257FCF8400C80701 /* ShapeFillAndStroke.swift in Sources */,
+				9D7850692581663600D5F485 /* Collection+.swift in Sources */,
 				9D0C2BE8257E3E72006F3D89 /* Task.swift in Sources */,
 				9D0C2BF7257E5363006F3D89 /* UserDefaults.swift in Sources */,
 				9D0C2BDD257E3DC3006F3D89 /* Column.swift in Sources */,

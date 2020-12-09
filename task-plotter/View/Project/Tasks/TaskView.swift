@@ -7,13 +7,7 @@
 
 import SwiftUI
 
-let costFormatter: NumberFormatter = {
-    var res = NumberFormatter()
-    res.numberStyle = .decimal
-    return res
-}()
-
-struct LabelView: View {
+struct TaskLabelView: View {
     @State var label: Label
     
     var body: some View {
@@ -32,7 +26,7 @@ struct TaskCostView: View {
     
     var body: some View {
         if let cost = self.task.cost,
-           let formattedCost = costFormatter.string(from: NSNumber(value: cost)) {
+           let formattedCost = Common.costFormatter.string(from: NSNumber(value: cost)) {
             Text(formattedCost)
                 .font(.callout)
                 .frame(width: 22, height: 22)
@@ -91,92 +85,11 @@ struct TaskDueDateView: View {
     }
 }
 
-struct TaskEditionView: View {
-    @Environment(\.presentationMode) var presentationMode
-    
-    @Binding var task: Task
-    
-    @State var tempTaskTitle: String = ""
-    @State var tempTaskDescription: String = ""
-    
-    @State var tempTaskCost: Float? = nil
-    
-    static let labelsWidth: CGFloat = 80
-    
-    var body: some View {
-        VStack(spacing: 0) {
-            Text("Edit task")
-                .font(.headline)
-            
-            Spacer()
-                .frame(height: 20)
-            
-            VStack(spacing: 6) {
-                HStack(spacing: 20) {
-                    Text("Title")
-                        .frame(width: Self.labelsWidth, alignment: .leading)
-                    TextField("", text: self.$tempTaskTitle)
-                }
-                
-                HStack(alignment: .top, spacing: 20) {
-                    Text("Description")
-                        .frame(width: Self.labelsWidth, alignment: .leading)
-                    TextEditor(text: self.$tempTaskDescription)
-                        .font(.body)
-                }
-                
-                // TODO labels
-                
-                HStack(spacing: 20) {
-                    Text("Estimated cost")
-                        .frame(width: Self.labelsWidth, alignment: .leading)
-                    TextField("", value: self.$tempTaskCost, formatter: costFormatter)
-                }
-            }
-            
-            Spacer()
-            
-            HStack {
-                Button("Cancel", action: self.cancel)
-                    .keyboardShortcut(.cancelAction)
-                
-                Button("Edit", action: self.edit)
-                    .keyboardShortcut(.defaultAction)
-                    .disabled(self.tempTaskTitle.isEmpty)
-            }
-        }
-        .padding()
-        .frame(width: 400, height: 300)
-        .onAppear {
-            self.tempTaskTitle = self.task.title
-            self.tempTaskDescription = self.task.description
-            self.tempTaskCost = self.task.cost
-        }
-    }
-    
-    func edit() {
-        if !self.tempTaskTitle.isEmpty {
-            self.task.title = self.tempTaskTitle
-            self.task.description = self.tempTaskDescription
-            self.task.cost = self.tempTaskCost
-            
-            // close sheet and reset text
-            self.presentationMode.wrappedValue.dismiss()
-            self.tempTaskTitle = ""
-        }
-    }
-    
-    func cancel() {
-        // close sheet and reset text
-        self.presentationMode.wrappedValue.dismiss()
-        self.tempTaskTitle = ""
-    }
-}
-
 // TODO show icon when description non-empty
 
 struct TaskView: View {
     @Binding var task: Task
+    let labels: [Label]
     
     @State var isTaskEditionSheetPresented: Bool = false
     
@@ -187,7 +100,7 @@ struct TaskView: View {
                     // TODO wrap
                     HStack(spacing: 3) {
                         ForEach(self.task.labels, id: \.name) {
-                            LabelView(label: $0)
+                            TaskLabelView(label: $0)
                         }
                         
                         Spacer()
@@ -221,7 +134,7 @@ struct TaskView: View {
             self.isTaskEditionSheetPresented = true
         }
         .sheet(isPresented: self.$isTaskEditionSheetPresented) {
-            TaskEditionView(task: self.$task)
+            TaskEditionView(task: self.$task, labels: self.labels)
         }
     }
 }

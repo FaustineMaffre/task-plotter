@@ -12,9 +12,11 @@ class TestRepositories {
         let labelModel = Label(name: "Model", color: Color.purple.ҩhex)
         let labelUiUx = Label(name: "UI/UX", color: Color.blue.ҩhex)
         let labelGraphics = Label(name: "Graphics", color: Color.pink.ҩhex)
-        let labels = [labelModel, labelUiUx, labelGraphics]
+        let labelIO = Label(name: "File I/O", color: Color.green.ҩhex)
+        let labelScene = Label(name: "Scene", color: Color.yellow.ҩhex)
+        let labels = [labelModel, labelUiUx, labelGraphics, labelIO, labelScene]
         
-        var tasks = [Task(column: .todo, title: "Blur and sharpen tools", labels: [labelModel, labelUiUx, labelModel, labelUiUx, labelModel, labelUiUx], description: "Tools", cost: 8),
+        var tasks = [Task(column: .todo, title: "Blur and sharpen tools", labels: [labelModel, labelUiUx, labelGraphics, labelIO, labelScene], description: "Tools", cost: 8),
                      Task(column: .doing, title: "Site/mail", labels: [labelGraphics], description: "- Nom de domaine\n- Adresse mail", cost: nil),
                      Task(column: .doing, title: "In-app purchases", labels: [], description: "", cost: 4),
                      Task(column: .doing, title: "Scene camera", labels: [labelUiUx], description: "", cost: 2.5),
