@@ -42,13 +42,15 @@ struct CreateTaskButton: View {
                 
                 HStack {
                     Text("Task title:")
-                    TextField("", text: self.$tempTaskTitle, onCommit: self.create)
+                    TextField("", text: self.$tempTaskTitle)
                 }
                 
                 HStack {
                     Button("Cancel", action: self.cancel)
+                        .keyboardShortcut(.cancelAction)
                     
                     Button("Create", action: self.create)
+                        .keyboardShortcut(.defaultAction)
                         .disabled(self.tempTaskTitle.isEmpty)
                 }
                 

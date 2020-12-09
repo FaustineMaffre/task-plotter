@@ -34,8 +34,8 @@ struct TasksView: View {
                             
                             ScrollView {
                                 VStack(spacing: 4) {
-                                    ForEach(tasks) { task in
-                                        TaskView(task: task)
+                                    ForEach(tasks.indices, id: \.self) { taskIndex in
+                                        TaskView(task: self.generateTaskBinding(taskIndex: taskIndex))
                                     }
                                     
                                     HStack {
@@ -55,6 +55,26 @@ struct TasksView: View {
                 .padding(10)
             } else {
                 Spacer()
+            }
+        }
+    }
+    
+    func generateTaskBinding(taskIndex: Int) -> Binding<Task> {
+        Binding {
+            if let selectedVersion = self.repository.ҩselectedProject?.ҩselectedVersion,
+               selectedVersion.tasks.indices.contains(taskIndex) {
+                return selectedVersion.tasks[taskIndex]
+            } else {
+                return Task(column: .todo, title: "Oops")
+            }
+            
+        } set: {
+            if let selectedProjectIndex = self.repository.ҩselectedProjectIndex {
+                if let selectedVersionIndex = self.repository.projects[selectedProjectIndex].ҩselectedVersionIndex {
+                    if self.repository.projects[selectedProjectIndex].versions[selectedVersionIndex].tasks.indices.contains(taskIndex) {
+                        self.repository.projects[selectedProjectIndex].versions[selectedVersionIndex].tasks[taskIndex] = $0
+                    }
+                }
             }
         }
     }

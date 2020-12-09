@@ -40,13 +40,15 @@ struct CreateProjectButton: View {
                 
                 HStack {
                     Text("Project name:")
-                    TextField("", text: self.$tempProjectName, onCommit: self.create)
+                    TextField("", text: self.$tempProjectName)
                 }
                 
                 HStack {
                     Button("Cancel", action: self.cancel)
+                        .keyboardShortcut(.cancelAction)
                     
                     Button("Create", action: self.create)
+                        .keyboardShortcut(.defaultAction)
                         .disabled(self.tempProjectName.isEmpty)
                 }
                 

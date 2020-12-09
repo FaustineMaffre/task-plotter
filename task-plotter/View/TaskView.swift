@@ -92,13 +92,70 @@ struct TaskDueDateView: View {
     }
 }
 
+struct TaskEditionView: View {
+    @Environment(\.presentationMode) var presentationMode
+    
+    @Binding var task: Task
+    
+    @State var tempTaskTitle: String = ""
+    
+    var body: some View {
+        VStack(spacing: 20) {
+            Spacer()
+            
+            Text("Edit task")
+                .font(.headline)
+            
+            HStack {
+                Text("Task title:")
+                TextField("", text: self.$tempTaskTitle)
+            }
+            
+            HStack {
+                Button("Cancel", action: self.cancel)
+                    .keyboardShortcut(.cancelAction)
+                
+                Button("Edit", action: self.edit)
+                    .keyboardShortcut(.defaultAction)
+                    .disabled(self.tempTaskTitle.isEmpty)
+            }
+            
+            Spacer()
+        }
+        .padding()
+        .frame(width: 300, height: 130)
+        .onAppear {
+            self.tempTaskTitle = self.task.title
+        }
+    }
+    
+    func edit() {
+        if !self.tempTaskTitle.isEmpty {
+            self.task.title = self.tempTaskTitle
+            
+            // close sheet and reset text
+            self.presentationMode.wrappedValue.dismiss()
+            self.tempTaskTitle = ""
+        }
+    }
+    
+    func cancel() {
+        // close sheet and reset text
+        self.presentationMode.wrappedValue.dismiss()
+        self.tempTaskTitle = ""
+    }
+}
+
 struct TaskView: View {
-    @State var task: Task
+    @Binding var task: Task
+    
+    @State var isTaskEditionSheetPresented: Bool = false
     
     var body: some View {
         HStack {
             VStack(spacing: 4) {
                 if !self.task.labels.isEmpty {
+                    // TODO new line
                     HStack(spacing: 3) {
                         ForEach(self.task.labels, id: \.name) {
                             LabelView(label: $0)
@@ -131,5 +188,11 @@ struct TaskView: View {
         .background(RoundedRectangle(cornerRadius: 8)
                         .fillAndStroke(fill: Color(NSColor.windowBackgroundColor),
                                        stroke: Color.white.opacity(0.1)))
+        .onTapGesture(count: 2) {
+            self.isTaskEditionSheetPresented = true
+        }
+        .sheet(isPresented: self.$isTaskEditionSheetPresented) {
+            TaskEditionView(task: self.$task)
+        }
     }
 }

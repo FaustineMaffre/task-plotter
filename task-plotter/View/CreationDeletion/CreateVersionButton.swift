@@ -40,13 +40,15 @@ struct CreateVersionButton: View {
                 
                 HStack {
                     Text("Version number:")
-                    TextField("", text: self.$tempVersionNumber, onCommit: self.create)
+                    TextField("", text: self.$tempVersionNumber)
                 }
                 
                 HStack {
                     Button("Cancel", action: self.cancel)
+                        .keyboardShortcut(.cancelAction)
                     
                     Button("Create", action: self.create)
+                        .keyboardShortcut(.defaultAction)
                         .disabled(self.tempVersionNumber.isEmpty)
                 }
                 
