@@ -17,13 +17,13 @@ struct Task: Identifiable, Hashable, Equatable {
     var labels: [Label]
     var description: String
     
-    var cost: Float?
+    var cost: Double?
     
     var expectedDueDate: Date? = nil
     
     init(id: TaskID = UUID(),
          title: String, labels: [Label] = [], description: String = "",
-         cost: Float? = nil) {
+         cost: Double? = nil) {
         self.id = id
         self.title = title
         self.labels = labels

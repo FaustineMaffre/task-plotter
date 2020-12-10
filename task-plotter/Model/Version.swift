@@ -16,7 +16,7 @@ struct Version: Identifiable, Hashable, Equatable {
     
     var dueDate: Date?
     
-    var pointsPerDay: Float?
+    var pointsPerDay: Double?
     var workingDays: [Day]
     var excludedDates: [Date]
     
@@ -30,7 +30,7 @@ struct Version: Identifiable, Hashable, Equatable {
     init(id: VersionID = UUID(),
          number: String,
          dueDate: Date? = nil,
-         pointsPerDay: Float? = nil, workingDays: [Day] = Day.all, excludedDates: [Date] = []) {
+         pointsPerDay: Double? = nil, workingDays: [Day] = Day.all, excludedDates: [Date] = []) {
         self.id = id
         self.number = number
         self.dueDate = dueDate

@@ -117,8 +117,7 @@ struct TaskEditionView: View {
     @State var tempTaskTitle: String = ""
     @State var tempTaskLabels: [Label] = []
     @State var tempTaskDescription: String = ""
-    
-    @State var tempTaskCost: Float? = nil
+    @State var tempTaskCost: Double? = nil
     
     static let labelsWidth: CGFloat = 100
     
@@ -151,7 +150,7 @@ struct TaskEditionView: View {
                     TaskLabelSelector(selectedLabels: self.$tempTaskLabels, allLabels: self.labels)
                 }
                 
-                // TODO cost not saved
+                // TODO0 cost not saved when tapping button (but ok with enter)
                 HStack(spacing: 20) {
                     Text("Estimated cost")
                         .frame(width: Self.labelsWidth, alignment: .leading)
@@ -191,6 +190,9 @@ struct TaskEditionView: View {
             // close sheet and reset text
             self.presentationMode.wrappedValue.dismiss()
             self.tempTaskTitle = ""
+            self.tempTaskLabels = []
+            self.tempTaskDescription = ""
+            self.tempTaskCost = nil
         }
     }
     
@@ -198,5 +200,8 @@ struct TaskEditionView: View {
         // close sheet and reset text
         self.presentationMode.wrappedValue.dismiss()
         self.tempTaskTitle = ""
+        self.tempTaskLabels = []
+        self.tempTaskDescription = ""
+        self.tempTaskCost = nil
     }
 }
