@@ -16,21 +16,21 @@ class TestRepositories {
         let labelScene = Label(name: "Scene", color: Color.yellow.ҩhex)
         let labels = [labelModel, labelUiUx, labelGraphics, labelIO, labelScene]
         
-        var tasks = [Task(column: .todo, title: "Blur and sharpen tools", labels: [labelModel, labelUiUx, labelGraphics, labelIO, labelScene], description: "Tools", cost: 8),
-                     Task(column: .doing, title: "Site/mail", labels: [labelGraphics], description: "- Nom de domaine\n- Adresse mail", cost: nil),
-                     Task(column: .doing, title: "In-app purchases", labels: [], description: "", cost: 4),
-                     Task(column: .doing, title: "Scene camera", labels: [labelUiUx], description: "", cost: 2.5),
-                     Task(column: .doing, title: "Cushion effect", labels: [labelModel, labelUiUx, labelGraphics], description: "", cost: 1),
-                     Task(column: .done, title: "User tests", labels: [labelModel, labelUiUx, labelGraphics], description: "", cost: 16)]
+        var tasks = [Column.todo: [Task(title: "Blur and sharpen tools", labels: [labelModel, labelUiUx, labelGraphics, labelIO, labelScene], description: "Tools", cost: 8)],
+                     Column.doing: [Task(title: "Site/mail", labels: [labelGraphics], description: "- Nom de domaine\n- Adresse mail", cost: nil),
+                                    Task(title: "In-app purchases", labels: [], description: "", cost: 4),
+                                    Task(title: "Scene camera", labels: [labelUiUx], description: "", cost: 2.5),
+                                    Task(title: "Cushion effect", labels: [labelModel, labelUiUx, labelGraphics], description: "", cost: 1)],
+                     Column.done: [Task(title: "User tests", labels: [labelModel, labelUiUx, labelGraphics], description: "", cost: 16)]]
         
-        tasks[0].expectedDueDate = Date() + TimeInterval(60*60*25) // 25 hours after now
-        tasks[1].expectedDueDate = Date() + TimeInterval(60*60*6) // 6 hours after now
-        tasks[2].expectedDueDate = Date() - TimeInterval(60*60*5) // 5 hours before now
-        tasks[3].expectedDueDate = Date() - TimeInterval(60*60*25) // 25 hours before now
-        tasks[5].expectedDueDate = Date() - TimeInterval(60*60*55) // 55 hours before now
+        tasks[Column.todo]?[0].expectedDueDate = Date() + TimeInterval(60*60*25) // 25 hours after now
+        tasks[Column.doing]?[0].expectedDueDate = Date() + TimeInterval(60*60*6) // 6 hours after now
+        tasks[Column.doing]?[1].expectedDueDate = Date() - TimeInterval(60*60*5) // 5 hours before now
+        tasks[Column.doing]?[2].expectedDueDate = Date() - TimeInterval(60*60*25) // 25 hours before now
+        tasks[Column.done]?[0].expectedDueDate = Date() - TimeInterval(60*60*55) // 55 hours before now
         
         var version10 = Version(number: "1.0", pointsPerDay: 4, workingDays: Day.all, excludedDates: [])
-        version10.tasks = tasks
+        version10.tasksByColumn = tasks
         let version11 = Version(number: "1.1")
         
         var project1 = Project(name: "Ardoise")

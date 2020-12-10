@@ -29,7 +29,7 @@ struct TaskLabelSelector: View {
     
     @State var isDropTargeted: Bool = false
 
-    static let emptyLabel: Label = Label(name: "Drop here", color: Color.clear.ҩhex)
+    static let emptyLabel: Label = Label(name: "", color: Color.clear.ҩhex)
     static let spacingBetweenLists: CGFloat = 8
     
     var body: some View {
@@ -47,7 +47,7 @@ struct TaskLabelSelector: View {
             if let availableLabel = self.ҩavailableLabels.first(where: { $0.name == name }) {
                 // inserting available label
                 if self.selectedLabels.isEmpty {
-                    // in case index would be outside bounds (because of empty label)
+                    // in case index would be outside bounds (because of empty labels)
                     self.selectedLabels.append(availableLabel)
                 } else {
                     self.selectedLabels.insert(availableLabel, at: index)
@@ -74,14 +74,23 @@ struct TaskLabelSelector: View {
             
             List {
                 ForEach(labels.isEmpty ? [Self.emptyLabel] : labels, id: \.self) { label in
-                    HStack {
-                        Spacer()
-                        TaskLabelSelectorLabelView(label: label)
-                            .onDrag { NSItemProvider(object: label.name as NSString) }
-                        Spacer()
+                    if label == Self.emptyLabel {
+                        HStack {
+                            Spacer()
+                            Text("No label")
+                                .foregroundColor(Color.white.opacity(0.2))
+                            Spacer()
+                        }
+                    } else {
+                        HStack {
+                            Spacer()
+                            TaskLabelSelectorLabelView(label: label)
+                            Spacer()
+                        }
+                        .frame(height: 30)
+                        .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+                        .onDrag { NSItemProvider(object: label.name as NSString) }
                     }
-                    .frame(height: 30)
-                    .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
                 }
                 .onInsert(of: [UTType.plainText]) { index, items in
                     items.forEach { item in
@@ -142,6 +151,7 @@ struct TaskEditionView: View {
                     TaskLabelSelector(selectedLabels: self.$tempTaskLabels, allLabels: self.labels)
                 }
                 
+                // TODO cost not saved
                 HStack(spacing: 20) {
                     Text("Estimated cost")
                         .frame(width: Self.labelsWidth, alignment: .leading)

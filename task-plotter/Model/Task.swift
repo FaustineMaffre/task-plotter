@@ -13,8 +13,6 @@ struct Task: Identifiable, Hashable, Equatable {
     
     let id: TaskID
     
-    var column: Column
-    
     var title: String
     var labels: [Label]
     var description: String
@@ -24,11 +22,9 @@ struct Task: Identifiable, Hashable, Equatable {
     var expectedDueDate: Date? = nil
     
     init(id: TaskID = UUID(),
-         column: Column,
          title: String, labels: [Label] = [], description: String = "",
          cost: Float? = nil) {
         self.id = id
-        self.column = column
         self.title = title
         self.labels = labels
         self.description = description

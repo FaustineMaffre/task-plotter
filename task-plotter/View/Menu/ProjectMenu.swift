@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// TODO labels
+// TODO all labels
 
 struct ProjectMenu: View {
     @ObservedObject var repository: Repository

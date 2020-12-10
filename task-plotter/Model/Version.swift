@@ -20,22 +20,11 @@ struct Version: Identifiable, Hashable, Equatable {
     var workingDays: [Day]
     var excludedDates: [Date]
     
-    var tasks: [Task] = []
+    var tasksByColumn: [Column: [Task]] = Dictionary(uniqueKeysWithValues: Column.allCases.map { ($0, []) })
     
-    var ҩtaskIndicesByColumn: [(column: Column, taskIndices: [Int])] {
-        // create an array for each column, even if it is going to be empty
-        var res = Column.allCases.map { (column: $0, taskIndices: [Int]()) }
-        
-        // index of each column to find it quicker
-        let columnsOrdered = Dictionary(uniqueKeysWithValues: res.enumerated().map { ($0.element.0, $0.offset) })
-        
-        self.tasks.indices.forEach { index in
-            if let columnIndex = columnsOrdered[self.tasks[index].column] {
-                res[columnIndex].taskIndices.append(index)
-            }
-        }
-        
-        return res
+    var ҩtasksByColumnArray: [(Column, [Task])] {
+        let columnsOrdered = Dictionary(uniqueKeysWithValues: Column.allCases.enumerated().map { ($0.element, $0.offset) })
+        return self.tasksByColumn.sorted { columnsOrdered[$0.key] ?? 0 < columnsOrdered[$1.key] ?? 0 }
     }
     
     init(id: VersionID = UUID(),
@@ -61,14 +50,20 @@ struct Version: Identifiable, Hashable, Equatable {
     mutating func addTask(column: Column, title: String) {
         if !title.isEmpty {
             // create new task
-            let newTask = Task(column: column, title: title)
-            self.tasks.append(newTask)
+            let newTask = Task(title: title)
+            self.tasksByColumn[column]!.append(newTask)
         }
     }
     
-    mutating func deleteTask(task: Task) {
-        if let taskIndex = self.tasks.firstIndex(of: task) {
-            self.tasks.remove(at: taskIndex)
+    mutating func deleteTask(column: Column, task: Task) {
+        if let taskIndex = self.tasksByColumn[column]!.firstIndex(of: task) {
+            self.tasksByColumn[column]!.remove(at: taskIndex)
         }
+    }
+    
+    func findColumnOfTask(id: TaskID) -> Column?  {
+        self.tasksByColumn.first { _, tasks in
+            tasks.contains { $0.id == id }
+        }?.key
     }
 }

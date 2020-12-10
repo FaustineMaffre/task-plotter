@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// TODO edit version
+// TODO edit version number
 
 struct CreateVersionButton: View {
     @Binding var project: Project

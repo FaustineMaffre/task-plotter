@@ -6,9 +6,9 @@
 //
 
 import SwiftUI
+import UniformTypeIdentifiers
 
 // TODO delete task
-// TODO move task
 
 // TODO due date
 // TODO points per day, working days, excluded dates
@@ -29,7 +29,7 @@ struct TasksView: View {
             }
             
             HStack(spacing: 8) {
-                ForEach(self.version.ҩtaskIndicesByColumn, id: \.0) { column, tasksIndices in
+                ForEach(self.version.ҩtasksByColumnArray, id: \.0) { column, tasks in
                     VStack(spacing: 0) {
                         HStack {
                             Text(column.rawValue)
@@ -39,21 +39,61 @@ struct TasksView: View {
                             Spacer()
                         }
                         
-                        ScrollView {
-                            VStack(spacing: 4) {
-                                ForEach(tasksIndices, id: \.self) { taskIndex in
-                                    TaskView(task: self.generateTaskBinding(taskIndex: taskIndex), labels: self.labels)
+                        List {
+                            ForEach(tasks.isEmpty ? [-1] : Array(tasks.indices), id: \.self) { taskIndex in
+                                if taskIndex < 0 {
+                                    HStack {
+                                        Spacer()
+                                        Text("No task")
+                                            .foregroundColor(Color.white.opacity(0.2))
+                                        Spacer()
+                                    }
+                                } else {
+                                    TaskView(task: self.generateTaskBinding(column: column, taskIndex: taskIndex), column: column, labels: self.labels)
+                                        .listRowInsets(EdgeInsets(top: 3, leading: 0, bottom: 3, trailing: 0))
+                                        .onDrag { NSItemProvider(object: tasks[taskIndex].id.uuidString as NSString) }
                                 }
-                                
-                                HStack {
-                                    CreateTaskButton(version: self.$version, column: column, showText: true)
-                                    Spacer()
+                            }
+                            .onInsert(of: [UTType.plainText]) { index, items in
+                                items.forEach { item in
+                                    _ = item.loadObject(ofClass: String.self) { str, _ in
+                                        if let taskIdStr = str,
+                                           let taskId = UUID(uuidString: taskIdStr) {
+                                            DispatchQueue.main.async {
+                                                // find old column
+                                                if let oldColumn = self.version.findColumnOfTask(id: taskId),
+                                                   let taskOldIndex = self.version.tasksByColumn[oldColumn]!.firstIndex(where: { $0.id == taskId }) {
+                                                    let task = self.version.tasksByColumn[oldColumn]![taskOldIndex]
+                                                    
+                                                    if oldColumn != column {
+                                                        // change column
+                                                        self.version.tasksByColumn[oldColumn]!.remove(at: taskOldIndex)
+                                                        
+                                                        if self.version.tasksByColumn[column]!.isEmpty {
+                                                            // in case index would be outside bounds (because of empty tasks)
+                                                            self.version.tasksByColumn[column]!.append(task)
+                                                        } else {
+                                                            self.version.tasksByColumn[column]!.insert(task, at: index)
+                                                        }
+                                                    } else {
+                                                        // move within same column
+                                                        self.version.tasksByColumn[column]!.move(fromOffsets: IndexSet(arrayLiteral: taskOldIndex), toOffset: index)
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
-                        .padding(10)
+                        .listStyle(PlainListStyle())
+                        
+                        HStack {
+                            CreateTaskButton(version: self.$version, column: column, showText: true)
+                            Spacer()
+                        }
                     }
-                    .frame(width: 300)
+                    .frame(width: 320)
                     .background(RoundedRectangle(cornerRadius: 8)
                                     .fillAndStroke(fill: Color(NSColor.underPageBackgroundColor),
                                                    stroke: Color.white.opacity(0.1)))
@@ -63,11 +103,11 @@ struct TasksView: View {
         }
     }
     
-    func generateTaskBinding(taskIndex: Int) -> Binding<Task> {
+    func generateTaskBinding(column: Column, taskIndex: Int) -> Binding<Task> {
         Binding {
-            self.version.tasks[taskIndex]
+            self.version.tasksByColumn[column]![taskIndex]
         } set: {
-            self.version.tasks[taskIndex] = $0
+            self.version.tasksByColumn[column]![taskIndex] = $0
         }
     }
 }

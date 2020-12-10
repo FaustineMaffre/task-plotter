@@ -38,6 +38,7 @@ struct TaskCostView: View {
 
 struct TaskDueDateView: View {
     @Binding var task: Task
+    let column: Column
     
     var ҩbackgroundColor: Color {
         let now = Date()
@@ -48,7 +49,7 @@ struct TaskDueDateView: View {
         
         let oneHour = TimeInterval(60*60)
         
-        if self.task.column == .done {
+        if self.column == .done {
             // done
             return Color.green.opacity(0.5)
             
@@ -89,6 +90,7 @@ struct TaskDueDateView: View {
 
 struct TaskView: View {
     @Binding var task: Task
+    let column: Column
     let labels: [Label]
     
     @State var isTaskEditionSheetPresented: Bool = false
@@ -116,7 +118,7 @@ struct TaskView: View {
                     .frame(height: 2)
                 
                 HStack {
-                    TaskDueDateView(task: self.$task)
+                    TaskDueDateView(task: self.$task, column: self.column)
                     Spacer()
                 }
             }
@@ -126,7 +128,6 @@ struct TaskView: View {
             TaskCostView(task: self.$task)
         }
         .padding(EdgeInsets(top: 8, leading: 10, bottom: 8, trailing: 10))
-        .frame(width: 280)
         .background(RoundedRectangle(cornerRadius: 8)
                         .fillAndStroke(fill: Color(NSColor.windowBackgroundColor),
                                        stroke: Color.white.opacity(0.1)))
