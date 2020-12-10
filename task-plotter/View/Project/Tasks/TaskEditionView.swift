@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct TaskLabelSelectorLabelView: View {
     @State var label: Label
@@ -19,39 +20,75 @@ struct TaskLabelSelectorLabelView: View {
 }
 
 struct TaskLabelSelector: View {
-    // TODOq move labels
-    
-    @Binding var task: Task
-    let labels: [Label]
+    @Binding var selectedLabels: [Label]
+    let allLabels: [Label]
     
     var ҩavailableLabels: [Label] {
-        self.labels.substracting(other: self.task.labels)
+        self.allLabels.substracting(other: self.selectedLabels)
     }
+    
+    @State var isDropTargeted: Bool = false
 
+    static let emptyLabel: Label = Label(name: "Drop here", color: Color.clear.ҩhex)
     static let spacingBetweenLists: CGFloat = 8
     
     var body: some View {
         HStack {
             // available
-            self.labelsListView(title: "Available", labels: self.ҩavailableLabels)
+            self.labelsListView(title: "Available", labels: self.ҩavailableLabels, onDrop: { labelName, _ in self.removeLabel(withName: labelName) })
             
             // added
-            self.labelsListView(title: "Selected", labels: self.task.labels)
+            self.labelsListView(title: "Selected", labels: self.selectedLabels, onDrop: self.addLabel)
         }
     }
     
-    func labelsListView(title: String, labels: [Label]) -> some View {
+    func addLabel(withName name: String, at index: Int) {
+        DispatchQueue.main.async {
+            if let availableLabel = self.ҩavailableLabels.first(where: { $0.name == name }) {
+                // inserting available label
+                if self.selectedLabels.isEmpty {
+                    // in case index would be outside bounds (because of empty label)
+                    self.selectedLabels.append(availableLabel)
+                } else {
+                    self.selectedLabels.insert(availableLabel, at: index)
+                }
+            } else if let taskLabelIndex = self.selectedLabels.firstIndex(where: { $0.name == name }) {
+                // label not available, we are moving a label in the same list
+                self.selectedLabels.move(fromOffsets: IndexSet(arrayLiteral: taskLabelIndex), toOffset: index)
+            }
+        }
+    }
+    
+    func removeLabel(withName name: String) {
+        DispatchQueue.main.async {
+            if let labelIndex = self.selectedLabels.firstIndex(where: { $0.name == name }) {
+                self.selectedLabels.remove(at: labelIndex)
+            }
+        }
+    }
+    
+    func labelsListView(title: String, labels: [Label], onDrop: @escaping (String, Int) -> Void) -> some View {
         VStack(spacing: 4) {
             Text(title)
                 .bold()
             
-            ScrollView {
-                VStack(spacing: 2) {
-                    ForEach(labels, id: \.self) { label in
-                        HStack {
-                            Spacer()
-                            TaskLabelSelectorLabelView(label: label)
-                            Spacer()
+            List {
+                ForEach(labels.isEmpty ? [Self.emptyLabel] : labels, id: \.self) { label in
+                    HStack {
+                        Spacer()
+                        TaskLabelSelectorLabelView(label: label)
+                            .onDrag { NSItemProvider(object: label.name as NSString) }
+                        Spacer()
+                    }
+                    .frame(height: 30)
+                    .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+                }
+                .onInsert(of: [UTType.plainText]) { index, items in
+                    items.forEach { item in
+                        _ = item.loadObject(ofClass: String.self) { str, _ in
+                            if let labelName = str {
+                                onDrop(labelName, index)
+                            }
                         }
                     }
                 }
@@ -69,6 +106,7 @@ struct TaskEditionView: View {
     let labels: [Label]
     
     @State var tempTaskTitle: String = ""
+    @State var tempTaskLabels: [Label] = []
     @State var tempTaskDescription: String = ""
     
     @State var tempTaskCost: Float? = nil
@@ -101,7 +139,7 @@ struct TaskEditionView: View {
                 HStack(alignment: .top, spacing: 20) {
                     Text("Labels")
                         .frame(width: Self.labelsWidth, alignment: .leading)
-                    TaskLabelSelector(task: self.$task, labels: self.labels)
+                    TaskLabelSelector(selectedLabels: self.$tempTaskLabels, allLabels: self.labels)
                 }
                 
                 HStack(spacing: 20) {
@@ -112,6 +150,7 @@ struct TaskEditionView: View {
             }
             
             Spacer()
+                .frame(height: 20)
             
             HStack {
                 Button("Cancel", action: self.cancel)
@@ -126,6 +165,7 @@ struct TaskEditionView: View {
         .frame(width: 500, height: 600)
         .onAppear {
             self.tempTaskTitle = self.task.title
+            self.tempTaskLabels = self.task.labels
             self.tempTaskDescription = self.task.description
             self.tempTaskCost = self.task.cost
         }
@@ -134,6 +174,7 @@ struct TaskEditionView: View {
     func edit() {
         if !self.tempTaskTitle.isEmpty {
             self.task.title = self.tempTaskTitle
+            self.task.labels = self.tempTaskLabels
             self.task.description = self.tempTaskDescription
             self.task.cost = self.tempTaskCost
             

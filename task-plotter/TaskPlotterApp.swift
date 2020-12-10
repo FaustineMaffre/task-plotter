@@ -7,6 +7,16 @@
 
 import SwiftUI
 
+extension NSTableView {
+    open override func viewDidMoveToWindow() {
+        // remove background from lists
+        super.viewDidMoveToWindow()
+        
+        backgroundColor = .clear
+        enclosingScrollView?.drawsBackground = false
+    }
+}
+
 @main
 struct TaskPlotterApp: App {    
     var body: some Scene {
