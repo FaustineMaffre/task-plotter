@@ -86,7 +86,7 @@ struct TaskDueDateView: View {
     }
 }
 
-// TODO show icon when description non-empty
+// TODO2 show icon when description non-empty
 
 struct TaskView: View {
     @Binding var task: Task
@@ -99,7 +99,7 @@ struct TaskView: View {
         HStack {
             VStack(spacing: 4) {
                 if !self.task.labels.isEmpty {
-                    // TODO wrap
+                    // TODO9 wrap
                     HStack(spacing: 3) {
                         ForEach(self.task.labels, id: \.name) {
                             TaskLabelView(label: $0)

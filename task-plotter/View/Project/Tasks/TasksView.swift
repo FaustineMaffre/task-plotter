@@ -8,11 +8,11 @@
 import SwiftUI
 import UniformTypeIdentifiers
 
-// TODO delete task
+// TODO1 delete task
 
-// TODO due date
-// TODO points per day, working days, excluded dates
-// TODO compute dates per task 
+// TODO5 due date
+// TODO6 points per day, working days, excluded dates
+// TODO7 compute dates per task
 
 struct TasksView: View {
     @Binding var version: Version

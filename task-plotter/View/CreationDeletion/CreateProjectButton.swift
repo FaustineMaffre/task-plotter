@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// TODO edit project name?
+// TODO3 edit project name
 
 struct CreateProjectButton: View {
     @ObservedObject var repository: Repository

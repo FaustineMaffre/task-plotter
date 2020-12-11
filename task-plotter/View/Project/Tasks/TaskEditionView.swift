@@ -150,7 +150,7 @@ struct TaskEditionView: View {
                     TaskLabelSelector(selectedLabels: self.$tempTaskLabels, allLabels: self.labels)
                 }
                 
-                // TODO0 cost not saved when tapping button (but ok with enter)
+                // TODOq0 cost not saved when tapping button (but ok with enter)
                 HStack(spacing: 20) {
                     Text("Estimated cost")
                         .frame(width: Self.labelsWidth, alignment: .leading)
