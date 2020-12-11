@@ -12,7 +12,6 @@ struct VersionsView: View {
     
     @State var versionCreationOrEditionSheetItem: CreationOrEditionMode? = nil
     @State var versionToEditIndex: Int = 0
-    @State var versionToCreateOrEditTempNumber: String = ""
     
     @State var isVersionDeletionAlertPresented: Bool = false
     @State var versionToDeleteIndex: Int? = 0
@@ -59,7 +58,6 @@ struct VersionsView: View {
                 CreateDeleteEditButton(image: Image(systemName: "pencil")) {
                     if let index = self.project.ҩselectedVersionIndex {
                         self.versionToEditIndex = index
-                        self.versionToCreateOrEditTempNumber = self.project.ҩselectedVersion?.number ?? ""
                         self.versionCreationOrEditionSheetItem = .edition
                     }
                 }
@@ -69,7 +67,6 @@ struct VersionsView: View {
                 
                 // create version
                 CreateDeleteEditButton(image: Image(systemName: "plus")) {
-                    self.versionToCreateOrEditTempNumber = ""
                     self.versionCreationOrEditionSheetItem = .creation
                 }
                 
@@ -84,12 +81,10 @@ struct VersionsView: View {
         .sheet(item: self.$versionCreationOrEditionSheetItem) { mode in
             switch mode {
             case .creation:
-                VersionCreationModal(project: self.$project,
-                                     tempVersionNumber: self.$versionToCreateOrEditTempNumber)
+                VersionCreationModal(project: self.$project)
             case .edition:
                 VersionEditionModal(project: self.$project,
-                                    versionIndex: self.versionToEditIndex,
-                                    tempVersionNumber: self.$versionToCreateOrEditTempNumber)
+                                    versionIndex: self.versionToEditIndex)
             }
         }
         .deleteVersionAlert(isPresented: self.$isVersionDeletionAlertPresented,

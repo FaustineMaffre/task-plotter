@@ -16,9 +16,9 @@ struct TasksView: View {
     @Binding var version: Version
     let labels: [Label]
     
-    @State var isTaskCreationSheetPresented: Bool = false
-    @State var taskToCreateColumn: Column = .todo
-    @State var tempTaskTitle: String = ""
+    @State var taskCreationOrEditionSheetItem: CreationOrEditionMode? = nil
+    @State var taskToCreateOrEditColumn: Column = .todo
+    @State var taskToEditIndex: Int = 0
     
     @State var isTaskDeletionAlertPresented: Bool = false
     @State var taskToDeleteColumn: Column = .todo
@@ -65,6 +65,11 @@ struct TasksView: View {
                                                 self.isTaskDeletionAlertPresented = true
                                             }
                                         }
+                                        .onTapGesture(count: 2) {
+                                            self.taskToEditIndex = taskIndex
+                                            self.taskToCreateOrEditColumn = column
+                                            self.taskCreationOrEditionSheetItem = .edition
+                                        }
                                 }
                             }
                             .onInsert(of: [UTType.plainText]) { index, items in
@@ -82,8 +87,8 @@ struct TasksView: View {
                         
                         HStack {
                             CreateDeleteEditButton(image: Image(systemName: "plus"), text: "Add a task") {
-                                self.taskToCreateColumn = column
-                                self.isTaskCreationSheetPresented = true
+                                self.taskToCreateOrEditColumn = column
+                                self.taskCreationOrEditionSheetItem = .creation
                             }
                             Spacer()
                         }
@@ -96,10 +101,19 @@ struct TasksView: View {
             }
             .padding(10)
         }
-        .createTaskModal(isPresented: self.$isTaskCreationSheetPresented,
-                         version: self.$version,
-                         column: self.taskToCreateColumn,
-                         tempTaskTitle: self.$tempTaskTitle)
+        .sheet(item: self.$taskCreationOrEditionSheetItem) { mode in
+            switch mode {
+            case .creation:
+                TaskCreationModal(version: self.$version,
+                                  labels: self.labels,
+                                  column: self.taskToCreateOrEditColumn)
+            case .edition:
+                TaskEditionModal(version: self.$version,
+                                 labels: self.labels,
+                                 column: self.taskToCreateOrEditColumn,
+                                 taskIndex: self.taskToEditIndex)
+            }
+        }
         .deleteTaskAlert(isPresented: self.$isTaskDeletionAlertPresented,
                          version: self.$version,
                          column: self.taskToDeleteColumn,

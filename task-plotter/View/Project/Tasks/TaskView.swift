@@ -137,11 +137,5 @@ struct TaskView: View {
         .background(RoundedRectangle(cornerRadius: 8)
                         .fillAndStroke(fill: Color(NSColor.windowBackgroundColor),
                                        stroke: Color.white.opacity(0.1)))
-        .onTapGesture(count: 2) {
-            self.isTaskEditionSheetPresented = true
-        }
-        .sheet(isPresented: self.$isTaskEditionSheetPresented) {
-            EditTaskModal(task: self.$task, labels: self.labels)
-        }
     }
 }

@@ -23,12 +23,11 @@
 		9D2B316B25802332001280AD /* Color+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D2B316A25802332001280AD /* Color+.swift */; };
 		9D5709BD257E87CE00B5C5B7 /* ProjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D5709BC257E87CE00B5C5B7 /* ProjectView.swift */; };
 		9D5709CA257EBF2C00B5C5B7 /* ProjectMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D5709C9257EBF2C00B5C5B7 /* ProjectMenu.swift */; };
-		9D7850612581631100D5F485 /* EditTaskModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D7850602581631100D5F485 /* EditTaskModal.swift */; };
 		9D7850652581638800D5F485 /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D7850642581638800D5F485 /* Common.swift */; };
 		9D7850692581663600D5F485 /* Collection+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D7850682581663600D5F485 /* Collection+.swift */; };
 		9D7B80802583AFF2003FC735 /* DeletionAlerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D7B807F2583AFF2003FC735 /* DeletionAlerts.swift */; };
 		9D7B80872583B844003FC735 /* CreateDeleteEditButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D7B80862583B844003FC735 /* CreateDeleteEditButton.swift */; };
-		9D7B808A2583B9B4003FC735 /* CreationModals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D7B80892583B9B4003FC735 /* CreationModals.swift */; };
+		9D7B808A2583B9B4003FC735 /* CreationOrEditionModals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D7B80892583B9B4003FC735 /* CreationOrEditionModals.swift */; };
 		9DC0F192257FB4CA00C80701 /* TitleStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC0F191257FB4CA00C80701 /* TitleStyle.swift */; };
 		9DC0F196257FB59600C80701 /* VersionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC0F195257FB59600C80701 /* VersionsView.swift */; };
 		9DC0F19B257FC3D400C80701 /* TasksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC0F19A257FC3D400C80701 /* TasksView.swift */; };
@@ -56,12 +55,11 @@
 		9D2B316A25802332001280AD /* Color+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+.swift"; sourceTree = "<group>"; };
 		9D5709BC257E87CE00B5C5B7 /* ProjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectView.swift; sourceTree = "<group>"; };
 		9D5709C9257EBF2C00B5C5B7 /* ProjectMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectMenu.swift; sourceTree = "<group>"; };
-		9D7850602581631100D5F485 /* EditTaskModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTaskModal.swift; sourceTree = "<group>"; };
 		9D7850642581638800D5F485 /* Common.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Common.swift; sourceTree = "<group>"; };
 		9D7850682581663600D5F485 /* Collection+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Collection+.swift"; sourceTree = "<group>"; };
 		9D7B807F2583AFF2003FC735 /* DeletionAlerts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletionAlerts.swift; sourceTree = "<group>"; };
 		9D7B80862583B844003FC735 /* CreateDeleteEditButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateDeleteEditButton.swift; sourceTree = "<group>"; };
-		9D7B80892583B9B4003FC735 /* CreationModals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreationModals.swift; sourceTree = "<group>"; };
+		9D7B80892583B9B4003FC735 /* CreationOrEditionModals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreationOrEditionModals.swift; sourceTree = "<group>"; };
 		9DC0F191257FB4CA00C80701 /* TitleStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleStyle.swift; sourceTree = "<group>"; };
 		9DC0F195257FB59600C80701 /* VersionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VersionsView.swift; sourceTree = "<group>"; };
 		9DC0F19A257FC3D400C80701 /* TasksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasksView.swift; sourceTree = "<group>"; };
@@ -184,7 +182,6 @@
 		9D376F0F2581241C00F45533 /* Tasks */ = {
 			isa = PBXGroup;
 			children = (
-				9D7850602581631100D5F485 /* EditTaskModal.swift */,
 				9DC0F19E257FC67900C80701 /* TaskView.swift */,
 				9DC0F19A257FC3D400C80701 /* TasksView.swift */,
 			);
@@ -204,7 +201,7 @@
 		9D5709C8257EBF1F00B5C5B7 /* CreationDeletion */ = {
 			isa = PBXGroup;
 			children = (
-				9D7B80892583B9B4003FC735 /* CreationModals.swift */,
+				9D7B80892583B9B4003FC735 /* CreationOrEditionModals.swift */,
 				9D7B807F2583AFF2003FC735 /* DeletionAlerts.swift */,
 			);
 			path = CreationDeletion;
@@ -290,7 +287,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				9D0C2BCD257E3CCE006F3D89 /* ContentView.swift in Sources */,
-				9D7850612581631100D5F485 /* EditTaskModal.swift in Sources */,
 				9D7850652581638800D5F485 /* Common.swift in Sources */,
 				9D2B316B25802332001280AD /* Color+.swift in Sources */,
 				9D0C2BCB257E3CCE006F3D89 /* TaskPlotterApp.swift in Sources */,
@@ -299,7 +295,7 @@
 				9D7B80802583AFF2003FC735 /* DeletionAlerts.swift in Sources */,
 				9D0C2BE4257E3E3C006F3D89 /* Label.swift in Sources */,
 				9D0C2BEB257E3F49006F3D89 /* Version.swift in Sources */,
-				9D7B808A2583B9B4003FC735 /* CreationModals.swift in Sources */,
+				9D7B808A2583B9B4003FC735 /* CreationOrEditionModals.swift in Sources */,
 				9D0C2C00257E6AF8006F3D89 /* TestRepositories.swift in Sources */,
 				9DC0F1A3257FCF8400C80701 /* ShapeFillAndStroke.swift in Sources */,
 				9D7850692581663600D5F485 /* Collection+.swift in Sources */,

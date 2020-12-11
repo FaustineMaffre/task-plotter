@@ -7,8 +7,6 @@
 
 import SwiftUI
 
-// TODO3 edit project name
-
 // TODO4 edit available labels
 
 struct ProjectMenu: View {
@@ -16,7 +14,6 @@ struct ProjectMenu: View {
     
     @State var projectCreationOrEditionSheetItem: CreationOrEditionMode? = nil
     @State var projectToEditIndex: Int = 0
-    @State var projectToCreateOrEditTempName: String = ""
     
     @State var isProjectDeletionAlertPresented: Bool = false
     @State var projectToDeleteIndex: Int = 0
@@ -37,7 +34,6 @@ struct ProjectMenu: View {
             CreateDeleteEditButton(image: Image(systemName: "pencil"), text: "Edit project") {
                 if let index = self.repository.ҩselectedProjectIndex {
                     self.projectToEditIndex = index
-                    self.projectToCreateOrEditTempName = self.repository.ҩselectedProject?.name ?? ""
                     self.projectCreationOrEditionSheetItem = .edition
                 }
             }
@@ -47,7 +43,6 @@ struct ProjectMenu: View {
             
             // create project
             CreateDeleteEditButton(image: Image(systemName: "plus"), text: "Create a project") {
-                self.projectToCreateOrEditTempName = ""
                 self.projectCreationOrEditionSheetItem = .creation
             }
             
@@ -63,12 +58,10 @@ struct ProjectMenu: View {
         .sheet(item: self.$projectCreationOrEditionSheetItem) { mode in
             switch mode {
             case .creation:
-                ProjectCreationModal(repository: self.repository,
-                                     tempProjectName: self.$projectToCreateOrEditTempName)
+                ProjectCreationModal(repository: self.repository)
             case .edition:
                 ProjectEditionModal(repository: self.repository,
-                                    projectIndex: self.projectToEditIndex,
-                                    tempProjectName: self.$projectToCreateOrEditTempName)
+                                    projectIndex: self.projectToEditIndex)
             }
         }
         .deleteProjectAlert(isPresented: self.$isProjectDeletionAlertPresented,
