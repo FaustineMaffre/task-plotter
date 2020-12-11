@@ -86,8 +86,6 @@ struct TaskDueDateView: View {
     }
 }
 
-// TODO2 show icon when description non-empty
-
 struct TaskView: View {
     @Binding var task: Task
     let column: Column
@@ -111,6 +109,14 @@ struct TaskView: View {
                 
                 HStack {
                     Text(self.task.title)
+                    Spacer()
+                }
+                
+                HStack {
+                    if !self.task.description.isEmpty {
+                        Image(systemName: "text.alignleft")
+                            .foregroundColor(.secondary)
+                    }
                     Spacer()
                 }
                 
