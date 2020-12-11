@@ -33,8 +33,8 @@ struct ProjectMenu: View {
             }
             .frame(width: 200)
             
-            // edit project name
-            CreateDeleteButton(image: Image(systemName: "pencil"), text: "Edit project") {
+            // edit project
+            CreateDeleteEditButton(image: Image(systemName: "pencil"), text: "Edit project") {
                 if let index = self.repository.ҩselectedProjectIndex {
                     self.projectToEditIndex = index
                     self.projectToCreateOrEditTempName = self.repository.ҩselectedProject?.name ?? ""
@@ -46,12 +46,13 @@ struct ProjectMenu: View {
             Spacer()
             
             // create project
-            CreateDeleteButton(image: Image(systemName: "plus"), text: "Create a project") {
+            CreateDeleteEditButton(image: Image(systemName: "plus"), text: "Create a project") {
+                self.projectToCreateOrEditTempName = ""
                 self.projectCreationOrEditionSheetItem = .creation
             }
             
             // delete project
-            CreateDeleteButton(image: Image(systemName: "minus"), text: "Delete project") {
+            CreateDeleteEditButton(image: Image(systemName: "minus"), text: "Delete project") {
                 if let index = self.repository.ҩselectedProjectIndex {
                     self.projectToDeleteIndex = index
                     self.isProjectDeletionAlertPresented = true

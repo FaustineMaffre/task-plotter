@@ -7,16 +7,7 @@
 
 import SwiftUI
 
-struct ProjectModal: View {
-    @Binding<String> var projectName: String
-    
-    var body: some View {
-        HStack(spacing: 20) {
-            Text("Name")
-            TextField("", text: self.$projectName)
-        }
-    }
-}
+// MARK: - Generics
 
 enum CreationOrEditionMode: Identifiable {
     case creation, edition
@@ -104,6 +95,19 @@ struct CreationOrEditionModal<Content: View>: View {
     }
 }
 
+// MARK: - Project
+
+struct ProjectFormContent: View {
+    @Binding<String> var projectName: String
+    
+    var body: some View {
+        HStack(spacing: 20) {
+            Text("Name")
+            TextField("", text: self.$projectName)
+        }
+    }
+}
+
 struct ProjectCreationModal: View {
     let repository: Repository
     @Binding var tempProjectName: String
@@ -113,10 +117,10 @@ struct ProjectCreationModal: View {
             mode: .creation,
             titleText: "Create a new project",
             propertiesView: {
-                ProjectModal(projectName: self.$tempProjectName)
+                ProjectFormContent(projectName: self.$tempProjectName)
             }, createOrEditCondition: !self.tempProjectName.isEmpty) {
             // create
-            repository.addProject(name: self.tempProjectName, selectIt: true)
+            self.repository.addProject(name: self.tempProjectName, selectIt: true)
         } resetAction: {
             // reset project name
             self.tempProjectName = ""
@@ -134,10 +138,10 @@ struct ProjectEditionModal: View {
             mode: .edition,
             titleText: "Edit project",
             propertiesView: {
-                ProjectModal(projectName: self.$tempProjectName)
+                ProjectFormContent(projectName: self.$tempProjectName)
             }, createOrEditCondition: !self.tempProjectName.isEmpty) {
             // edit
-            repository.projects[projectIndex].name = self.tempProjectName
+            self.repository.projects[projectIndex].name = self.tempProjectName
         } resetAction: {
             // reset project name
             self.tempProjectName = ""
@@ -145,53 +149,64 @@ struct ProjectEditionModal: View {
     }
 }
 
-extension View {
-    func createVersionModal(isPresented: Binding<Bool>, project: Binding<Project>, tempVersionNumber: Binding<String>) -> some View {
-        let create: () -> Void = {
-            if !tempVersionNumber.wrappedValue.isEmpty {
-                project.wrappedValue.addVersion(number: tempVersionNumber.wrappedValue, selectIt: true)
-                
-                // close sheet and reset text
-                isPresented.wrappedValue = false
-                tempVersionNumber.wrappedValue = ""
-            }
-        }
+// MARK: - Version
+
+struct VersionFormContent: View {
+    @Binding<String> var versionNumber: String
+    
+    var body: some View {
         
-        let cancel: () -> Void = {
-            // close sheet and reset text
-            isPresented.wrappedValue = false
-            tempVersionNumber.wrappedValue = ""
+        HStack(spacing: 20) {
+            Text("Number")
+            TextField("", text: self.$versionNumber)
         }
-        
-        return self
-            .sheet(isPresented: isPresented) {
-                VStack(spacing: 0) {
-                    Text("Add a new version")
-                        .font(.headline)
-                    
-                    Spacer()
-                        .frame(height: 20)
-                    
-                    HStack(spacing: 20) {
-                        Text("Number")
-                        TextField("", text: tempVersionNumber)
-                    }
-                    
-                    Spacer()
-                    
-                    HStack {
-                        Button("Cancel", action: cancel)
-                            .keyboardShortcut(.cancelAction)
-                        
-                        Button("Create", action: create)
-                            .keyboardShortcut(.defaultAction)
-                            .disabled(tempVersionNumber.wrappedValue.isEmpty)
-                    }
-                }
-                .padding()
-                .frame(width: 300, height: 130)
-            }
     }
+}
+
+struct VersionCreationModal: View {
+    @Binding var project: Project
+    @Binding var tempVersionNumber: String
+    
+    var body: some View {
+        CreationOrEditionModal(
+            mode: .creation,
+            titleText: "Add a new version",
+            propertiesView: {
+                ProjectFormContent(projectName: self.$tempVersionNumber)
+            }, createOrEditCondition: !self.tempVersionNumber.isEmpty) {
+            // create
+            self.project.addVersion(number: self.tempVersionNumber, selectIt: true)
+        } resetAction: {
+            // reset version number
+            self.tempVersionNumber = ""
+        }
+    }
+}
+
+struct VersionEditionModal: View {
+    @Binding var project: Project
+    let versionIndex: Int
+    @Binding var tempVersionNumber: String
+    
+    var body: some View {
+        CreationOrEditionModal(
+            mode: .edition,
+            titleText: "Edit version",
+            propertiesView: {
+                ProjectFormContent(projectName: self.$tempVersionNumber)
+            }, createOrEditCondition: !self.tempVersionNumber.isEmpty) {
+            // edit
+            self.project.versions[versionIndex].number = self.tempVersionNumber
+        } resetAction: {
+            // reset project name
+            self.tempVersionNumber = ""
+        }
+    }
+}
+
+// MARK: - Task
+
+extension View {
     
     func createTaskModal(isPresented: Binding<Bool>, version: Binding<Version>, column: Column, tempTaskTitle: Binding<String>) -> some View {
         let create: () -> Void = {

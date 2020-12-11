@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct CreateDeleteButton: View {
+struct CreateDeleteEditButton: View {
     let image: Image
     let text: String?
     let action: () -> Void

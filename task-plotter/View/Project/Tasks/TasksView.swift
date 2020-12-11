@@ -81,7 +81,7 @@ struct TasksView: View {
                         .listStyle(PlainListStyle())
                         
                         HStack {
-                            CreateDeleteButton(image: Image(systemName: "plus"), text: "Add a task") {
+                            CreateDeleteEditButton(image: Image(systemName: "plus"), text: "Add a task") {
                                 self.taskToCreateColumn = column
                                 self.isTaskCreationSheetPresented = true
                             }
