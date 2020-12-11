@@ -61,9 +61,7 @@ struct TaskLabelSelector: View {
     
     func removeLabel(withName name: String) {
         DispatchQueue.main.async {
-            if let labelIndex = self.selectedLabels.firstIndex(where: { $0.name == name }) {
-                self.selectedLabels.remove(at: labelIndex)
-            }
+            self.selectedLabels.remove(name, by: \.name)
         }
     }
     

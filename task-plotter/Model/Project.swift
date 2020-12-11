@@ -62,6 +62,10 @@ struct Project: Identifiable, Hashable, Equatable {
         }
     }
     
+    mutating func deleteVersion(version: Version) {
+        self.versions.remove(version)
+    }
+    
     mutating func deleteSelectedVersion() {
         if let selectedVersionIndex = self.ҩselectedVersionIndex {
             self.versions.remove(at: selectedVersionIndex)

@@ -54,6 +54,10 @@ struct Version: Identifiable, Hashable, Equatable {
         lhs.id == rhs.id
     }
     
+    func getTask(column: Column, taskIndex: Int) -> Task {
+        self.tasksByColumn[column]![taskIndex]
+    }
+    
     mutating func addTask(column: Column, title: String) {
         if !title.isEmpty {
             // create new task
@@ -63,9 +67,7 @@ struct Version: Identifiable, Hashable, Equatable {
     }
     
     mutating func deleteTask(column: Column, task: Task) {
-        if let taskIndex = self.tasksByColumn[column]!.firstIndex(of: task) {
-            self.tasksByColumn[column]!.remove(at: taskIndex)
-        }
+        self.tasksByColumn[column]!.remove(task)
     }
     
     func findColumnOfTask(id: TaskID) -> Column?  {
