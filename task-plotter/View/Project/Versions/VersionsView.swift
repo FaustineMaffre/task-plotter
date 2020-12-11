@@ -65,6 +65,7 @@ struct VersionsView: View {
                     self.versionToDeleteIndex = self.project.ҩselectedVersionIndex
                     self.isVersionDeletionAlertPresented = true
                 }
+                .disabled(self.project.ҩselectedVersion == nil)
             }
         }
         .createVersionModal(isPresented: self.$isVersionCreationSheetPresented,

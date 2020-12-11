@@ -108,9 +108,15 @@ struct TasksView: View {
     
     func generateTaskBinding(column: Column, taskIndex: Int) -> Binding<Task> {
         Binding {
-            self.version.tasksByColumn[column]![taskIndex]
+            if self.version.tasksByColumn[column]!.indices.contains(taskIndex) {
+                return self.version.tasksByColumn[column]![taskIndex]
+            } else {
+                return Task(title: "Oops")
+            }
         } set: {
-            self.version.tasksByColumn[column]![taskIndex] = $0
+            if self.version.tasksByColumn[column]!.indices.contains(taskIndex) {
+                self.version.tasksByColumn[column]![taskIndex] = $0
+            }
         }
     }
     

@@ -8,24 +8,21 @@
 import SwiftUI
 
 extension View {
-    func deleteProjectAlert(isPresented: Binding<Bool>, repository: Repository, projectToDeleteIndex: Int?) -> some View {
+    func deleteProjectAlert(isPresented: Binding<Bool>, repository: Repository, projectToDeleteIndex: Int) -> some View {
         let projectName: String
-        if let index = projectToDeleteIndex,
-           repository.projects.indices.contains(index) {
-            projectName = repository.projects[index].name
+        if repository.projects.indices.contains(projectToDeleteIndex) {
+            projectName = repository.projects[projectToDeleteIndex].name
         } else {
             projectName = ""
         }
         
         let deleteAction: () -> Void = {
-            if let index = projectToDeleteIndex {
-                repository.projects.remove(at: index)
-            }
+            repository.projects.remove(at: projectToDeleteIndex)
         }
         
         return self
             .alert(isPresented: isPresented) {
-                Alert(title: Text("Delete the project"),
+                Alert(title: Text("Delete project"),
                       message: Text("Are you sure you want to delete project \"\(projectName)\"?"),
                       primaryButton: .destructive(Text("Delete"), action: deleteAction),
                       secondaryButton: .cancel())
@@ -49,7 +46,7 @@ extension View {
         
         return self
             .alert(isPresented: isPresented) {
-                Alert(title: Text("Delete the version"),
+                Alert(title: Text("Delete version"),
                       message: Text("Are you sure you want to delete version \"\(versionNumber)\"?"),
                       primaryButton: .destructive(Text("Delete"), action: deleteAction),
                       secondaryButton: .cancel())
@@ -70,7 +67,7 @@ extension View {
         
         return self
             .alert(isPresented: isPresented) {
-                Alert(title: Text("Delete the task"),
+                Alert(title: Text("Delete task"),
                       message: Text("Are you sure you want to delete the task \"\(taskTitle)\"?"),
                       primaryButton: .destructive(Text("Delete"), action: deleteAction),
                       secondaryButton: .cancel())

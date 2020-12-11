@@ -33,17 +33,31 @@ struct ProjectView: View {
     
     func generateProjectBinding(projectIndex: Int) -> Binding<Project> {
         Binding {
-            self.repository.projects[projectIndex]
+            if self.repository.projects.indices.contains(projectIndex) {
+                return self.repository.projects[projectIndex]
+            } else {
+                return Project(name: "Oops")
+            }
         } set: {
-            self.repository.projects[projectIndex] = $0
+            if self.repository.projects.indices.contains(projectIndex) {
+                self.repository.projects[projectIndex] = $0
+            }
         }
     }
     
     func generateVersionBinding(projectIndex: Int, versionIndex: Int) -> Binding<Version> {
         Binding {
-            self.repository.projects[projectIndex].versions[versionIndex]
+            if self.repository.projects.indices.contains(projectIndex),
+               self.repository.projects[projectIndex].versions.indices.contains(versionIndex) {
+                return self.repository.projects[projectIndex].versions[versionIndex]
+            } else {
+                return Version(number: "Oops")
+            }
         } set: {
-            self.repository.projects[projectIndex].versions[versionIndex] = $0
+            if self.repository.projects.indices.contains(projectIndex),
+               self.repository.projects[projectIndex].versions.indices.contains(versionIndex) {
+                self.repository.projects[projectIndex].versions[versionIndex] = $0
+            }
         }
     }
 }
