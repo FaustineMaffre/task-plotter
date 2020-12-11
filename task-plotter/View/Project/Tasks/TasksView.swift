@@ -8,8 +8,6 @@
 import SwiftUI
 import UniformTypeIdentifiers
 
-// TODO1 delete task
-
 // TODO5 due date
 // TODO6 points per day, working days, excluded dates
 // TODO7 compute dates per task
@@ -17,6 +15,10 @@ import UniformTypeIdentifiers
 struct TasksView: View {
     @Binding var version: Version
     let labels: [Label]
+    
+    @State var isTaskDeletionAlertPresented: Bool = false
+    @State var taskToDeleteColumn: Column = .todo
+    @State var taskToDeleteIndex: Int = -1
     
     var body: some View {
         VStack(spacing: 0) {
@@ -52,6 +54,13 @@ struct TasksView: View {
                                     TaskView(task: self.generateTaskBinding(column: column, taskIndex: taskIndex), column: column, labels: self.labels)
                                         .listRowInsets(EdgeInsets(top: 3, leading: 0, bottom: 3, trailing: 0))
                                         .onDrag { NSItemProvider(object: tasks[taskIndex].id.uuidString as NSString) }
+                                        .contextMenu {
+                                            Button("Delete") {
+                                                self.taskToDeleteColumn = column
+                                                self.taskToDeleteIndex = taskIndex
+                                                self.isTaskDeletionAlertPresented = true
+                                            }
+                                        }
                                 }
                             }
                             .onInsert(of: [UTType.plainText]) { index, items in
@@ -79,6 +88,12 @@ struct TasksView: View {
                 }
             }
             .padding(10)
+        }
+        .alert(isPresented: self.$isTaskDeletionAlertPresented) {
+            Alert(title: Text("Delete the task"),
+                  message: Text("Are you sure you want to delete the task \"\(self.version.tasksByColumn[self.taskToDeleteColumn]![self.taskToDeleteIndex].title)\"?"),
+                  primaryButton: .destructive(Text("Delete"), action: self.deleteTask),
+                  secondaryButton: .cancel())
         }
     }
     
@@ -113,6 +128,10 @@ struct TasksView: View {
                 }
             }
         }
+    }
+    
+    func deleteTask() {
+        self.version.tasksByColumn[self.taskToDeleteColumn]!.remove(at: self.taskToDeleteIndex)
     }
 }
 

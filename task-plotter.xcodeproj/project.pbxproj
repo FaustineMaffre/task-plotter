@@ -25,7 +25,7 @@
 		9D5709C5257EBD6400B5C5B7 /* CreateProjectButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D5709C4257EBD6400B5C5B7 /* CreateProjectButton.swift */; };
 		9D5709CA257EBF2C00B5C5B7 /* ProjectMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D5709C9257EBF2C00B5C5B7 /* ProjectMenu.swift */; };
 		9D5709CE257EC2E500B5C5B7 /* CreateVersionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D5709CD257EC2E500B5C5B7 /* CreateVersionButton.swift */; };
-		9D7850612581631100D5F485 /* TaskEditionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D7850602581631100D5F485 /* TaskEditionView.swift */; };
+		9D7850612581631100D5F485 /* EditTaskModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D7850602581631100D5F485 /* EditTaskModal.swift */; };
 		9D7850652581638800D5F485 /* Common.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D7850642581638800D5F485 /* Common.swift */; };
 		9D7850692581663600D5F485 /* Collection+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D7850682581663600D5F485 /* Collection+.swift */; };
 		9DC0F16D257F792000C80701 /* DeleteProjectButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC0F16C257F792000C80701 /* DeleteProjectButton.swift */; };
@@ -60,7 +60,7 @@
 		9D5709C4257EBD6400B5C5B7 /* CreateProjectButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateProjectButton.swift; sourceTree = "<group>"; };
 		9D5709C9257EBF2C00B5C5B7 /* ProjectMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectMenu.swift; sourceTree = "<group>"; };
 		9D5709CD257EC2E500B5C5B7 /* CreateVersionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateVersionButton.swift; sourceTree = "<group>"; };
-		9D7850602581631100D5F485 /* TaskEditionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskEditionView.swift; sourceTree = "<group>"; };
+		9D7850602581631100D5F485 /* EditTaskModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTaskModal.swift; sourceTree = "<group>"; };
 		9D7850642581638800D5F485 /* Common.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Common.swift; sourceTree = "<group>"; };
 		9D7850682581663600D5F485 /* Collection+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Collection+.swift"; sourceTree = "<group>"; };
 		9DC0F16C257F792000C80701 /* DeleteProjectButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteProjectButton.swift; sourceTree = "<group>"; };
@@ -161,7 +161,7 @@
 			isa = PBXGroup;
 			children = (
 				9DC0F190257FB4B500C80701 /* Common */,
-				9D5709C8257EBF1F00B5C5B7 /* CreationDeletion */,
+				9D5709C8257EBF1F00B5C5B7 /* CreationEditionDeletion */,
 				9D376F0D258123F900F45533 /* Menu */,
 				9D376F112581244900F45533 /* Project */,
 				9D0C2BCC257E3CCE006F3D89 /* ContentView.swift */,
@@ -188,7 +188,6 @@
 		9D376F0F2581241C00F45533 /* Tasks */ = {
 			isa = PBXGroup;
 			children = (
-				9D7850602581631100D5F485 /* TaskEditionView.swift */,
 				9DC0F19E257FC67900C80701 /* TaskView.swift */,
 				9DC0F19A257FC3D400C80701 /* TasksView.swift */,
 			);
@@ -205,7 +204,7 @@
 			path = Project;
 			sourceTree = "<group>";
 		};
-		9D5709C8257EBF1F00B5C5B7 /* CreationDeletion */ = {
+		9D5709C8257EBF1F00B5C5B7 /* CreationEditionDeletion */ = {
 			isa = PBXGroup;
 			children = (
 				9D5709C4257EBD6400B5C5B7 /* CreateProjectButton.swift */,
@@ -213,8 +212,9 @@
 				9D5709CD257EC2E500B5C5B7 /* CreateVersionButton.swift */,
 				9DC0F16F257F7FA400C80701 /* DeleteVersionButton.swift */,
 				9DC0F1A6257FD5B400C80701 /* CreateTaskButton.swift */,
+				9D7850602581631100D5F485 /* EditTaskModal.swift */,
 			);
-			path = CreationDeletion;
+			path = CreationEditionDeletion;
 			sourceTree = "<group>";
 		};
 		9DC0F190257FB4B500C80701 /* Common */ = {
@@ -296,7 +296,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9D0C2BCD257E3CCE006F3D89 /* ContentView.swift in Sources */,
-				9D7850612581631100D5F485 /* TaskEditionView.swift in Sources */,
+				9D7850612581631100D5F485 /* EditTaskModal.swift in Sources */,
 				9D7850652581638800D5F485 /* Common.swift in Sources */,
 				9D2B316B25802332001280AD /* Color+.swift in Sources */,
 				9D0C2BCB257E3CCE006F3D89 /* TaskPlotterApp.swift in Sources */,

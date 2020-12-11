@@ -1,5 +1,5 @@
 //
-//  TaskEditionView.swift
+//  EditTaskModal.swift
 //  task-plotter
 //
 //  Created by Faustine Maffre on 09/12/2020.
@@ -108,7 +108,7 @@ struct TaskLabelSelector: View {
     }
 }
 
-struct TaskEditionView: View {
+struct EditTaskModal: View {
     @Environment(\.presentationMode) var presentationMode
     
     @Binding var task: Task

@@ -135,7 +135,7 @@ struct TaskView: View {
             self.isTaskEditionSheetPresented = true
         }
         .sheet(isPresented: self.$isTaskEditionSheetPresented) {
-            TaskEditionView(task: self.$task, labels: self.labels)
+            EditTaskModal(task: self.$task, labels: self.labels)
         }
     }
 }
