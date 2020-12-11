@@ -117,7 +117,7 @@ struct TaskEditionView: View {
     @State var tempTaskTitle: String = ""
     @State var tempTaskLabels: [Label] = []
     @State var tempTaskDescription: String = ""
-    @State var tempTaskCost: Double? = nil
+    @State var tempTaskCost: String = ""
     
     static let labelsWidth: CGFloat = 100
     
@@ -150,11 +150,12 @@ struct TaskEditionView: View {
                     TaskLabelSelector(selectedLabels: self.$tempTaskLabels, allLabels: self.labels)
                 }
                 
-                // TODOq0 cost not saved when tapping button (but ok with enter)
+                // cost is not saved when tapping the edit button if we use a formatter (maybe because optional?)
+                // so we use a string and convert it in onAppear (double? -> string) and edit (string -> double?)
                 HStack(spacing: 20) {
                     Text("Estimated cost")
                         .frame(width: Self.labelsWidth, alignment: .leading)
-                    TextField("", value: self.$tempTaskCost, formatter: Common.costFormatter)
+                    TextField("", text: self.$tempTaskCost)
                 }
             }
             
@@ -176,7 +177,7 @@ struct TaskEditionView: View {
             self.tempTaskTitle = self.task.title
             self.tempTaskLabels = self.task.labels
             self.tempTaskDescription = self.task.description
-            self.tempTaskCost = self.task.cost
+            self.tempTaskCost = Common.costFormatter.string(for: self.task.cost) ?? ""
         }
     }
     
@@ -185,14 +186,21 @@ struct TaskEditionView: View {
             self.task.title = self.tempTaskTitle
             self.task.labels = self.tempTaskLabels
             self.task.description = self.tempTaskDescription
-            self.task.cost = self.tempTaskCost
+            if self.tempTaskCost.isEmpty {
+                // empty cost string: no cost
+                self.task.cost = nil
+            } else if let parsedCost = Common.costFormatter.number(from: self.tempTaskCost) {
+                // non-empty cost string that can be parsed: set cost
+                self.task.cost = parsedCost.doubleValue
+            }
+            // non-empty cost string that cannot be parsed: cost not updated
             
             // close sheet and reset text
             self.presentationMode.wrappedValue.dismiss()
             self.tempTaskTitle = ""
             self.tempTaskLabels = []
             self.tempTaskDescription = ""
-            self.tempTaskCost = nil
+            self.tempTaskCost = ""
         }
     }
     
@@ -202,6 +210,6 @@ struct TaskEditionView: View {
         self.tempTaskTitle = ""
         self.tempTaskLabels = []
         self.tempTaskDescription = ""
-        self.tempTaskCost = nil
+        self.tempTaskCost = ""
     }
 }
