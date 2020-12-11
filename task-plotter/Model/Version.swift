@@ -16,7 +16,14 @@ struct Version: Identifiable, Hashable, Equatable {
     
     var dueDate: Date?
     
-    var pointsPerDay: Double?
+    var pointsPerDay: Double? {
+        didSet {
+            // if negative, then nil
+            if let pointsPerDay = self.pointsPerDay, pointsPerDay <= 0 {
+                self.pointsPerDay = nil
+            }
+        }
+    }
     var workingDays: [Day]
     var excludedDates: [Date]
     

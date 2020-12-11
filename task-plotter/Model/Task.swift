@@ -17,7 +17,14 @@ struct Task: Identifiable, Hashable, Equatable {
     var labels: [Label]
     var description: String
     
-    var cost: Double?
+    var cost: Double? {
+        didSet {
+            // if negative, then nil (no cost)
+            if let cost = self.cost, cost <= 0 {
+                self.cost = nil
+            }
+        }
+    }
     
     var expectedDueDate: Date? = nil
     
