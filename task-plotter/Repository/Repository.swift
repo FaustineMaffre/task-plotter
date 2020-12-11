@@ -7,9 +7,7 @@
 
 import Combine
 
-class Repository: ObservableObject {
-    @Published var labels: [Label]
-    
+class Repository: ObservableObject {    
     @Published var projects: [Project]
     
     @Published var selectedProjectId: ProjectID? {
@@ -34,9 +32,8 @@ class Repository: ObservableObject {
         }
     }
     
-    required init(labels: [Label], projects: [Project],
+    required init(projects: [Project],
                   selectedProjectId: ProjectID? = nil) {
-        self.labels = labels
         self.projects = projects
         self.selectedProjectId = selectedProjectId
         
@@ -49,15 +46,13 @@ class Repository: ObservableObject {
         }
     }
     
-    func addProject(name: String, selectIt: Bool) {
-        if !name.isEmpty {
-            // create new project
-            let newProject = Project(name: name)
-            self.projects.append(newProject)
+    func addProject(_ project: Project, selectIt: Bool) {
+        if !project.name.isEmpty {
+            self.projects.append(project)
             
             // select it if required
             if selectIt {
-                self.selectedProjectId = newProject.id
+                self.selectedProjectId = project.id
             }
         }
     }

@@ -134,7 +134,9 @@ struct ProjectCreationModal: View {
             }, modalWidth: 300, modalHeight: 130,
             createOrEditCondition: !self.projectName.isEmpty) {
             // create
-            self.repository.addProject(name: self.projectName, selectIt: true)
+            let newProject = Project(name: self.projectName, labels: []) // TODOq0 labels
+            self.repository.addProject(newProject, selectIt: true)
+            
         } resetAction: {
             // reset project name
             self.projectName = ""
@@ -167,6 +169,7 @@ struct ProjectEditionModal: View {
             createOrEditCondition: !self.projectName.isEmpty) {
             // edit
             self.repository.projects[projectIndex].name = self.projectName
+            
         } resetAction: {
             // reset project name
             self.projectName = ""
@@ -203,7 +206,8 @@ struct VersionCreationModal: View {
             }, modalWidth: 300, modalHeight: 130,
             createOrEditCondition: !self.versionNumber.isEmpty) {
             // create
-            self.project.addVersion(number: self.versionNumber, selectIt: true)
+            let newVersion = Version(number: self.versionNumber)
+            self.project.addVersion(newVersion, selectIt: true)
 
         } resetAction: {
             // reset version number
@@ -433,7 +437,7 @@ struct TaskCreationModal: View {
                                labels: self.taskLabels,
                                description: self.taskDescription,
                                cost: self.taskCost)
-            self.version.addTask(column: self.column, task: newTask)
+            self.version.addTask(column: self.column, newTask)
             
         } resetAction: {
             // reset task title, labels, description, cost

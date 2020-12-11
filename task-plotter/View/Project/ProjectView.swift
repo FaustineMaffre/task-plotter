@@ -23,7 +23,7 @@ struct ProjectView: View {
             if let projectIndex = self.repository.ҩselectedProjectIndex,
                let versionIndex = self.repository.projects[projectIndex].ҩselectedVersionIndex {
                 TasksView(version: self.generateVersionBinding(projectIndex: projectIndex, versionIndex: versionIndex),
-                          labels: self.repository.labels)
+                          labels: self.repository.projects[projectIndex].labels)
             } else {
                 Spacer()
             }
@@ -36,7 +36,7 @@ struct ProjectView: View {
             if self.repository.projects.indices.contains(projectIndex) {
                 return self.repository.projects[projectIndex]
             } else {
-                return Project(name: "Oops")
+                return Project(name: "Oops", labels: [])
             }
         } set: {
             if self.repository.projects.indices.contains(projectIndex) {

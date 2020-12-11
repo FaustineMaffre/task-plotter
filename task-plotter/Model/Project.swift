@@ -15,7 +15,9 @@ struct Project: Identifiable, Hashable, Equatable {
     var name: String
     var versions: [Version] = []
     
-    var selectedVersionId: VersionID?
+    var labels: [Label]
+    
+    var selectedVersionId: VersionID? = nil
     
     var ҩselectedVersionIndex: Int? {
         if let selectedVersionId = self.selectedVersionId {
@@ -35,10 +37,10 @@ struct Project: Identifiable, Hashable, Equatable {
     
     init(id: ProjectID = UUID(),
          name: String,
-         selectedVersionId: VersionID? = nil) {
+         labels: [Label]) {
         self.id = id
         self.name = name
-        self.selectedVersionId = selectedVersionId
+        self.labels = labels
     }
     
     func hash(into hasher: inout Hasher) {
@@ -49,15 +51,13 @@ struct Project: Identifiable, Hashable, Equatable {
         lhs.id == rhs.id
     }
     
-    mutating func addVersion(number: String, selectIt: Bool) {
-        if !number.isEmpty {
-            // create new version
-            let newVersion = Version(number: number)
-            self.versions.append(newVersion)
+    mutating func addVersion(_ version: Version, selectIt: Bool) {
+        if !version.number.isEmpty {
+            self.versions.append(version)
             
             // select it if required
             if selectIt {
-                self.selectedVersionId = newVersion.id
+                self.selectedVersionId = version.id
             }
         }
     }

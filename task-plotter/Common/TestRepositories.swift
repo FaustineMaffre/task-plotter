@@ -33,13 +33,13 @@ class TestRepositories {
         version10.tasksByColumn = tasks
         let version11 = Version(number: "1.1")
         
-        var project1 = Project(name: "Ardoise")
+        var project1 = Project(name: "Ardoise", labels: labels)
         project1.versions = [version10, version11]
         project1.selectedVersionId = version10.id
         
-        var project2 = Project(name: "Project 2")
+        var project2 = Project(name: "Project 2", labels: [])
         
-        let repository = Repository(labels: labels, projects: [project1, project2])
+        let repository = Repository(projects: [project1, project2])
         repository.selectedProjectId = project1.id
         
         return repository
