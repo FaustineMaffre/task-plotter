@@ -10,6 +10,9 @@ import SwiftUI
 struct VersionsView: View {
     @Binding var project: Project
     
+    @State var isVersionCreationSheetPresented: Bool = false
+    @State var tempVersionNumber: String = ""
+    
     @State var isVersionDeletionAlertPresented: Bool = false
     @State var versionToDeleteIndex: Int? = 0
     
@@ -54,22 +57,19 @@ struct VersionsView: View {
             HStack(spacing: 0) {
                 Spacer()
                 
-                CreateVersionButton(project: self.$project, showText: false)
+                CreateDeleteButton(image: Image(systemName: "plus")) {
+                    self.isVersionCreationSheetPresented = true
+                }
                 
-                Button {
+                CreateDeleteButton(image: Image(systemName: "minus")) {
                     self.versionToDeleteIndex = self.project.ҩselectedVersionIndex
                     self.isVersionDeletionAlertPresented = true
-                } label: {
-                    HStack(spacing: 4) {
-                        Image(systemName: "minus")
-                            .imageScale(.large)
-                            .frame(width: 30, height: 30)
-                    }
-                    .contentShape(Rectangle())
                 }
-                .buttonStyle(PlainButtonStyle())
             }
         }
+        .createVersionModal(isPresented: self.$isVersionCreationSheetPresented,
+                            project: self.$project,
+                            tempVersionNumber: self.$tempVersionNumber)
         .deleteVersionAlert(isPresented: self.$isVersionDeletionAlertPresented,
                             project: self.$project,
                             versionToDeleteIndex: self.versionToDeleteIndex)

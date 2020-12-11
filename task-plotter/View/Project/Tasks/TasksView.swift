@@ -16,6 +16,10 @@ struct TasksView: View {
     @Binding var version: Version
     let labels: [Label]
     
+    @State var isTaskCreationSheetPresented: Bool = false
+    @State var taskToCreateColumn: Column = .todo
+    @State var tempTaskTitle: String = ""
+    
     @State var isTaskDeletionAlertPresented: Bool = false
     @State var taskToDeleteColumn: Column = .todo
     @State var taskToDeleteIndex: Int = -1
@@ -77,7 +81,10 @@ struct TasksView: View {
                         .listStyle(PlainListStyle())
                         
                         HStack {
-                            CreateTaskButton(version: self.$version, column: column, showText: true)
+                            CreateDeleteButton(image: Image(systemName: "plus"), text: "Add a task") {
+                                self.taskToCreateColumn = column
+                                self.isTaskCreationSheetPresented = true
+                            }
                             Spacer()
                         }
                     }
@@ -89,12 +96,14 @@ struct TasksView: View {
             }
             .padding(10)
         }
-        .alert(isPresented: self.$isTaskDeletionAlertPresented) {
-            Alert(title: Text("Delete the task"),
-                  message: Text("Are you sure you want to delete the task \"\(self.version.tasksByColumn[self.taskToDeleteColumn]![self.taskToDeleteIndex].title)\"?"),
-                  primaryButton: .destructive(Text("Delete"), action: self.deleteTask),
-                  secondaryButton: .cancel())
-        }
+        .createTaskModal(isPresented: self.$isTaskCreationSheetPresented,
+                         version: self.$version,
+                         column: self.taskToCreateColumn,
+                         tempTaskTitle: self.$tempTaskTitle)
+        .deleteTaskAlert(isPresented: self.$isTaskDeletionAlertPresented,
+                         version: self.$version,
+                         column: self.taskToDeleteColumn,
+                         taskToDeleteIndex: self.taskToDeleteIndex)
     }
     
     func generateTaskBinding(column: Column, taskIndex: Int) -> Binding<Task> {
@@ -128,10 +137,6 @@ struct TasksView: View {
                 }
             }
         }
-    }
-    
-    func deleteTask() {
-        self.version.tasksByColumn[self.taskToDeleteColumn]!.remove(at: self.taskToDeleteIndex)
     }
 }
 
