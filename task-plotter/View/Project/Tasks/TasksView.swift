@@ -59,28 +59,7 @@ struct TasksView: View {
                                     _ = item.loadObject(ofClass: String.self) { str, _ in
                                         if let taskIdStr = str,
                                            let taskId = UUID(uuidString: taskIdStr) {
-                                            DispatchQueue.main.async {
-                                                // find old column
-                                                if let oldColumn = self.version.findColumnOfTask(id: taskId),
-                                                   let taskOldIndex = self.version.tasksByColumn[oldColumn]!.firstIndex(where: { $0.id == taskId }) {
-                                                    let task = self.version.tasksByColumn[oldColumn]![taskOldIndex]
-                                                    
-                                                    if oldColumn != column {
-                                                        // change column
-                                                        self.version.tasksByColumn[oldColumn]!.remove(at: taskOldIndex)
-                                                        
-                                                        if self.version.tasksByColumn[column]!.isEmpty {
-                                                            // in case index would be outside bounds (because of empty tasks)
-                                                            self.version.tasksByColumn[column]!.append(task)
-                                                        } else {
-                                                            self.version.tasksByColumn[column]!.insert(task, at: index)
-                                                        }
-                                                    } else {
-                                                        // move within same column
-                                                        self.version.tasksByColumn[column]!.move(fromOffsets: IndexSet(arrayLiteral: taskOldIndex), toOffset: index)
-                                                    }
-                                                }
-                                            }
+                                            self.moveTask(taskId: taskId, newColumn: column, index: index)
                                         }
                                     }
                                 }
@@ -108,6 +87,31 @@ struct TasksView: View {
             self.version.tasksByColumn[column]![taskIndex]
         } set: {
             self.version.tasksByColumn[column]![taskIndex] = $0
+        }
+    }
+    
+    func moveTask(taskId: TaskID, newColumn: Column, index: Int) {
+        DispatchQueue.main.async {
+            // find old column
+            if let oldColumn = self.version.findColumnOfTask(id: taskId),
+               let taskOldIndex = self.version.tasksByColumn[oldColumn]!.firstIndex(where: { $0.id == taskId }) {
+                let task = self.version.tasksByColumn[oldColumn]![taskOldIndex]
+                
+                if oldColumn != newColumn {
+                    // change column
+                    self.version.tasksByColumn[oldColumn]!.remove(at: taskOldIndex)
+                    
+                    if self.version.tasksByColumn[newColumn]!.isEmpty {
+                        // in case index would be outside bounds (because of empty tasks)
+                        self.version.tasksByColumn[newColumn]!.append(task)
+                    } else {
+                        self.version.tasksByColumn[newColumn]!.insert(task, at: index)
+                    }
+                } else {
+                    // move within same column
+                    self.version.tasksByColumn[newColumn]!.move(fromOffsets: IndexSet(arrayLiteral: taskOldIndex), toOffset: index)
+                }
+            }
         }
     }
 }
