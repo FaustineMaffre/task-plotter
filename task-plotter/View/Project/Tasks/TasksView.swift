@@ -56,7 +56,11 @@ struct TasksView: View {
                                     }
                                 } else {
                                     TaskView(task: self.generateTaskBinding(column: column, taskIndex: taskIndex), column: column, labels: self.labels)
-                                        .listRowInsets(EdgeInsets(top: 3, leading: 0, bottom: 3, trailing: 0))
+                                        .onTapGesture(count: 2) {
+                                            self.taskToEditIndex = taskIndex
+                                            self.taskToCreateOrEditColumn = column
+                                            self.taskCreationOrEditionSheetItem = .edition
+                                        }
                                         .onDrag { NSItemProvider(object: tasks[taskIndex].id.uuidString as NSString) }
                                         .contextMenu {
                                             Button("Delete") {
@@ -65,11 +69,7 @@ struct TasksView: View {
                                                 self.isTaskDeletionAlertPresented = true
                                             }
                                         }
-                                        .onTapGesture(count: 2) {
-                                            self.taskToEditIndex = taskIndex
-                                            self.taskToCreateOrEditColumn = column
-                                            self.taskCreationOrEditionSheetItem = .edition
-                                        }
+                                        .listRowInsets(EdgeInsets(top: 3, leading: 0, bottom: 3, trailing: 0))
                                 }
                             }
                             .onInsert(of: [UTType.plainText]) { index, items in

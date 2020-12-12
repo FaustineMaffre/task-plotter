@@ -7,8 +7,6 @@
 
 import SwiftUI
 
-// TODO4 edit available labels
-
 struct ProjectMenu: View {
     @ObservedObject var repository: Repository
     

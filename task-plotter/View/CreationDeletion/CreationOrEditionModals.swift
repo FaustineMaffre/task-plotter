@@ -24,8 +24,7 @@ struct CreationOrEditionModal<Content: View>: View {
     let titleText: String
     let propertiesView: () -> Content
     
-    let modalWidth: CGFloat
-    let modalHeight: CGFloat
+    let modalSize: CGSize
     
     let createOrEditCondition: Bool
     
@@ -43,8 +42,7 @@ struct CreationOrEditionModal<Content: View>: View {
     init(mode: CreationOrEditionMode,
          titleText: String,
          propertiesView: @escaping () -> Content,
-         modalWidth: CGFloat,
-         modalHeight: CGFloat,
+         modalSize: CGSize,
          createOrEditCondition: Bool,
          createOrEditAction: @escaping () -> Void,
          cancelAction: @escaping () -> Void = {},
@@ -55,8 +53,7 @@ struct CreationOrEditionModal<Content: View>: View {
         self.titleText = titleText
         self.propertiesView = propertiesView
         
-        self.modalWidth = modalWidth
-        self.modalHeight = modalHeight
+        self.modalSize = modalSize
         
         self.createOrEditCondition = createOrEditCondition
         
@@ -87,7 +84,7 @@ struct CreationOrEditionModal<Content: View>: View {
             }
         }
         .padding()
-        .frame(width: self.modalWidth, height: self.modalHeight)
+        .frame(width: self.modalSize.width, height: self.modalSize.height)
     }
     
     func createOrEdit() {
@@ -107,16 +104,250 @@ struct CreationOrEditionModal<Content: View>: View {
     }
 }
 
+// MARK: - View of labels, used in project and task
+
+struct LabelSelectorLabelView: View {
+    let label: Label
+    
+    var body: some View {
+        Text(self.label.name)
+            .foregroundColor(Label.foregroundOn(background: self.label.color))
+            .padding(EdgeInsets(top: 4, leading: 10, bottom: 4, trailing: 10))
+            .background(RoundedRectangle(cornerRadius: 8)
+                            .fill(Color(hex: self.label.color)))
+    }
+}
+
+struct LabelsListView<BottomContent: View, TapContent: View, ContextContent: View>: View {
+    let title: String?
+    let labels: [Label]
+    
+    let onDropAction: (String, Int) -> Void
+    let onTapContent: (Int) -> TapContent
+    let contextMenuContent: (Int) -> ContextContent
+    
+    let bottomContent: () -> BottomContent
+    
+    @State var isOnTapPopoverPresentedIndex: Int? = nil
+    
+    init(title: String? = nil,
+         labels: [Label],
+         onDropAction: @escaping (String, Int) -> Void,
+         onTapContent: @escaping (Int) -> TapContent,
+         contextMenuContent: @escaping (Int) -> ContextContent,
+         bottomContent: @escaping () -> BottomContent) {
+        
+        self.title = title
+        self.labels = labels
+        self.onDropAction = onDropAction
+        self.onTapContent = onTapContent
+        self.contextMenuContent = contextMenuContent
+        self.bottomContent = bottomContent
+    }
+    
+    var body: some View {
+        VStack(spacing: 4) {
+            if let title = self.title {
+                Text(title)
+                    .bold()
+            }
+            
+            VStack(spacing: 0) {
+                List {
+                    ForEach(labels.isEmpty ? [-1] : Array(self.labels.indices), id: \.self) { labelIndex in
+                        if labelIndex < 0 {
+                            HStack {
+                                Spacer()
+                                Text("No label")
+                                    .foregroundColor(Color.white.opacity(0.2))
+                                Spacer()
+                            }
+                        } else {
+                            HStack {
+                                Spacer()
+                                LabelSelectorLabelView(label: self.labels[labelIndex])
+                                Spacer()
+                            }
+                            .frame(height: 30)
+                            .onTapGesture {
+                                if TapContent.self != EmptyView.self {
+                                    self.isOnTapPopoverPresentedIndex = labelIndex
+                                }
+                            }
+                            .onDrag { NSItemProvider(object: self.labels[labelIndex].name as NSString) }
+                            .contextMenu { self.contextMenuContent(labelIndex) }
+                            .popover(isPresented: self.generateIsOnTapPopoverPresented(labelIndex: labelIndex), content: { self.onTapContent(labelIndex) })
+                            .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+                        }
+                    }
+                    .onInsert(of: [UTType.plainText]) { index, items in
+                        items.forEach { item in
+                            _ = item.loadObject(ofClass: String.self) { str, _ in
+                                if let labelName = str {
+                                    self.onDropAction(labelName, index)
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                self.bottomContent()
+            }
+            .border(Color.white.opacity(0.1))
+            .background(Color(NSColor.controlBackgroundColor))
+        }
+    }
+    
+    func generateIsOnTapPopoverPresented(labelIndex: Int) -> Binding<Bool> {
+        Binding {
+            labelIndex == self.isOnTapPopoverPresentedIndex
+        } set: {
+            self.isOnTapPopoverPresentedIndex = $0 ? labelIndex : nil
+        }
+    }
+}
+
+extension LabelsListView where BottomContent == EmptyView, TapContent == EmptyView, ContextContent == EmptyView {
+    init(title: String? = nil,
+         labels: [Label],
+         onDropAction: @escaping (String, Int) -> Void) {
+        
+        self.init(title: title,
+                  labels: labels,
+                  onDropAction: onDropAction,
+                  onTapContent: { _ in EmptyView() },
+                  contextMenuContent: { _ in EmptyView() },
+                  bottomContent: { EmptyView() })
+    }
+}
+
 // MARK: - Project
+
+let projectModalSize = CGSize(width: 320, height: 420)
+
+struct AvailableLabelColorsSelector: View {
+    @Binding var selectedColor: String
+    
+    static let elementsByRow = Label.huesCount
+    var rowCounts: Int {
+        Label.availableColors.count / Self.elementsByRow
+    }
+    func colorAt(row: Int, column: Int) -> String {
+        Label.availableColors[row * Self.elementsByRow + column]
+    }
+    
+    var body: some View {
+        VStack(spacing: 4) {
+            ForEach(0..<self.rowCounts, id: \.self) { row in
+                HStack(spacing: 4) {
+                    ForEach(0..<Self.elementsByRow, id: \.self) { column in
+                        let color = self.colorAt(row: row, column: column)
+                        
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(Color(hex: color))
+                                .frame(width: 24, height: 24)
+                                .onTapGesture {
+                                    self.selectedColor = color
+                                }
+                            
+                            if color == self.selectedColor {
+                                Image(systemName: "circle.fill")
+                                    .foregroundColor(Label.foregroundOn(background: color))
+                                    .imageScale(.small)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 
 struct ProjectFormContent: View {
     @Binding var projectName: String
+    @Binding var projectLabels: [Label]
+    
+    static let labelsWidth: CGFloat = 60
     
     var body: some View {
-        HStack(spacing: 20) {
-            Text("Name")
-            TextField("", text: self.$projectName)
+        VStack(spacing: 10) {
+            HStack(spacing: 20) {
+                Text("Name")
+                    .frame(width: Self.labelsWidth, alignment: .leading)
+                TextField("", text: self.$projectName)
+            }
+            
+            HStack(alignment: .top, spacing: 20) {
+                Text("Labels")
+                    .frame(width: Self.labelsWidth, alignment: .leading)
+                
+                VStack(spacing: 0) {
+                    LabelsListView(labels: self.projectLabels,
+                                   onDropAction: self.moveLabel,
+                                   onTapContent: { labelIndex in
+                                    VStack(spacing: 8) {
+                                        TextField("", text: self.generateLabelNameBinding(labelIndex: labelIndex))
+                                        AvailableLabelColorsSelector(selectedColor: self.generateLabelColorBinding(labelIndex: labelIndex))
+                                    }
+                                    .padding(10)
+                                   },
+                                   contextMenuContent: { labelIndex in
+                                    Button("Delete") {
+                                        // delete (without warning)
+                                        self.deleteLabel(at: labelIndex)
+                                    }
+                                   },
+                                   bottomContent: {
+                                    CreateDeleteEditButton(image: Image(systemName: "plus"), text: "Create a label", action: self.createLabel)
+                                   })
+                }
+            }
         }
+    }
+    
+    func generateLabelNameBinding(labelIndex: Int) -> Binding<String> {
+        Binding {
+            if self.projectLabels.indices.contains(labelIndex) {
+                return self.projectLabels[labelIndex].name
+            } else {
+                return "Oops"
+            }
+        } set: {
+            if self.projectLabels.indices.contains(labelIndex) {
+                self.projectLabels[labelIndex].name = $0
+            }
+        }
+    }
+    
+    func generateLabelColorBinding(labelIndex: Int) -> Binding<String> {
+        Binding {
+            if self.projectLabels.indices.contains(labelIndex) {
+                return self.projectLabels[labelIndex].color
+            } else {
+                return "Oops"
+            }
+        } set: {
+            if self.projectLabels.indices.contains(labelIndex) {
+                self.projectLabels[labelIndex].color = $0
+            }
+        }
+    }
+    
+    func createLabel() {
+        self.projectLabels.append(Label.nextAvailableLabel(labels: self.projectLabels))
+    }
+    
+    func moveLabel(withName name: String, to index: Int) {
+        DispatchQueue.main.async {
+            if let taskLabelIndex = self.projectLabels.firstIndex(where: { $0.name == name }) {
+                self.projectLabels.move(fromOffsets: IndexSet(arrayLiteral: taskLabelIndex), toOffset: index)
+            }
+        }
+    }
+    
+    func deleteLabel(at index: Int) {
+        self.projectLabels.remove(at: index)
     }
 }
 
@@ -124,17 +355,20 @@ struct ProjectCreationModal: View {
     let repository: Repository
     
     @State var projectName: String = ""
+    @State var projectLabels: [Label] = []
     
     var body: some View {
         CreationOrEditionModal(
             mode: .creation,
             titleText: "Create a new project",
             propertiesView: {
-                ProjectFormContent(projectName: self.$projectName)
-            }, modalWidth: 300, modalHeight: 130,
+                ProjectFormContent(projectName: self.$projectName, projectLabels: self.$projectLabels)
+                
+            }, modalSize: projectModalSize,
             createOrEditCondition: !self.projectName.isEmpty) {
             // create
-            let newProject = Project(name: self.projectName, labels: []) // TODOq0 labels
+            let newProject = Project(name: self.projectName,
+                                     labels: self.projectLabels) 
             self.repository.addProject(newProject, selectIt: true)
             
         } resetAction: {
@@ -149,6 +383,7 @@ struct ProjectEditionModal: View {
     let projectIndex: Int
     
     @State var projectName: String
+    @State var projectLabels: [Label]
     
     init(repository: Repository, projectIndex: Int) {
         self.repository = repository
@@ -157,6 +392,7 @@ struct ProjectEditionModal: View {
         
         let project = repository.projects[projectIndex]
         self._projectName = State(initialValue: project.name)
+        self._projectLabels = State(initialValue: project.labels)
     }
     
     var body: some View {
@@ -164,11 +400,13 @@ struct ProjectEditionModal: View {
             mode: .edition,
             titleText: "Edit project",
             propertiesView: {
-                ProjectFormContent(projectName: self.$projectName)
-            }, modalWidth: 300, modalHeight: 130,
+                ProjectFormContent(projectName: self.$projectName, projectLabels: self.$projectLabels)
+                
+            }, modalSize: projectModalSize,
             createOrEditCondition: !self.projectName.isEmpty) {
             // edit
             self.repository.projects[projectIndex].name = self.projectName
+            self.repository.projects[projectIndex].labels = self.projectLabels
             
         } resetAction: {
             // reset project name
@@ -178,6 +416,8 @@ struct ProjectEditionModal: View {
 }
 
 // MARK: - Version
+
+let versionModalSize = CGSize(width: 300, height: 130)
 
 struct VersionFormContent: View {
     @Binding var versionNumber: String
@@ -201,9 +441,9 @@ struct VersionCreationModal: View {
             mode: .creation,
             titleText: "Add a new version",
             propertiesView: {
-                ProjectFormContent(projectName: self.$versionNumber)
+                VersionFormContent(versionNumber: self.$versionNumber)
 
-            }, modalWidth: 300, modalHeight: 130,
+            }, modalSize: versionModalSize,
             createOrEditCondition: !self.versionNumber.isEmpty) {
             // create
             let newVersion = Version(number: self.versionNumber)
@@ -236,9 +476,9 @@ struct VersionEditionModal: View {
             mode: .edition,
             titleText: "Edit version",
             propertiesView: {
-                ProjectFormContent(projectName: self.$versionNumber)
+                VersionFormContent(versionNumber: self.$versionNumber)
 
-            }, modalWidth: 300, modalHeight: 130,
+            }, modalSize: versionModalSize,
             createOrEditCondition: !self.versionNumber.isEmpty) {
             // edit
             self.project.versions[versionIndex].number = self.versionNumber
@@ -252,16 +492,7 @@ struct VersionEditionModal: View {
 
 // MARK: - Task
 
-struct TaskLabelSelectorLabelView: View {
-    @State var label: Label
-    
-    var body: some View {
-        Text(self.label.name)
-            .padding(EdgeInsets(top: 4, leading: 10, bottom: 4, trailing: 10))
-            .background(RoundedRectangle(cornerRadius: 8)
-                            .fill(Color(hex: self.label.color)))
-    }
-}
+let taskModalSize = CGSize(width: 500, height: 680)
 
 struct TaskLabelSelector: View {
     @Binding var selectedLabels: [Label]
@@ -272,17 +503,19 @@ struct TaskLabelSelector: View {
     }
     
     @State var isDropTargeted: Bool = false
-    
-    static let emptyLabel: Label = Label(name: "", color: Color.clear.ҩhex)
     static let spacingBetweenLists: CGFloat = 8
     
     var body: some View {
         HStack {
             // available
-            self.labelsListView(title: "Available", labels: self.ҩavailableLabels, onDrop: { labelName, _ in self.removeLabel(withName: labelName) })
+            LabelsListView(title: "Available",
+                           labels: self.ҩavailableLabels,
+                           onDropAction: { labelName, _ in self.removeLabel(withName: labelName) })
             
             // added
-            self.labelsListView(title: "Selected", labels: self.selectedLabels, onDrop: self.addLabel)
+            LabelsListView(title: "Selected",
+                           labels: self.selectedLabels,
+                           onDropAction: self.addLabel)
         }
     }
     
@@ -306,46 +539,6 @@ struct TaskLabelSelector: View {
     func removeLabel(withName name: String) {
         DispatchQueue.main.async {
             self.selectedLabels.remove(name, by: \.name)
-        }
-    }
-    
-    func labelsListView(title: String, labels: [Label], onDrop: @escaping (String, Int) -> Void) -> some View {
-        VStack(spacing: 4) {
-            Text(title)
-                .bold()
-            
-            List {
-                ForEach(labels.isEmpty ? [Self.emptyLabel] : labels, id: \.self) { label in
-                    if label == Self.emptyLabel {
-                        HStack {
-                            Spacer()
-                            Text("No label")
-                                .foregroundColor(Color.white.opacity(0.2))
-                            Spacer()
-                        }
-                    } else {
-                        HStack {
-                            Spacer()
-                            TaskLabelSelectorLabelView(label: label)
-                            Spacer()
-                        }
-                        .frame(height: 30)
-                        .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-                        .onDrag { NSItemProvider(object: label.name as NSString) }
-                    }
-                }
-                .onInsert(of: [UTType.plainText]) { index, items in
-                    items.forEach { item in
-                        _ = item.loadObject(ofClass: String.self) { str, _ in
-                            if let labelName = str {
-                                onDrop(labelName, index)
-                            }
-                        }
-                    }
-                }
-            }
-            .border(Color.white.opacity(0.1))
-            .background(Color(NSColor.controlBackgroundColor))
         }
     }
 }
@@ -430,7 +623,7 @@ struct TaskCreationModal: View {
                                 taskDescription: self.$taskDescription,
                                 taskCost: self.$taskCost)
                 
-            }, modalWidth: 500, modalHeight: 600,
+            }, modalSize: taskModalSize,
             createOrEditCondition: !self.taskTitle.isEmpty) {
             // create
             let newTask = Task(title: self.taskTitle,
@@ -487,7 +680,7 @@ struct TaskEditionModal: View {
                                 taskDescription: self.$taskDescription,
                                 taskCost: self.$taskCost)
                 
-            }, modalWidth: 500, modalHeight: 600,
+            }, modalSize: taskModalSize,
             createOrEditCondition: !self.taskTitle.isEmpty) {
             // edit
             self.version.tasksByColumn[self.column]![self.taskIndex].title = self.taskTitle
