@@ -68,7 +68,7 @@ struct Version: Identifiable, Hashable, Equatable {
         self.tasksByColumn[column]!.remove(task)
     }
     
-    func findColumnOfTask(id: TaskID) -> Column?  {
+    func findColumnOfTask(id: TaskID) -> Column? {
         self.tasksByColumn.first { _, tasks in
             tasks.contains { $0.id == id }
         }?.key

@@ -14,7 +14,7 @@ import UniformTypeIdentifiers
 
 struct TasksView: View {
     @Binding var version: Version
-    let labels: [Label]
+    let projectLabels: [Label]
     
     @State var taskCreationOrEditionSheetItem: CreationOrEditionMode? = nil
     @State var taskToCreateOrEditColumn: Column = .todo
@@ -55,7 +55,9 @@ struct TasksView: View {
                                         Spacer()
                                     }
                                 } else {
-                                    TaskView(task: self.generateTaskBinding(column: column, taskIndex: taskIndex), column: column, labels: self.labels)
+                                    TaskView(task: self.generateTaskBinding(column: column, taskIndex: taskIndex),
+                                             column: column,
+                                             projectLabels: self.projectLabels)
                                         .onTapGesture {
                                             self.taskToEditIndex = taskIndex
                                             self.taskToCreateOrEditColumn = column
@@ -105,11 +107,11 @@ struct TasksView: View {
             switch mode {
             case .creation:
                 TaskCreationModal(version: self.$version,
-                                  labels: self.labels,
+                                  projectLabels: self.projectLabels,
                                   column: self.taskToCreateOrEditColumn)
             case .edition:
                 TaskEditionModal(version: self.$version,
-                                 labels: self.labels,
+                                 projectLabels: self.projectLabels,
                                  column: self.taskToCreateOrEditColumn,
                                  taskIndex: self.taskToEditIndex)
             }

@@ -16,12 +16,12 @@ class TestRepositories {
         let labelScene = Label(name: "Scene", color: Label.availableColors[3])
         let labels = [labelModel, labelUiUx, labelGraphics, labelIO, labelScene]
         
-        var tasks = [Column.todo: [Task(title: "Blur and sharpen tools", labels: [labelModel, labelUiUx, labelGraphics, labelIO, labelScene], description: "Tools", cost: 8)],
-                     Column.doing: [Task(title: "Site/mail", labels: [labelGraphics], description: "- Nom de domaine\n- Adresse mail", cost: nil),
-                                    Task(title: "In-app purchases", labels: [], description: "", cost: 4),
-                                    Task(title: "Scene camera", labels: [labelUiUx], description: "", cost: 2.5),
-                                    Task(title: "Cushion effect", labels: [labelModel, labelUiUx, labelGraphics], description: "", cost: 1)],
-                     Column.done: [Task(title: "User tests", labels: [labelModel, labelUiUx, labelGraphics], description: "", cost: 16)]]
+        var tasks = [Column.todo: [Task(title: "Blur and sharpen tools", labelIds: [labelModel.id, labelUiUx.id, labelGraphics.id, labelIO.id, labelScene.id], description: "Tools", cost: 8)],
+                     Column.doing: [Task(title: "Site/mail", labelIds: [labelGraphics.id], description: "- Nom de domaine\n- Adresse mail", cost: nil),
+                                    Task(title: "In-app purchases", labelIds: [], description: "", cost: 4),
+                                    Task(title: "Scene camera", labelIds: [labelUiUx.id], description: "", cost: 2.5),
+                                    Task(title: "Cushion effect", labelIds: [labelModel.id, labelUiUx.id, labelGraphics.id], description: "", cost: 1)],
+                     Column.done: [Task(title: "User tests", labelIds: [labelModel.id, labelUiUx.id, labelGraphics.id], description: "", cost: 16)]]
         
         tasks[Column.todo]?[0].expectedDueDate = Date() + TimeInterval(60*60*25) // 25 hours after now
         tasks[Column.doing]?[0].expectedDueDate = Date() + TimeInterval(60*60*6) // 6 hours after now

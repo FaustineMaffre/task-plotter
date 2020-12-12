@@ -23,7 +23,7 @@ struct ProjectView: View {
             if let projectIndex = self.repository.ҩselectedProjectIndex,
                let versionIndex = self.repository.projects[projectIndex].ҩselectedVersionIndex {
                 TasksView(version: self.generateVersionBinding(projectIndex: projectIndex, versionIndex: versionIndex),
-                          labels: self.repository.projects[projectIndex].labels)
+                          projectLabels: self.repository.projects[projectIndex].labels)
             } else {
                 Spacer()
             }

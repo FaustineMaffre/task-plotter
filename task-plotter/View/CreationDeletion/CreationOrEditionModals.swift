@@ -120,9 +120,10 @@ struct LabelSelectorLabelView: View {
 
 struct LabelsListView<BottomContent: View, TapContent: View, ContextContent: View>: View {
     let title: String?
-    let labels: [Label]
+    let labelIds: [LabelID]
+    let projectLabels: [Label]
     
-    let onDropAction: (String, Int) -> Void
+    let onDropAction: (LabelID, Int) -> Void
     let onTapContent: (Int) -> TapContent
     let contextMenuContent: (Int) -> ContextContent
     
@@ -131,14 +132,16 @@ struct LabelsListView<BottomContent: View, TapContent: View, ContextContent: Vie
     @State var isOnTapPopoverPresentedIndex: Int? = nil
     
     init(title: String? = nil,
-         labels: [Label],
-         onDropAction: @escaping (String, Int) -> Void,
+         labelIds: [LabelID],
+         projectLabels: [Label],
+         onDropAction: @escaping (LabelID, Int) -> Void,
          onTapContent: @escaping (Int) -> TapContent,
          contextMenuContent: @escaping (Int) -> ContextContent,
          bottomContent: @escaping () -> BottomContent) {
         
         self.title = title
-        self.labels = labels
+        self.labelIds = labelIds
+        self.projectLabels = projectLabels
         self.onDropAction = onDropAction
         self.onTapContent = onTapContent
         self.contextMenuContent = contextMenuContent
@@ -154,7 +157,7 @@ struct LabelsListView<BottomContent: View, TapContent: View, ContextContent: Vie
             
             VStack(spacing: 0) {
                 List {
-                    ForEach(labels.isEmpty ? [-1] : Array(self.labels.indices), id: \.self) { labelIndex in
+                    ForEach(labelIds.isEmpty ? [-1] : Array(self.labelIds.indices), id: \.self) { labelIndex in
                         if labelIndex < 0 {
                             HStack {
                                 Spacer()
@@ -163,28 +166,31 @@ struct LabelsListView<BottomContent: View, TapContent: View, ContextContent: Vie
                                 Spacer()
                             }
                         } else {
-                            HStack {
-                                Spacer()
-                                LabelSelectorLabelView(label: self.labels[labelIndex])
-                                Spacer()
-                            }
-                            .frame(height: 30)
-                            .onTapGesture {
-                                if TapContent.self != EmptyView.self {
-                                    self.isOnTapPopoverPresentedIndex = labelIndex
+                            if let label = Label.findLabel(id: self.labelIds[labelIndex], among: self.projectLabels) {
+                                HStack {
+                                    Spacer()
+                                    LabelSelectorLabelView(label: label)
+                                    Spacer()
                                 }
+                                .frame(height: 30)
+                                .onTapGesture {
+                                    if TapContent.self != EmptyView.self {
+                                        self.isOnTapPopoverPresentedIndex = labelIndex
+                                    }
+                                }
+                                .onDrag { NSItemProvider(object: label.id.uuidString as NSString) }
+                                .contextMenu { self.contextMenuContent(labelIndex) }
+                                .popover(isPresented: self.generateIsOnTapPopoverPresented(labelIndex: labelIndex), content: { self.onTapContent(labelIndex) })
+                                .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
                             }
-                            .onDrag { NSItemProvider(object: self.labels[labelIndex].name as NSString) }
-                            .contextMenu { self.contextMenuContent(labelIndex) }
-                            .popover(isPresented: self.generateIsOnTapPopoverPresented(labelIndex: labelIndex), content: { self.onTapContent(labelIndex) })
-                            .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
                         }
                     }
                     .onInsert(of: [UTType.plainText]) { index, items in
                         items.forEach { item in
                             _ = item.loadObject(ofClass: String.self) { str, _ in
-                                if let labelName = str {
-                                    self.onDropAction(labelName, index)
+                                if let labelIdStr = str,
+                                   let labelId = UUID(uuidString: labelIdStr) {
+                                    self.onDropAction(labelId, index)
                                 }
                             }
                         }
@@ -209,11 +215,13 @@ struct LabelsListView<BottomContent: View, TapContent: View, ContextContent: Vie
 
 extension LabelsListView where BottomContent == EmptyView, TapContent == EmptyView, ContextContent == EmptyView {
     init(title: String? = nil,
-         labels: [Label],
-         onDropAction: @escaping (String, Int) -> Void) {
+         labelIds: [LabelID],
+         projectLabels: [Label],
+         onDropAction: @escaping (LabelID, Int) -> Void) {
         
         self.init(title: title,
-                  labels: labels,
+                  labelIds: labelIds,
+                  projectLabels: projectLabels,
                   onDropAction: onDropAction,
                   onTapContent: { _ in EmptyView() },
                   contextMenuContent: { _ in EmptyView() },
@@ -283,7 +291,8 @@ struct ProjectFormContent: View {
                     .frame(width: Self.labelsWidth, alignment: .leading)
                 
                 VStack(spacing: 0) {
-                    LabelsListView(labels: self.projectLabels,
+                    LabelsListView(labelIds: self.projectLabels.map(\.id),
+                                   projectLabels: self.projectLabels,
                                    onDropAction: self.moveLabel,
                                    onTapContent: { labelIndex in
                                     VStack(spacing: 8) {
@@ -338,9 +347,9 @@ struct ProjectFormContent: View {
         self.projectLabels.append(Label.nextAvailableLabel(labels: self.projectLabels))
     }
     
-    func moveLabel(withName name: String, to index: Int) {
+    func moveLabel(id: LabelID, to index: Int) {
         DispatchQueue.main.async {
-            if let taskLabelIndex = self.projectLabels.firstIndex(where: { $0.name == name }) {
+            if let taskLabelIndex = self.projectLabels.firstIndex(where: { $0.id == id }) {
                 self.projectLabels.move(fromOffsets: IndexSet(arrayLiteral: taskLabelIndex), toOffset: index)
             }
         }
@@ -495,11 +504,11 @@ struct VersionEditionModal: View {
 let taskModalSize = CGSize(width: 500, height: 680)
 
 struct TaskLabelSelector: View {
-    @Binding var selectedLabels: [Label]
-    let allLabels: [Label]
+    @Binding var selectedLabelIds: [LabelID]
+    let projectLabels: [Label]
     
-    var ҩavailableLabels: [Label] {
-        self.allLabels.substracting(other: self.selectedLabels)
+    var ҩavailableLabels: [LabelID] {
+        self.projectLabels.map(\.id).substracting(other: self.selectedLabelIds)
     }
     
     @State var isDropTargeted: Bool = false
@@ -509,45 +518,47 @@ struct TaskLabelSelector: View {
         HStack {
             // available
             LabelsListView(title: "Available",
-                           labels: self.ҩavailableLabels,
-                           onDropAction: { labelName, _ in self.removeLabel(withName: labelName) })
+                           labelIds: self.ҩavailableLabels,
+                           projectLabels: self.projectLabels,
+                           onDropAction: { labelId, _ in self.removeLabel(id: labelId) })
             
             // added
             LabelsListView(title: "Selected",
-                           labels: self.selectedLabels,
+                           labelIds: self.selectedLabelIds,
+                           projectLabels: self.projectLabels,
                            onDropAction: self.addLabel)
         }
     }
     
-    func addLabel(withName name: String, at index: Int) {
+    func addLabel(id: LabelID, at index: Int) {
         DispatchQueue.main.async {
-            if let availableLabel = self.ҩavailableLabels.first(where: { $0.name == name }) {
+            if let availableLabel = self.ҩavailableLabels.first(where: { $0 == id }) {
                 // inserting available label
-                if self.selectedLabels.isEmpty {
+                if self.selectedLabelIds.isEmpty {
                     // in case index would be outside bounds (because of empty labels)
-                    self.selectedLabels.append(availableLabel)
+                    self.selectedLabelIds.append(availableLabel)
                 } else {
-                    self.selectedLabels.insert(availableLabel, at: index)
+                    self.selectedLabelIds.insert(availableLabel, at: index)
                 }
-            } else if let taskLabelIndex = self.selectedLabels.firstIndex(where: { $0.name == name }) {
+            } else if let taskLabelIndex = self.selectedLabelIds.firstIndex(where: { $0 == id }) {
                 // label not available, we are moving a label in the same list
-                self.selectedLabels.move(fromOffsets: IndexSet(arrayLiteral: taskLabelIndex), toOffset: index)
+                self.selectedLabelIds.move(fromOffsets: IndexSet(arrayLiteral: taskLabelIndex), toOffset: index)
             }
         }
     }
     
-    func removeLabel(withName name: String) {
+    func removeLabel(id: LabelID) {
         DispatchQueue.main.async {
-            self.selectedLabels.remove(name, by: \.name)
+            self.selectedLabelIds.remove(id)
         }
     }
 }
 
 struct TaskFormContent: View {
-    let labels: [Label]
+    let projectLabels: [Label]
     
     @Binding var taskTitle: String
-    @Binding var taskLabels: [Label]
+    @Binding var taskLabels: [LabelID]
     @Binding var taskDescription: String
     @Binding var taskCost: Double?
     
@@ -572,7 +583,7 @@ struct TaskFormContent: View {
             HStack(alignment: .top, spacing: 20) {
                 Text("Labels")
                     .frame(width: Self.labelsWidth, alignment: .leading)
-                TaskLabelSelector(selectedLabels: self.$taskLabels, allLabels: self.labels)
+                TaskLabelSelector(selectedLabelIds: self.$taskLabels, projectLabels: self.projectLabels)
             }
             
             // cost is not saved when tapping the edit button if we use a formatter (maybe because optional?)
@@ -604,11 +615,11 @@ struct TaskFormContent: View {
 struct TaskCreationModal: View {
     @Binding var version: Version
     
-    let labels: [Label]
+    let projectLabels: [Label]
     let column: Column
     
     @State var taskTitle: String = ""
-    @State var taskLabels: [Label] = []
+    @State var taskLabels: [LabelID] = []
     @State var taskDescription: String = ""
     @State var taskCost: Double? = nil
     
@@ -617,7 +628,7 @@ struct TaskCreationModal: View {
             mode: .creation,
             titleText: "Add a new task",
             propertiesView: {
-                TaskFormContent(labels: self.labels,
+                TaskFormContent(projectLabels: self.projectLabels,
                                 taskTitle: self.$taskTitle,
                                 taskLabels: self.$taskLabels,
                                 taskDescription: self.$taskDescription,
@@ -627,7 +638,7 @@ struct TaskCreationModal: View {
             createOrEditCondition: !self.taskTitle.isEmpty) {
             // create
             let newTask = Task(title: self.taskTitle,
-                               labels: self.taskLabels,
+                               labelIds: self.taskLabels,
                                description: self.taskDescription,
                                cost: self.taskCost)
             self.version.addTask(column: self.column, newTask)
@@ -645,26 +656,26 @@ struct TaskCreationModal: View {
 struct TaskEditionModal: View {
     @Binding var version: Version
     
-    let labels: [Label]
+    let projectLabels: [Label]
     let column: Column
     
     let taskIndex: Int
     
     @State var taskTitle: String
-    @State var taskLabels: [Label]
+    @State var taskLabelIds: [LabelID]
     @State var taskDescription: String
     @State var taskCost: Double?
     
-    init(version: Binding<Version>, labels: [Label], column: Column, taskIndex: Int) {
+    init(version: Binding<Version>, projectLabels: [Label], column: Column, taskIndex: Int) {
         self._version = version
         
-        self.labels = labels
+        self.projectLabels = projectLabels
         self.column = column
         self.taskIndex = taskIndex
         
         let task = version.wrappedValue.tasksByColumn[column]![taskIndex]
         self._taskTitle = State(initialValue: task.title)
-        self._taskLabels = State(initialValue: task.labels)
+        self._taskLabelIds = State(initialValue: task.labelIds)
         self._taskDescription = State(initialValue: task.description)
         self._taskCost = State(initialValue: task.cost)
     }
@@ -674,9 +685,9 @@ struct TaskEditionModal: View {
             mode: .edition,
             titleText: "Edit task",
             propertiesView: {
-                TaskFormContent(labels: self.labels,
+                TaskFormContent(projectLabels: self.projectLabels,
                                 taskTitle: self.$taskTitle,
-                                taskLabels: self.$taskLabels,
+                                taskLabels: self.$taskLabelIds,
                                 taskDescription: self.$taskDescription,
                                 taskCost: self.$taskCost)
                 
@@ -684,14 +695,14 @@ struct TaskEditionModal: View {
             createOrEditCondition: !self.taskTitle.isEmpty) {
             // edit
             self.version.tasksByColumn[self.column]![self.taskIndex].title = self.taskTitle
-            self.version.tasksByColumn[self.column]![self.taskIndex].labels = self.taskLabels
+            self.version.tasksByColumn[self.column]![self.taskIndex].labelIds = self.taskLabelIds
             self.version.tasksByColumn[self.column]![self.taskIndex].description = self.taskDescription
             self.version.tasksByColumn[self.column]![self.taskIndex].cost = self.taskCost
             
         } resetAction: {
             // reset task title, labels, description, cost
             self.taskTitle = ""
-            self.taskLabels = []
+            self.taskLabelIds = []
             self.taskDescription = ""
             self.taskCost = nil
         }

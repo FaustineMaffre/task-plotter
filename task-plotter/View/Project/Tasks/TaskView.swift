@@ -8,13 +8,14 @@
 import SwiftUI
 
 struct TaskLabelView: View {
-    @State var label: Label
+    let label: Label
     
     var body: some View {
         Text(self.label.name)
             .font(.caption)
             .bold()
             .frame(height: 12)
+            .foregroundColor(Label.foregroundOn(background: self.label.color))
             .padding(EdgeInsets(top: 1, leading: 8, bottom: 1, trailing: 8))
             .background(RoundedRectangle(cornerRadius: 8)
                             .fill(Color(hex: self.label.color)))
@@ -89,18 +90,20 @@ struct TaskDueDateView: View {
 struct TaskView: View {
     @Binding var task: Task
     let column: Column
-    let labels: [Label]
+    let projectLabels: [Label]
     
     @State var isTaskEditionSheetPresented: Bool = false
     
     var body: some View {
         HStack {
             VStack(spacing: 4) {
-                if !self.task.labels.isEmpty {
+                if !self.task.labelIds.isEmpty {
                     // TODO9 wrap
                     HStack(spacing: 3) {
-                        ForEach(self.task.labels, id: \.name) {
-                            TaskLabelView(label: $0)
+                        ForEach(self.task.labelIds, id: \.self) {
+                            if let label = Label.findLabel(id: $0, among: self.projectLabels) {
+                                TaskLabelView(label: label)
+                            }
                         }
                         
                         Spacer()

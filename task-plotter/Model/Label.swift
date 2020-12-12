@@ -8,12 +8,21 @@
 import Foundation
 import SwiftUI
 
-// TODO0 add ID
-// TODO0 put IDs in tasks
+typealias LabelID = UUID
 
-struct Label: Hashable, Equatable {
+struct Label: Identifiable, Hashable, Equatable {
+    
+    let id: LabelID
+    
     var name: String
     var color: String
+    
+    init(id: LabelID = UUID(),
+         name: String, color: String) {
+        self.id = id
+        self.name = name
+        self.color = color
+    }
     
     static let huesCount = 16
     static let brightnessOrSaturationCount = 3
@@ -52,5 +61,9 @@ struct Label: Hashable, Equatable {
             } ?? availableColors[0]
         
         return Label(name: availableName, color: availableColor)
+    }
+    
+    static func findLabel(id: LabelID, among labels: [Label]) -> Label? {
+        labels.first { $0.id == id }
     }
 }
