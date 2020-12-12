@@ -56,7 +56,7 @@ struct TasksView: View {
                                     }
                                 } else {
                                     TaskView(task: self.generateTaskBinding(column: column, taskIndex: taskIndex), column: column, labels: self.labels)
-                                        .onTapGesture(count: 2) {
+                                        .onTapGesture {
                                             self.taskToEditIndex = taskIndex
                                             self.taskToCreateOrEditColumn = column
                                             self.taskCreationOrEditionSheetItem = .edition
