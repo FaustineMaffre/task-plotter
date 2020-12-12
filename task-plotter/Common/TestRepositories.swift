@@ -9,11 +9,11 @@ import SwiftUI
 
 class TestRepositories {
     static let repository: Repository = {
-        let labelModel = Label(name: "Model", color: Label.availableColors[19])
-        let labelUiUx = Label(name: "UI/UX", color: Label.availableColors[14])
-        let labelGraphics = Label(name: "Graphics", color: Label.availableColors[22])
-        let labelIO = Label(name: "File I/O", color: Label.availableColors[8])
-        let labelScene = Label(name: "Scene", color: Label.availableColors[3])
+        let labelModel = Label(name: "Model", color: Label.availableColors[41])
+        let labelUiUx = Label(name: "UI/UX", color: Label.availableColors[36])
+        let labelGraphics = Label(name: "Graphics", color: Label.availableColors[28])
+        let labelIO = Label(name: "File I/O", color: Label.availableColors[49])
+        let labelScene = Label(name: "Scene", color: Label.availableColors[30])
         let labels = [labelModel, labelUiUx, labelGraphics, labelIO, labelScene]
         
         var tasks = [Column.todo: [Task(title: "Blur and sharpen tools", labelIds: [labelModel.id, labelUiUx.id, labelGraphics.id, labelIO.id, labelScene.id], description: "Tools", cost: 8)],
