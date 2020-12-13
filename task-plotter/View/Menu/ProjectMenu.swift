@@ -19,7 +19,7 @@ struct ProjectMenu: View {
     var body: some View {
         HStack(spacing: 4) {
             // projects menu
-            MenuButton(self.repository.ҩselectedProject?.name ?? "") {
+            Menu(self.repository.ҩselectedProject?.name ?? "") {
                 ForEach(self.repository.projects, id: \.self) { project in
                     Button(project.name) {
                         self.repository.selectedProjectId = project.id

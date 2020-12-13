@@ -456,6 +456,7 @@ struct VersionCreationModal: View {
             createOrEditCondition: !self.versionNumber.isEmpty) {
             // create
             let newVersion = Version(number: self.versionNumber)
+            // TODO0 get points per day/working days from previous version?
             self.project.addVersion(newVersion, selectIt: true)
 
         } resetAction: {
@@ -591,23 +592,10 @@ struct TaskFormContent: View {
             HStack(spacing: 20) {
                 Text("Estimated cost")
                     .frame(width: Self.labelsWidth, alignment: .leading)
-                TextField("", text: self.generateCostBinding())
+                TextField("", text: self.$taskCost.stringBinding(formatter: Common.costFormatter))
+                    .frame(width: 60)
+                Spacer()
             }
-        }
-    }
-    
-    func generateCostBinding() -> Binding<String> {
-        Binding {
-            Common.costFormatter.string(for: self.taskCost) ?? ""
-        } set: {
-            if $0.isEmpty {
-                // empty cost string: no cost
-                self.taskCost = nil
-            } else if let parsedCost = Common.costFormatter.number(from: $0) {
-                // non-empty cost string that can be parsed: set cost
-                self.taskCost = parsedCost.doubleValue
-            }
-            // non-empty cost string that cannot be parsed: cost not updated
         }
     }
 }

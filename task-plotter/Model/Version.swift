@@ -37,7 +37,7 @@ struct Version: Identifiable, Hashable, Equatable {
     init(id: VersionID = UUID(),
          number: String,
          dueDate: Date? = nil,
-         pointsPerDay: Double? = nil, workingDays: [Day] = Day.all, excludedDates: [Date] = []) {
+         pointsPerDay: Double? = nil, workingDays: [Day] = Day.allCases, excludedDates: [Date] = []) {
         self.id = id
         self.number = number
         self.dueDate = dueDate
@@ -72,5 +72,37 @@ struct Version: Identifiable, Hashable, Equatable {
         self.tasksByColumn.first { _, tasks in
             tasks.contains { $0.id == id }
         }?.key
+    }
+    
+    func formattedWorkingDays() -> String {
+        var res: String
+        
+        if self.workingDays.isEmpty {
+            // no days
+            res = "None"
+            
+        } else if self.workingDays.containsAll(other: Day.allCases) {
+            // all days
+            res = "All days"
+            
+        } else if self.workingDays.containsAll(other: Day.weekDays) {
+            // all week days
+            res = "Week days"
+            
+            // + saturday or sunday (not both, otherwise we were in the first case)
+            if self.workingDays.contains(Day.saturday) {
+                res += " + \(Day.saturday.ҩshortName)"
+            } else if self.workingDays.contains(Day.sunday) {
+                res += " + \(Day.sunday.ҩshortName)"
+            }
+        } else {
+            // all days, separately
+            res = Day.allCases
+                .filter { self.workingDays.contains($0) }
+                .map { $0.ҩshortName }
+                .joined(separator: ", ")
+        }
+        
+        return res
     }
 }

@@ -16,6 +16,21 @@ enum Day: String, CaseIterable {
          saturday = "Saturday",
          sunday = "Sunday"
     
-    static let all: [Day] = Self.allCases
-    static let week: [Day] = [.monday, .tuesday, .wednesday, .thursday, .friday]
+    static let weekDays: [Day] = [.monday, .tuesday, .wednesday, .thursday, .friday]
+    
+    var ҩlongName: String {
+        self.rawValue
+    }
+    
+    var ҩshortName: String {
+        switch self {
+        case .monday: return "Mon."
+        case .tuesday: return "Tue."
+        case .wednesday: return "Wed."
+        case .thursday: return "Thu."
+        case .friday: return "Fri."
+        case .saturday: return "Sat."
+        case .sunday: return "Sun."
+        }
+    }
 }

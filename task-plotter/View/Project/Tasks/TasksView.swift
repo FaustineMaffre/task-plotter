@@ -8,10 +8,6 @@
 import SwiftUI
 import UniformTypeIdentifiers
 
-// TODO5 due date
-// TODO6 points per day, working days, excluded dates
-// TODO7 compute dates per task
-
 struct TasksView: View {
     @Binding var version: Version
     let projectLabels: [Label]
@@ -34,71 +30,12 @@ struct TasksView: View {
                 Spacer()
             }
             
+            VersionDatesView(version: self.$version)
+                .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
+            
             HStack(spacing: 8) {
                 ForEach(self.version.ҩtasksByColumnArray, id: \.0) { column, tasks in
-                    VStack(spacing: 0) {
-                        HStack {
-                            Text(column.rawValue)
-                                .smallTitleStyle()
-                                .padding(10)
-                            
-                            Spacer()
-                        }
-                        
-                        List {
-                            ForEach(tasks.isEmpty ? [-1] : Array(tasks.indices), id: \.self) { taskIndex in
-                                if taskIndex < 0 {
-                                    HStack {
-                                        Spacer()
-                                        Text("No task")
-                                            .foregroundColor(Color.white.opacity(0.2))
-                                        Spacer()
-                                    }
-                                } else {
-                                    TaskView(task: self.generateTaskBinding(column: column, taskIndex: taskIndex),
-                                             column: column,
-                                             projectLabels: self.projectLabels)
-                                        .onTapGesture {
-                                            self.taskToEditIndex = taskIndex
-                                            self.taskToCreateOrEditColumn = column
-                                            self.taskCreationOrEditionSheetItem = .edition
-                                        }
-                                        .onDrag { NSItemProvider(object: tasks[taskIndex].id.uuidString as NSString) }
-                                        .contextMenu {
-                                            Button("Delete") {
-                                                self.taskToDeleteColumn = column
-                                                self.taskToDeleteIndex = taskIndex
-                                                self.isTaskDeletionAlertPresented = true
-                                            }
-                                        }
-                                        .listRowInsets(EdgeInsets(top: 3, leading: 0, bottom: 3, trailing: 0))
-                                }
-                            }
-                            .onInsert(of: [UTType.plainText]) { index, items in
-                                items.forEach { item in
-                                    _ = item.loadObject(ofClass: String.self) { str, _ in
-                                        if let taskIdStr = str,
-                                           let taskId = UUID(uuidString: taskIdStr) {
-                                            self.moveTask(taskId: taskId, newColumn: column, index: index)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        .listStyle(PlainListStyle())
-                        
-                        HStack {
-                            CreateDeleteEditButton(image: Image(systemName: "plus"), text: "Add a task") {
-                                self.taskToCreateOrEditColumn = column
-                                self.taskCreationOrEditionSheetItem = .creation
-                            }
-                            Spacer()
-                        }
-                    }
-                    .frame(width: 320)
-                    .background(RoundedRectangle(cornerRadius: 8)
-                                    .fillAndStroke(fill: Color(NSColor.underPageBackgroundColor),
-                                                   stroke: Color.white.opacity(0.1)))
+                    self.columView(column: column, tasks: tasks)
                 }
             }
             .padding(10)
@@ -120,6 +57,72 @@ struct TasksView: View {
                          version: self.$version,
                          column: self.taskToDeleteColumn,
                          taskToDeleteIndex: self.taskToDeleteIndex)
+    }
+    
+    func columView(column: Column, tasks: [Task]) -> some View {
+        VStack(spacing: 0) {
+            HStack {
+                Text(column.rawValue)
+                    .smallTitleStyle()
+                    .padding(10)
+                
+                Spacer()
+            }
+            
+            List {
+                ForEach(tasks.isEmpty ? [-1] : Array(tasks.indices), id: \.self) { taskIndex in
+                    if taskIndex < 0 {
+                        HStack {
+                            Spacer()
+                            Text("No task")
+                                .foregroundColor(Color.white.opacity(0.2))
+                            Spacer()
+                        }
+                    } else {
+                        TaskView(task: self.generateTaskBinding(column: column, taskIndex: taskIndex),
+                                 column: column,
+                                 projectLabels: self.projectLabels)
+                            .onTapGesture {
+                                self.taskToEditIndex = taskIndex
+                                self.taskToCreateOrEditColumn = column
+                                self.taskCreationOrEditionSheetItem = .edition
+                            }
+                            .onDrag { NSItemProvider(object: tasks[taskIndex].id.uuidString as NSString) }
+                            .contextMenu {
+                                Button("Delete") {
+                                    self.taskToDeleteColumn = column
+                                    self.taskToDeleteIndex = taskIndex
+                                    self.isTaskDeletionAlertPresented = true
+                                }
+                            }
+                            .listRowInsets(EdgeInsets(top: 3, leading: 0, bottom: 3, trailing: 0))
+                    }
+                }
+                .onInsert(of: [UTType.plainText]) { index, items in
+                    items.forEach { item in
+                        _ = item.loadObject(ofClass: String.self) { str, _ in
+                            if let taskIdStr = str,
+                               let taskId = UUID(uuidString: taskIdStr) {
+                                self.moveTask(taskId: taskId, newColumn: column, index: index)
+                            }
+                        }
+                    }
+                }
+            }
+            .listStyle(PlainListStyle())
+            
+            HStack {
+                CreateDeleteEditButton(image: Image(systemName: "plus"), text: "Add a task") {
+                    self.taskToCreateOrEditColumn = column
+                    self.taskCreationOrEditionSheetItem = .creation
+                }
+                Spacer()
+            }
+        }
+        .frame(width: 320)
+        .background(RoundedRectangle(cornerRadius: 8)
+                        .fillAndStroke(fill: Color(NSColor.underPageBackgroundColor),
+                                       stroke: Color.white.opacity(0.1)))
     }
     
     func generateTaskBinding(column: Column, taskIndex: Int) -> Binding<Task> {

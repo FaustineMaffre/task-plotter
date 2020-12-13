@@ -13,4 +13,10 @@ class Common {
         res.numberStyle = .decimal
         return res
     }()
+    
+    static let pointsPerDayFormatter: NumberFormatter = {
+        var res = NumberFormatter()
+        res.numberStyle = .decimal
+        return res
+    }()
 }
