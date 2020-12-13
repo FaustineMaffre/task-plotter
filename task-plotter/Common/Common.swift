@@ -19,4 +19,11 @@ class Common {
         res.numberStyle = .decimal
         return res
     }()
+    
+    static let dueDateFormatter: DateFormatter = {
+        var res = DateFormatter()
+        res.dateStyle = .medium
+        res.timeStyle = .none
+        return res
+    }()
 }

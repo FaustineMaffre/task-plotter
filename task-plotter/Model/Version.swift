@@ -74,12 +74,12 @@ struct Version: Identifiable, Hashable, Equatable {
         }?.key
     }
     
-    func formattedWorkingDays() -> String {
+    func formattedWorkingDays(emptyDaysText: String) -> String {
         var res: String
         
         if self.workingDays.isEmpty {
             // no days
-            res = "None"
+            res = emptyDaysText
             
         } else if self.workingDays.containsAll(other: Day.allCases) {
             // all days
