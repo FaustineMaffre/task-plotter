@@ -455,8 +455,14 @@ struct VersionCreationModal: View {
             }, modalSize: versionModalSize,
             createOrEditCondition: !self.versionNumber.isEmpty) {
             // create
-            let newVersion = Version(number: self.versionNumber)
-            // TODO0 get points per day/working days from previous version?
+            var newVersion = Version(number: self.versionNumber)
+            
+            // get points per day/working days from previous version, if there is one
+            if let lastVersion = self.project.versions.last {
+                newVersion.pointsPerDay = lastVersion.pointsPerDay
+                newVersion.workingDays = lastVersion.workingDays
+            }
+            
             self.project.addVersion(newVersion, selectIt: true)
 
         } resetAction: {
