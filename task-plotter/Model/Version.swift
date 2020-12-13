@@ -24,8 +24,8 @@ struct Version: Identifiable, Hashable, Equatable {
             }
         }
     }
-    var workingDays: [Day]
-    var excludedDates: [Date]
+    var workingDays: Set<Day>
+    var excludedDates: Set<Date>
     
     var tasksByColumn: [Column: [Task]] = Dictionary(uniqueKeysWithValues: Column.allCases.map { ($0, []) })
     
@@ -37,7 +37,7 @@ struct Version: Identifiable, Hashable, Equatable {
     init(id: VersionID = UUID(),
          number: String,
          dueDate: Date? = nil,
-         pointsPerDay: Double? = nil, workingDays: [Day] = Day.allCases, excludedDates: [Date] = []) {
+         pointsPerDay: Double? = nil, workingDays: Set<Day> = Day.allDays, excludedDates: Set<Date> = []) {
         self.id = id
         self.number = number
         self.dueDate = dueDate
@@ -81,11 +81,11 @@ struct Version: Identifiable, Hashable, Equatable {
             // no days
             res = emptyDaysText
             
-        } else if self.workingDays.containsAll(other: Day.allCases) {
+        } else if self.workingDays == Day.allDays {
             // all days
             res = "All days"
             
-        } else if self.workingDays.containsAll(other: Day.weekDays) {
+        } else if self.workingDays.isSuperset(of: Day.weekDays) { // .containsAll(other: Day.weekDays) {
             // all week days
             res = "Week days"
             
@@ -101,6 +101,23 @@ struct Version: Identifiable, Hashable, Equatable {
                 .filter { self.workingDays.contains($0) }
                 .map { $0.ҩshortName }
                 .joined(separator: ", ")
+        }
+        
+        return res
+    }
+    
+    func formattedExcludedDates(emptyDaysText: String) -> String {
+        // TODOq0 ranges
+        var res: String
+        
+        if self.excludedDates.isEmpty {
+            res = emptyDaysText
+        } else {
+            res = self.excludedDates
+                .sorted()
+                .map {
+                    Common.excludedDateFormatter.string(from: $0)
+                }.joined(separator: ", ")
         }
         
         return res

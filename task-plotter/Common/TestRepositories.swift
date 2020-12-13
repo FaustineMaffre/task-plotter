@@ -29,7 +29,7 @@ class TestRepositories {
         tasks[Column.doing]?[2].expectedDueDate = Date() - TimeInterval(60*60*25) // 25 hours before now
         tasks[Column.done]?[0].expectedDueDate = Date() - TimeInterval(60*60*55) // 55 hours before now
         
-        var version10 = Version(number: "1.0", pointsPerDay: 4, workingDays: Day.allCases, excludedDates: [])
+        var version10 = Version(number: "1.0", pointsPerDay: 4, workingDays: Day.allDays, excludedDates: [])
         version10.tasksByColumn = tasks
         let version11 = Version(number: "1.1")
         

@@ -20,6 +20,12 @@ class Common {
         return res
     }()
     
+    static let excludedDateFormatter: DateFormatter = {
+        var res = DateFormatter()
+        res.dateFormat = "dd MMM"
+        return res
+    }()
+    
     static let dueDateFormatter: DateFormatter = {
         var res = DateFormatter()
         res.dateStyle = .medium

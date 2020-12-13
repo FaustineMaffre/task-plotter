@@ -30,8 +30,4 @@ extension Array where Element: Equatable {
         
         return res
     }
-    
-    func containsAll(other: Array<Element>) -> Bool {
-        other.allSatisfy { self.contains($0) }
-    }
 }

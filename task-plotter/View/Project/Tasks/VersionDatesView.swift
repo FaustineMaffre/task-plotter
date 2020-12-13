@@ -16,6 +16,8 @@ struct VersionDatesView: View {
     @State var isExcludedDatesPopoverPresented: Bool = false
     @State var isDueDatePopoverPresented: Bool = false
     
+    @State var selectedForExcludedDates: Date? = nil
+    
     var body: some View {
         HStack(spacing: 16) {
             Spacer()
@@ -45,18 +47,59 @@ struct VersionDatesView: View {
                 }
             }
             
-            // TODOq excluded dates
+            // excluded dates
             HStack {
                 Text("Excluded dates:")
-                Button {
-                    self.isExcludedDatesPopoverPresented = true
-                } label: {
-                    Text("")
-                }
-                .popover(isPresented: self.$isExcludedDatesPopoverPresented) {
-                    Text("Excluded")
-                    //                DatePicker("", selection: self.$version.dueDate)
-                    //                .padding(10)
+                
+                HStack(spacing: 0) {
+                    // add/remove
+                    Button {
+                        self.isExcludedDatesPopoverPresented = true
+                    } label: {
+                        Text(self.version.formattedExcludedDates(emptyDaysText: "None"))
+                    }
+                    .popover(isPresented: self.$isExcludedDatesPopoverPresented) {
+                        VStack(spacing: 6) {
+                            DatePicker("", selection: self.generateSelectedForExcludedDatesBinding(), displayedComponents: [.date])
+                                .labelsHidden()
+                                .datePickerStyle(GraphicalDatePickerStyle())
+                            
+                            HStack {
+                                Button {
+                                    if let selectedDate = self.selectedForExcludedDates {
+                                        self.version.excludedDates.insert(selectedDate)
+                                    }
+                                } label: {
+                                    Image(systemName: "plus")
+                                        .frame(width: 20, height: 20)
+                                        .contentShape(Rectangle())
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                                
+                                Button {
+                                    if let selectedDate = self.selectedForExcludedDates {
+                                        self.version.excludedDates.remove(selectedDate)
+                                    }
+                                } label: {
+                                    Image(systemName: "minus")
+                                        .frame(width: 20, height: 20)
+                                        .contentShape(Rectangle())
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                            }
+                        }
+                        .padding(10)
+                    }
+                    
+                    // clear
+                    Button {
+                        self.version.excludedDates.removeAll()
+                    } label: {
+                        Image(systemName: "multiply")
+                            .frame(width: 16, height: 16)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(PlainButtonStyle())
                 }
             }
             
@@ -101,10 +144,18 @@ struct VersionDatesView: View {
             self.version.workingDays.contains(day)
         } set: {
             if $0 {
-                self.version.workingDays.append(day)
+                self.version.workingDays.insert(day)
             } else {
                 self.version.workingDays.remove(day)
             }
+        }
+    }
+    
+    func generateSelectedForExcludedDatesBinding() -> Binding<Date> {
+        Binding<Date> {
+            self.selectedForExcludedDates ?? Date()
+        } set: { newDate in
+            self.selectedForExcludedDates = newDate
         }
     }
     
