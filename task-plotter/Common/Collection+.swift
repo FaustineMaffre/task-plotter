@@ -31,3 +31,46 @@ extension Array where Element: Equatable {
         return res
     }
 }
+
+extension Date {
+    func isSameDay(than other: Date) -> Bool {
+        Calendar.current.compare(self, to: other, toGranularity: .day) == .orderedSame
+    }
+}
+
+extension Set where Element == Date {
+    func toRangesOfDays() -> [ClosedRange<Date>] {
+        var res = [ClosedRange<Date>]()
+        
+        if !self.isEmpty {
+            let sortedDates = self.sorted()
+            
+            var currentStart: Date = sortedDates[0]
+            var currentEnd: Date = sortedDates[0]
+            var i: Int = 1
+            
+            while i < sortedDates.count {
+                let date = sortedDates[i]
+
+                if date.isSameDay(than: currentEnd.addingTimeInterval(24*60*60)) {
+                    // current date is one day after end date: it is part of the same range
+                    currentEnd = date
+                    
+                } else {
+                    // current date is not one day after end date: new range
+                    res.append(currentStart...currentEnd)
+                    
+                    currentStart = sortedDates[i]
+                    currentEnd = sortedDates[i]
+                }
+                
+                i += 1
+            }
+            
+            // append last range
+            res.append(currentStart...currentEnd)
+        }
+        
+        return res
+    }
+}

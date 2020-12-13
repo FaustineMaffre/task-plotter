@@ -107,16 +107,21 @@ struct Version: Identifiable, Hashable, Equatable {
     }
     
     func formattedExcludedDates(emptyDaysText: String) -> String {
-        // TODOq0 ranges
         var res: String
         
         if self.excludedDates.isEmpty {
             res = emptyDaysText
         } else {
-            res = self.excludedDates
-                .sorted()
-                .map {
-                    Common.excludedDateFormatter.string(from: $0)
+            let dateRanges = self.excludedDates.toRangesOfDays()
+            
+            res = dateRanges
+                .map { range in
+                    if range.lowerBound.isSameDay(than: range.upperBound) {
+                        return Common.excludedDateFormatter.string(from: range.lowerBound)
+                        
+                    } else {
+                        return "\(Common.excludedDateFormatter.string(from: range.lowerBound))-\(Common.excludedDateFormatter.string(from: range.upperBound))"
+                    }
                 }.joined(separator: ", ")
         }
         
