@@ -35,6 +35,8 @@ struct Version: Identifiable, Hashable, Equatable {
     var workingHours: HourInterval
     var excludedDates: Set<Date>
     
+    var expectedStartDate: Date? = nil
+    
     var tasksByColumn: [Column: [Task]] = Dictionary(uniqueKeysWithValues: Column.allCases.map { ($0, []) })
     
     var ҩtasksByColumnArray: [(Column, [Task])] {
@@ -153,6 +155,7 @@ struct Version: Identifiable, Hashable, Equatable {
             
             var costsSum: Double = 0
             
+            // tasks due dates
             tasksLatestFirst.forEach { column, taskIndex in
                 if let cost = self.tasksByColumn[column]![taskIndex].cost {
                     self.tasksByColumn[column]![taskIndex].expectedDueDate =
@@ -163,6 +166,12 @@ struct Version: Identifiable, Hashable, Equatable {
                     costsSum += cost
                 }
             }
+            
+            // start date
+            self.expectedStartDate =
+                Self.computeTaskExpectedDueDate(dueDate: dueDate, costsSum: costsSum,
+                                                pointsPerDay: pointsPerDay, workingDays: self.workingDays, workingHours: self.workingHours,
+                                                excludedDates: self.excludedDates)
         }
     }
     

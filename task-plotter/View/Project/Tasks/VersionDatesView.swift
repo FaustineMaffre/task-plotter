@@ -7,8 +7,6 @@
 
 import SwiftUI
 
-// TODO0 compute day to start along with tasks dates
-
 struct VersionDatesView: View {
     @Binding var version: Version
     
@@ -166,6 +164,10 @@ struct VersionDatesView: View {
                     self.version.computeTaskDates()
                 }
                 .disabled(!self.version.canComputeTaskDates())
+                
+                if let expectedStartDate = self.version.expectedStartDate {
+                    DueDateView(dueDate: expectedStartDate, column: nil)
+                }
             }
         }
     }

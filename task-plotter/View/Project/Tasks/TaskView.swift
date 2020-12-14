@@ -37,14 +37,14 @@ struct TaskCostView: View {
     }
 }
 
-struct TaskDueDateView: View {
-    @Binding var task: Task
-    let column: Column
+struct DueDateView: View {
+    let dueDate: Date?
+    let column: Column?
     
     var ҩbackgroundColor: Color {
         let now = Date()
         
-        guard let dueDate = self.task.expectedDueDate else {
+        guard let dueDate = self.dueDate else {
             return Color.clear
         }
         
@@ -77,7 +77,7 @@ struct TaskDueDateView: View {
     }()
     
     var body: some View {
-        if let dueDate = self.task.expectedDueDate {
+        if let dueDate = self.dueDate {
             Text(Self.dueDateFormatter.string(from: dueDate))
                 .padding(EdgeInsets(top: 2, leading: 10, bottom: 2, trailing: 10))
                 .background(RoundedRectangle(cornerRadius: 8).fill(self.ҩbackgroundColor))
@@ -125,7 +125,7 @@ struct TaskView: View {
                     .frame(height: 2)
                 
                 HStack {
-                    TaskDueDateView(task: self.$task, column: self.column)
+                    DueDateView(dueDate: self.task.expectedDueDate, column: self.column)
                     Spacer()
                 }
             }
