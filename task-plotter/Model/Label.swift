@@ -26,6 +26,7 @@ struct Label: Identifiable, Hashable, Equatable, Codable {
     
     static let huesCount = 15
     static let huesShift = 0.05
+    static let brightnessShift = 0.1
     static let brightnessOrSaturationCount = 3
     static let brightnessAndSaturationCount = Self.brightnessOrSaturationCount * 2 - 1
     static let availableColors: [String] =
@@ -33,13 +34,15 @@ struct Label: Identifiable, Hashable, Equatable, Codable {
             let b = bas < Self.brightnessOrSaturationCount ? Self.brightnessOrSaturationCount : Self.brightnessAndSaturationCount - bas
             let s = bas >= Self.brightnessOrSaturationCount ? Self.brightnessOrSaturationCount : bas + 1
             
-            let brightness = Double(b) / Double(Self.brightnessOrSaturationCount)
+            let brightness = (Double(b) / Double(Self.brightnessOrSaturationCount)) - Self.brightnessShift
             let saturation = Double(s) / Double(Self.brightnessOrSaturationCount)
+            
+            let grayBrightness = 1 - (Double(bas) / Double(Self.brightnessAndSaturationCount - 1))
             
             return (0..<Self.huesCount).map { (h: Int) -> String in
                 let hue = (Self.huesShift + Double(h) / Double(Self.huesCount)).truncatingRemainder(dividingBy: 1)
                 return Color(hue: hue, saturation: saturation, brightness: brightness).ҩhex
-            }
+            } + [Color(hue: 0, saturation: 0, brightness: grayBrightness).ҩhex] // gray
         }
     
     static func foregroundOn(background: String) -> Color {

@@ -236,7 +236,7 @@ let projectModalSize = CGSize(width: 320, height: 420)
 struct AvailableLabelColorsSelector: View {
     @Binding var selectedColor: String
     
-    static let elementsByRow = Label.huesCount
+    static let elementsByRow = Label.huesCount + 1
     var rowCounts: Int {
         Label.availableColors.count / Self.elementsByRow
     }
