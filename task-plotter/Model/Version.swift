@@ -14,7 +14,14 @@ struct Version: Identifiable, Hashable, Equatable {
     
     var number: String
     
-    var dueDate: Date?
+    var dueDate: Date? {
+        didSet {
+            if let dueDate = self.dueDate {
+                // set hour to 23h59
+                self.dueDate = dueDate.setting(hours: 23, minutes: 59)
+            }
+        }
+    }
     
     var pointsPerDay: Double? {
         didSet {
@@ -127,6 +134,60 @@ struct Version: Identifiable, Hashable, Equatable {
                     }
                 }.joined(separator: ", ")
         }
+        
+        return res
+    }
+    
+    func canComputeTaskDates() -> Bool {
+        self.dueDate != nil && self.pointsPerDay != nil && !self.workingDays.isEmpty
+    }
+    
+    mutating func computeTaskDates() {
+        if self.canComputeTaskDates(),
+           let dueDate = self.dueDate,
+           let pointsPerDay = self.pointsPerDay,
+           !self.workingDays.isEmpty {
+            let tasksLatestFirst: [(Column, Int)] =
+                self.tasksByColumn[.todo]!.indices.reversed().map { (.todo, $0) } +
+                self.tasksByColumn[.doing]!.indices.reversed().map { (.doing, $0) }
+            
+            var costsSum: Double = 0
+            
+            tasksLatestFirst.forEach { column, taskIndex in
+                if let cost = self.tasksByColumn[column]![taskIndex].cost {
+                    self.tasksByColumn[column]![taskIndex].expectedDueDate =
+                        Self.computeTaskExpectedDueDate(dueDate: dueDate, costsSum: costsSum,
+                                                        pointsPerDay: pointsPerDay, workingDays: self.workingDays, workingHours: self.workingHours,
+                                                        excludedDates: self.excludedDates)
+                    
+                    costsSum += cost
+                }
+            }
+        }
+    }
+    
+    private static func computeTaskExpectedDueDate(dueDate: Date, costsSum: Double,
+                                                   pointsPerDay: Double, workingDays: Set<Day>, workingHours: HourInterval,
+                                                   excludedDates: Set<Date>) -> Date {
+        let daysCount = costsSum / pointsPerDay
+        let fullDaysCount = Int(daysCount)
+        let partialDayRatio = daysCount - Double(fullDaysCount)
+        
+        var res = dueDate
+        
+        // substract full days
+        (0..<fullDaysCount).forEach { _ in
+            res = res.substractingOneDay()
+            
+            // avoid excluded dates and non-working days
+            while excludedDates.contains(where: { res.isSameDay(than: $0) }) || !workingDays.contains(res.day()) {
+                res = res.substractingOneDay()
+            }
+        }
+        
+        // substract partial day
+        let (ratioHours, ratioMinutes) = workingHours.ratio(1 - partialDayRatio)
+        res = res.setting(hours: ratioHours, minutes: ratioMinutes)
         
         return res
     }

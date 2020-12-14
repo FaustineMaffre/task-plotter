@@ -35,3 +35,11 @@ enum Day: String, CaseIterable {
         }
     }
 }
+
+extension Date {
+    func day() -> Day {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "EEEE"
+        return Day(rawValue: dateFormatter.string(from: self))!
+    }
+}

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// TODO7 compute dates per task
+// TODO0 compute day to start along with tasks dates
 
 struct VersionDatesView: View {
     @Binding var version: Version
@@ -151,6 +151,12 @@ struct VersionDatesView: View {
                     .buttonStyle(PlainButtonStyle())
                 }
             }
+            
+            // compute dates
+            Button("Compute tasks dates") {
+                self.version.computeTaskDates()
+            }
+            .disabled(!self.version.canComputeTaskDates())
         }
     }
     

@@ -52,11 +52,11 @@ struct TaskDueDateView: View {
             // done
             return Color.green.opacity(0.5)
             
-        } else if now <= dueDate.removingOneDay() {
+        } else if now <= dueDate.substractingOneDay() {
             // due in more than 24 hours
             return Color.black.opacity(0.2)
             
-        } else if dueDate.removingOneDay() < now && now <= dueDate {
+        } else if dueDate.substractingOneDay() < now && now <= dueDate {
             // due in less than 24 hours
             return Color.orange.opacity(0.5)
             

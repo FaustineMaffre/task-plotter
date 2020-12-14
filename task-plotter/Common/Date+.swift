@@ -12,11 +12,15 @@ extension Date {
         self.addingTimeInterval(24*60*60)
     }
     
-    func removingOneDay() -> Date {
+    func substractingOneDay() -> Date {
         self.addingTimeInterval(-24*60*60)
     }
     
     func isSameDay(than other: Date) -> Bool {
         Calendar.current.compare(self, to: other, toGranularity: .day) == .orderedSame
+    }
+    
+    func setting(hours: Int, minutes: Int) -> Date {
+        Calendar.current.date(bySettingHour: hours, minute: minutes, second: 0, of: self)!
     }
 }
