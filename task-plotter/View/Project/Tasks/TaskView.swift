@@ -96,15 +96,14 @@ struct TaskView: View {
         HStack {
             VStack(spacing: 4) {
                 if !self.task.labelIds.isEmpty {
-                    // TODO9 wrap
-                    HStack(spacing: 3) {
-                        ForEach(self.task.labelIds, id: \.self) {
-                            if let label = Label.findLabel(id: $0, among: self.projectLabels) {
+                    HStackWrap(elements: self.task.labelIds, horizontalSpacing: 3, verticalSpacing: 2) { _, labelId in
+                        Group {
+                            if let label = Label.findLabel(id: labelId, among: self.projectLabels) {
                                 TaskLabelView(label: label)
+                            } else {
+                                EmptyView()
                             }
                         }
-                        
-                        Spacer()
                     }
                 }
                 
