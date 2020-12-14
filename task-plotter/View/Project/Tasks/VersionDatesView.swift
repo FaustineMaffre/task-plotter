@@ -18,20 +18,22 @@ struct VersionDatesView: View {
     
     @State var selectedForExcludedDates: Date? = nil
     
+    static let spaceBetweenItems: CGFloat = 12
+    
     var body: some View {
-        HStack(spacing: 16) {
-            Spacer()
-            
-            // points per day
-            HStack {
+        HStack(spacing: 6) {
+            Group {
                 Text("Points per day:")
+                
                 TextField("", text: self.$version.pointsPerDay.stringBinding(formatter: Common.pointsPerDayFormatter))
                     .frame(width: 60)
+                
+                Spacer().frame(width: Self.spaceBetweenItems)
             }
-            
-            // working days
-            HStack {
+              
+            Group {
                 Text("Working days:")
+                
                 Button {
                     self.isWorkingDaysPopoverPresented = true
                 } label: {
@@ -45,10 +47,11 @@ struct VersionDatesView: View {
                     }
                     .padding(10)
                 }
+                
+                Spacer().frame(width: Self.spaceBetweenItems)
             }
-            
-            // working hours
-            HStack {
+                
+            Group {
                 Text("Working hours:")
                 
                 HStack(spacing: 0) {
@@ -60,10 +63,11 @@ struct VersionDatesView: View {
                         .multilineTextAlignment(.leading)
                         .frame(width: 30)
                 }
+                
+                Spacer().frame(width: Self.spaceBetweenItems)
             }
-            
-            // excluded dates
-            HStack {
+               
+            Group {
                 Text("Excluded dates:")
                 
                 HStack(spacing: 0) {
@@ -116,10 +120,12 @@ struct VersionDatesView: View {
                     }
                     .buttonStyle(PlainButtonStyle())
                 }
+                
+                Spacer().frame(width: Self.spaceBetweenItems)
             }
-            
-            // due date
-            HStack {
+              
+            Group {
+                // due date
                 Text("Due date:")
                 
                 HStack(spacing: 0) {
@@ -150,13 +156,17 @@ struct VersionDatesView: View {
                     }
                     .buttonStyle(PlainButtonStyle())
                 }
+                
+                Spacer().frame(width: Self.spaceBetweenItems)
             }
-            
-            // compute dates
-            Button("Compute tasks dates") {
-                self.version.computeTaskDates()
+                
+            Group {
+                // compute dates
+                Button("Compute tasks dates") {
+                    self.version.computeTaskDates()
+                }
+                .disabled(!self.version.canComputeTaskDates())
             }
-            .disabled(!self.version.canComputeTaskDates())
         }
     }
     
