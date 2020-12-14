@@ -32,12 +32,6 @@ extension Array where Element: Equatable {
     }
 }
 
-extension Date {
-    func isSameDay(than other: Date) -> Bool {
-        Calendar.current.compare(self, to: other, toGranularity: .day) == .orderedSame
-    }
-}
-
 extension Set where Element == Date {
     func toRangesOfDays() -> [ClosedRange<Date>] {
         var res = [ClosedRange<Date>]()
@@ -52,7 +46,7 @@ extension Set where Element == Date {
             while i < sortedDates.count {
                 let date = sortedDates[i]
 
-                if date.isSameDay(than: currentEnd.addingTimeInterval(24*60*60)) {
+                if date.isSameDay(than: currentEnd.addingOneDay()) {
                     // current date is one day after end date: it is part of the same range
                     currentEnd = date
                     

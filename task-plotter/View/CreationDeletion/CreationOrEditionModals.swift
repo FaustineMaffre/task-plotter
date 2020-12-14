@@ -457,10 +457,11 @@ struct VersionCreationModal: View {
             // create
             var newVersion = Version(number: self.versionNumber)
             
-            // get points per day/working days from previous version, if there is one
+            // get points per day/working days/hours from previous version, if there is one
             if let lastVersion = self.project.versions.last {
                 newVersion.pointsPerDay = lastVersion.pointsPerDay
                 newVersion.workingDays = lastVersion.workingDays
+                newVersion.workingHours = lastVersion.workingHours
             }
             
             self.project.addVersion(newVersion, selectIt: true)

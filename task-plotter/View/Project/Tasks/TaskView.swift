@@ -48,21 +48,19 @@ struct TaskDueDateView: View {
             return Color.clear
         }
         
-        let oneHour = TimeInterval(60*60)
-        
         if self.column == .done {
             // done
             return Color.green.opacity(0.5)
             
-        } else if now <= dueDate - 24 * oneHour {
+        } else if now <= dueDate.removingOneDay() {
             // due in more than 24 hours
             return Color.black.opacity(0.2)
             
-        } else if dueDate - 24 * oneHour < now && now <= dueDate {
+        } else if dueDate.removingOneDay() < now && now <= dueDate {
             // due in less than 24 hours
             return Color.orange.opacity(0.5)
             
-        } else if dueDate < now && now <= dueDate + 24 * oneHour {
+        } else if dueDate < now && now <= dueDate.addingOneDay() {
             // due since less than 24 hours
             return Color.red.opacity(0.5)
         } else {

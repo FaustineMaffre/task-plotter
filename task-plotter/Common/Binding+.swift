@@ -23,3 +23,13 @@ extension Binding where Value == Double? {
         }
     }
 }
+
+extension Binding where Value == Int {
+    func doubleBinding(rounding: Bool = false) -> Binding<Double> {
+        Binding<Double> {
+            Double(self.wrappedValue)
+        } set: {
+            self.wrappedValue = Int(rounding ? round($0) : $0)
+        }
+    }
+}

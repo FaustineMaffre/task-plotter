@@ -20,6 +20,12 @@ class Common {
         return res
     }()
     
+    static let workingHourFormatter: NumberFormatter = {
+        var res = NumberFormatter()
+        res.numberStyle = .none
+        return res
+    }()
+    
     static let excludedDateFormatter: DateFormatter = {
         var res = DateFormatter()
         res.dateFormat = "dd MMM"

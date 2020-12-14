@@ -25,6 +25,7 @@ struct Version: Identifiable, Hashable, Equatable {
         }
     }
     var workingDays: Set<Day>
+    var workingHours: HourInterval
     var excludedDates: Set<Date>
     
     var tasksByColumn: [Column: [Task]] = Dictionary(uniqueKeysWithValues: Column.allCases.map { ($0, []) })
@@ -37,12 +38,14 @@ struct Version: Identifiable, Hashable, Equatable {
     init(id: VersionID = UUID(),
          number: String,
          dueDate: Date? = nil,
-         pointsPerDay: Double? = nil, workingDays: Set<Day> = Day.allDays, excludedDates: Set<Date> = []) {
+         pointsPerDay: Double? = nil,
+         workingDays: Set<Day> = Day.allDays, workingHours: HourInterval = HourInterval.allHours, excludedDates: Set<Date> = []) {
         self.id = id
         self.number = number
         self.dueDate = dueDate
         self.pointsPerDay = pointsPerDay
         self.workingDays = workingDays
+        self.workingHours = workingHours
         self.excludedDates = excludedDates
     }
     

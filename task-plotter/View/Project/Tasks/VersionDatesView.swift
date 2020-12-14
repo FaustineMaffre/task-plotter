@@ -47,6 +47,21 @@ struct VersionDatesView: View {
                 }
             }
             
+            // working hours
+            HStack {
+                Text("Working hours:")
+                
+                HStack(spacing: 0) {
+                    TextField("", value: self.$version.workingHours.startHour.doubleBinding(), formatter: Common.workingHourFormatter)
+                        .multilineTextAlignment(.trailing)
+                        .frame(width: 30)
+                    Text("-")
+                    TextField("", value: self.$version.workingHours.endHour.doubleBinding(), formatter: Common.workingHourFormatter)
+                        .multilineTextAlignment(.leading)
+                        .frame(width: 30)
+                }
+            }
+            
             // excluded dates
             HStack {
                 Text("Excluded dates:")
