@@ -43,7 +43,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		9D0C2BC7257E3CCE006F3D89 /* task-plotter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "task-plotter.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9D0C2BC7257E3CCE006F3D89 /* Task Plotter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Task Plotter.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9D0C2BCA257E3CCE006F3D89 /* TaskPlotterApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskPlotterApp.swift; sourceTree = "<group>"; };
 		9D0C2BCC257E3CCE006F3D89 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		9D0C2BCE257E3CCF006F3D89 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -103,7 +103,7 @@
 		9D0C2BC8257E3CCE006F3D89 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				9D0C2BC7257E3CCE006F3D89 /* task-plotter.app */,
+				9D0C2BC7257E3CCE006F3D89 /* Task Plotter.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -263,7 +263,7 @@
 			);
 			name = "task-plotter";
 			productName = "task-plotter";
-			productReference = 9D0C2BC7257E3CCE006F3D89 /* task-plotter.app */;
+			productReference = 9D0C2BC7257E3CCE006F3D89 /* Task Plotter.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -486,7 +486,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.faustinemaffre.task-plotter";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Task Plotter";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
@@ -510,7 +510,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.faustinemaffre.task-plotter";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Task Plotter";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
