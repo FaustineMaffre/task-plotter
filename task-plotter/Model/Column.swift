@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum Column: String, CaseIterable {
+enum Column: String, CaseIterable, Codable {
     case todo = "To do",
          doing = "Doing",
          done = "Done"

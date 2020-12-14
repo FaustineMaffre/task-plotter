@@ -18,10 +18,20 @@ extension NSTableView {
 }
 
 @main
-struct TaskPlotterApp: App {    
+struct TaskPlotterApp: App {
+    let repository: Repository
+    
+    init() {
+        if let repository = Storage.retrieve(as: Repository.self) {
+            self.repository = repository
+        } else {
+            self.repository = Repository()
+        }
+    }
+    
     var body: some Scene {
         WindowGroup {
-            ContentView(repository: TestRepositories.repository) // TODO8 read from file/document
+            ContentView(repository: self.repository) 
                 .environmentObject(UserDefaultsConfig.shared)
         }
     }

@@ -9,7 +9,7 @@ import Foundation
 
 typealias TaskID = UUID
 
-struct Task: Identifiable, Hashable, Equatable {
+struct Task: Identifiable, Hashable, Equatable, Codable {
     
     let id: TaskID
     

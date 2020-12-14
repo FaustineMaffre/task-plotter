@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct HourInterval {
+struct HourInterval: Codable {
     var startHour: Int {
         didSet {
             self.startHour = self.startHour.clampBetween(0, and: self.endHour - 1)

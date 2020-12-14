@@ -9,7 +9,8 @@ import Foundation
 
 typealias VersionID = UUID
 
-struct Version: Identifiable, Hashable, Equatable {
+struct Version: Identifiable, Hashable, Equatable, Codable {
+    
     let id: VersionID
     
     var number: String

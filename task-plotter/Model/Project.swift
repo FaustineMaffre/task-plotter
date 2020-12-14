@@ -9,7 +9,8 @@ import Foundation
 
 typealias ProjectID = UUID
 
-struct Project: Identifiable, Hashable, Equatable {
+struct Project: Identifiable, Hashable, Equatable, Codable {
+    
     let id: ProjectID
     
     var name: String

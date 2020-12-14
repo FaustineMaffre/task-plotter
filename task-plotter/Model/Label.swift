@@ -10,7 +10,7 @@ import SwiftUI
 
 typealias LabelID = UUID
 
-struct Label: Identifiable, Hashable, Equatable {
+struct Label: Identifiable, Hashable, Equatable, Codable {
     
     let id: LabelID
     
