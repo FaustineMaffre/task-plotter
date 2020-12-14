@@ -87,6 +87,7 @@ struct TasksView: View {
                                 self.taskToCreateOrEditColumn = column
                                 self.taskCreationOrEditionSheetItem = .edition
                             }
+                            // TODO drop to another version
                             .onDrag { NSItemProvider(object: tasks[taskIndex].id.uuidString as NSString) }
                             .contextMenu {
                                 Button("Delete") {

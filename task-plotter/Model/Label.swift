@@ -50,11 +50,17 @@ struct Label: Identifiable, Hashable, Equatable, Codable {
     
     static func nextAvailableLabel(labels: [Label]) -> Label {
         // name
-        let availableName = (1...labels.count)
-            .map { "New label \($0)" }
-            .first { labelName in
-                !labels.contains { $0.name == labelName }
-            }!
+        let availableName: String
+        
+        if labels.isEmpty {
+            availableName = "New label 1"
+        } else {
+            availableName = (1...labels.count)
+                .map { "New label \($0)" }
+                .first { labelName in
+                    !labels.contains { $0.name == labelName }
+                }!
+        }
         
         let availableColor = Self.availableColors
             .first { color in
