@@ -89,12 +89,18 @@ struct TasksView: View {
                             }
                             .onDrag { NSItemProvider(object: tasks[taskIndex].id.uuidString as NSString) }
                             .contextMenu {
-                                Button("Move to next version") {
-                                    self.project.moveTaskToNextVersion(taskCurrentVersionIndex: self.versionIndex,
-                                                                       taskCurrentColumn: column,
-                                                                       taskIndex: taskIndex)
+                                Menu("Move to") {
+                                    ForEach(self.project.versions.indices, id: \.self) { otherVersionIndex in
+                                        if otherVersionIndex != self.versionIndex {
+                                            Button(self.project.versions[otherVersionIndex].number) {
+                                                self.project.moveTaskTo(taskCurrentVersionIndex: self.versionIndex,
+                                                                        taskCurrentColumn: column,
+                                                                        taskIndex: taskIndex,
+                                                                        destinationVersionIndex: otherVersionIndex)
+                                            }
+                                        }
+                                    }
                                 }
-                                .disabled(!self.project.canMoveTaskToNextVersion(taskCurrentVersionIndex: self.versionIndex))
                                 
                                 Button("Delete") {
                                     self.taskToDeleteColumn = column
