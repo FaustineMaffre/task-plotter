@@ -17,8 +17,17 @@ extension NSTableView {
     }
 }
 
+class AppDelegate: NSObject, NSApplicationDelegate {
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+        // quit on close
+        true
+    }
+}
+
 @main
 struct TaskPlotterApp: App {
+    @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    
     let repository: Repository
     
     init() {
