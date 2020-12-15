@@ -231,7 +231,7 @@ extension LabelsListView where BottomContent == EmptyView, TapContent == EmptyVi
 
 // MARK: - Project
 
-let projectModalSize = CGSize(width: 320, height: 420)
+let projectModalSize = CGSize(width: 320, height: 540)
 
 struct AvailableLabelColorsSelector: View {
     @Binding var selectedColor: String
@@ -509,7 +509,7 @@ struct VersionEditionModal: View {
 
 // MARK: - Task
 
-let taskModalSize = CGSize(width: 500, height: 680)
+let taskModalSize = CGSize(width: 500, height: 720)
 
 struct TaskLabelSelector: View {
     @Binding var selectedLabelIds: [LabelID]
@@ -593,6 +593,7 @@ struct TaskFormContent: View {
                     .frame(width: Self.labelsWidth, alignment: .leading)
                 TaskLabelSelector(selectedLabelIds: self.$taskLabels, projectLabels: self.projectLabels)
             }
+            .frame(height: 400)
             
             // cost is not saved when tapping the edit button if we use a formatter (maybe because optional?)
             // so we use a string and convert it in onAppear (double? -> string) and edit (string -> double?)
