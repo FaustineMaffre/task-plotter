@@ -72,4 +72,15 @@ struct Project: Identifiable, Hashable, Equatable, Codable {
             self.versions.remove(at: selectedVersionIndex)
         }
     }
+    
+    func canMoveTaskToNextVersion(taskCurrentVersionIndex: Int) -> Bool {
+        taskCurrentVersionIndex < self.versions.count - 1
+    }
+    
+    mutating func moveTaskToNextVersion(taskCurrentVersionIndex: Int, taskCurrentColumn: Column, taskIndex: Int) {
+        if self.canMoveTaskToNextVersion(taskCurrentVersionIndex: taskCurrentVersionIndex) {
+            let task = self.versions[taskCurrentVersionIndex].tasksByColumn[taskCurrentColumn]!.remove(at: taskIndex)
+            self.versions[taskCurrentVersionIndex + 1].addTask(column: .todo, task)
+        }
+    }
 }

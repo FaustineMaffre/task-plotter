@@ -9,8 +9,8 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 struct TasksView: View {
-    @Binding var version: Version
-    let projectLabels: [Label]
+    @Binding var project: Project
+    let versionIndex: Int
     
     @State var taskCreationOrEditionSheetItem: CreationOrEditionMode? = nil
     @State var taskToCreateOrEditColumn: Column = .todo
@@ -30,11 +30,11 @@ struct TasksView: View {
                 Spacer()
             }
             
-            VersionDatesView(version: self.$version)
+            VersionDatesView(version: self.generateVersionBinding())
                 .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
             
             HStack(spacing: 8) {
-                ForEach(self.version.ҩtasksByColumnArray, id: \.0) { column, tasks in
+                ForEach(self.project.versions[self.versionIndex].ҩtasksByColumnArray, id: \.0) { column, tasks in
                     self.columView(column: column, tasks: tasks)
                 }
             }
@@ -43,18 +43,18 @@ struct TasksView: View {
         .sheet(item: self.$taskCreationOrEditionSheetItem) { mode in
             switch mode {
             case .creation:
-                TaskCreationModal(version: self.$version,
-                                  projectLabels: self.projectLabels,
+                TaskCreationModal(version: self.generateVersionBinding(),
+                                  projectLabels: self.project.labels,
                                   column: self.taskToCreateOrEditColumn)
             case .edition:
-                TaskEditionModal(version: self.$version,
-                                 projectLabels: self.projectLabels,
+                TaskEditionModal(version: self.generateVersionBinding(),
+                                 projectLabels: self.project.labels,
                                  column: self.taskToCreateOrEditColumn,
                                  taskIndex: self.taskToEditIndex)
             }
         }
         .deleteTaskAlert(isPresented: self.$isTaskDeletionAlertPresented,
-                         version: self.$version,
+                         version: self.generateVersionBinding(),
                          column: self.taskToDeleteColumn,
                          taskToDeleteIndex: self.taskToDeleteIndex)
     }
@@ -81,15 +81,21 @@ struct TasksView: View {
                     } else {
                         TaskView(task: self.generateTaskBinding(column: column, taskIndex: taskIndex),
                                  column: column,
-                                 projectLabels: self.projectLabels)
+                                 projectLabels: self.project.labels)
                             .onTapGesture {
                                 self.taskToEditIndex = taskIndex
                                 self.taskToCreateOrEditColumn = column
                                 self.taskCreationOrEditionSheetItem = .edition
                             }
-                            // TODO drop to another version
                             .onDrag { NSItemProvider(object: tasks[taskIndex].id.uuidString as NSString) }
                             .contextMenu {
+                                Button("Move to next version") {
+                                    self.project.moveTaskToNextVersion(taskCurrentVersionIndex: self.versionIndex,
+                                                                       taskCurrentColumn: column,
+                                                                       taskIndex: taskIndex)
+                                }
+                                .disabled(!self.project.canMoveTaskToNextVersion(taskCurrentVersionIndex: self.versionIndex))
+                                
                                 Button("Delete") {
                                     self.taskToDeleteColumn = column
                                     self.taskToDeleteIndex = taskIndex
@@ -126,16 +132,32 @@ struct TasksView: View {
                                        stroke: Color.white.opacity(0.1)))
     }
     
+    func generateVersionBinding() -> Binding<Version> {
+        Binding {
+            if self.project.versions.indices.contains(self.versionIndex) {
+                return self.project.versions[self.versionIndex]
+            } else {
+                return Version(number: "Oops")
+            }
+        } set: {
+            if self.project.versions.indices.contains(self.versionIndex) {
+                self.project.versions[self.versionIndex] = $0
+            }
+        }
+    }
+    
     func generateTaskBinding(column: Column, taskIndex: Int) -> Binding<Task> {
         Binding {
-            if self.version.tasksByColumn[column]!.indices.contains(taskIndex) {
-                return self.version.tasksByColumn[column]![taskIndex]
+            if self.project.versions.indices.contains(self.versionIndex),
+               self.project.versions[self.versionIndex].tasksByColumn[column]!.indices.contains(taskIndex) {
+                return self.project.versions[self.versionIndex].tasksByColumn[column]![taskIndex]
             } else {
                 return Task(title: "Oops")
             }
         } set: {
-            if self.version.tasksByColumn[column]!.indices.contains(taskIndex) {
-                self.version.tasksByColumn[column]![taskIndex] = $0
+            if self.project.versions.indices.contains(self.versionIndex),
+               self.project.versions[self.versionIndex].tasksByColumn[column]!.indices.contains(taskIndex) {
+                self.project.versions[self.versionIndex].tasksByColumn[column]![taskIndex] = $0
             }
         }
     }
@@ -143,23 +165,23 @@ struct TasksView: View {
     func moveTask(taskId: TaskID, newColumn: Column, index: Int) {
         DispatchQueue.main.async {
             // find old column
-            if let oldColumn = self.version.findColumnOfTask(id: taskId),
-               let taskOldIndex = self.version.tasksByColumn[oldColumn]!.firstIndex(where: { $0.id == taskId }) {
-                let task = self.version.tasksByColumn[oldColumn]![taskOldIndex]
+            if let oldColumn = self.project.versions[self.versionIndex].findColumnOfTask(id: taskId),
+               let taskOldIndex = self.project.versions[self.versionIndex].tasksByColumn[oldColumn]!.firstIndex(where: { $0.id == taskId }) {
+                let task = self.project.versions[self.versionIndex].tasksByColumn[oldColumn]![taskOldIndex]
                 
                 if oldColumn != newColumn {
                     // change column
-                    self.version.tasksByColumn[oldColumn]!.remove(at: taskOldIndex)
+                    self.project.versions[self.versionIndex].tasksByColumn[oldColumn]!.remove(at: taskOldIndex)
                     
-                    if self.version.tasksByColumn[newColumn]!.isEmpty {
+                    if self.project.versions[self.versionIndex].tasksByColumn[newColumn]!.isEmpty {
                         // in case index would be outside bounds (because of empty tasks)
-                        self.version.tasksByColumn[newColumn]!.append(task)
+                        self.project.versions[self.versionIndex].tasksByColumn[newColumn]!.append(task)
                     } else {
-                        self.version.tasksByColumn[newColumn]!.insert(task, at: index)
+                        self.project.versions[self.versionIndex].tasksByColumn[newColumn]!.insert(task, at: index)
                     }
                 } else {
                     // move within same column
-                    self.version.tasksByColumn[newColumn]!.move(fromOffsets: IndexSet(arrayLiteral: taskOldIndex), toOffset: index)
+                    self.project.versions[self.versionIndex].tasksByColumn[newColumn]!.move(fromOffsets: IndexSet(arrayLiteral: taskOldIndex), toOffset: index)
                 }
             }
         }

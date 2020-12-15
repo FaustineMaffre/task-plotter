@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct VersionsView: View {
     @Binding var project: Project
@@ -38,24 +39,8 @@ struct VersionsView: View {
                             Spacer()
                         }
                     } else {
-                        HStack {
-                            Text(self.project.versions[versionIndex].number)
-                            Spacer()
-                        }
-                        .padding(EdgeInsets(top: 6, leading: 10, bottom: 6, trailing: 10))
-                        .background(RoundedRectangle(cornerRadius: 8)
-                                        .fill(self.project.ҩselectedVersionIndex == versionIndex ? Color.accentColor : Color.clear))
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            self.project.selectedVersionId = self.project.versions[versionIndex].id
-                        }
-                        .contextMenu {
-                            Button("Delete") {
-                                self.versionToDeleteIndex = versionIndex
-                                self.isVersionDeletionAlertPresented = true
-                            }
-                        }
-                        .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+                        self.versionView(versionIndex: versionIndex)
+                            .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
                     }
                 }
             }
@@ -97,6 +82,26 @@ struct VersionsView: View {
         .deleteVersionAlert(isPresented: self.$isVersionDeletionAlertPresented,
                             project: self.$project,
                             versionToDeleteIndex: self.versionToDeleteIndex)
+    }
+    
+    func versionView(versionIndex: Int) -> some View {
+        HStack {
+            Text(self.project.versions[versionIndex].number)
+            Spacer()
+        }
+        .padding(EdgeInsets(top: 6, leading: 10, bottom: 6, trailing: 10))
+        .background(RoundedRectangle(cornerRadius: 8)
+                        .fill(self.project.ҩselectedVersionIndex == versionIndex ? Color.accentColor : Color.clear))
+        .contentShape(Rectangle())
+        .onTapGesture {
+            self.project.selectedVersionId = self.project.versions[versionIndex].id
+        }
+        .contextMenu {
+            Button("Delete") {
+                self.versionToDeleteIndex = versionIndex
+                self.isVersionDeletionAlertPresented = true
+            }
+        }
     }
 }
 
