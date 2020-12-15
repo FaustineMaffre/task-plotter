@@ -157,7 +157,7 @@ struct LabelsListView<BottomContent: View, TapContent: View, ContextContent: Vie
             
             VStack(spacing: 0) {
                 List {
-                    ForEach(labelIds.isEmpty ? [-1] : Array(self.labelIds.indices), id: \.self) { labelIndex in
+                    ForEach(self.labelIds.isEmpty ? [-1] : Array(self.labelIds.indices), id: \.self) { labelIndex in
                         if labelIndex < 0 {
                             HStack {
                                 Spacer()
@@ -173,6 +173,7 @@ struct LabelsListView<BottomContent: View, TapContent: View, ContextContent: Vie
                                     Spacer()
                                 }
                                 .frame(height: 30)
+                                .contentShape(Rectangle())
                                 .onTapGesture {
                                     if TapContent.self != EmptyView.self {
                                         self.isOnTapPopoverPresentedIndex = labelIndex
