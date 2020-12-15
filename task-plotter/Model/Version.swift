@@ -37,6 +37,7 @@ struct Version: Identifiable, Hashable, Equatable, Codable {
     var excludedDates: Set<Date>
     
     var expectedStartDate: Date? = nil
+    var isValidated: Bool = false
     
     var tasksByColumn: [Column: [Task]] = Dictionary(uniqueKeysWithValues: Column.allCases.map { ($0, []) })
     
@@ -142,7 +143,7 @@ struct Version: Identifiable, Hashable, Equatable, Codable {
     }
     
     func canComputeTaskDates() -> Bool {
-        self.dueDate != nil && self.pointsPerDay != nil && !self.workingDays.isEmpty
+        self.dueDate != nil && self.pointsPerDay != nil && !self.workingDays.isEmpty && !self.isValidated
     }
     
     mutating func computeTaskDates() {
@@ -200,5 +201,33 @@ struct Version: Identifiable, Hashable, Equatable, Codable {
         res = res.setting(hours: ratioHours, minutes: ratioMinutes)
         
         return res
+    }
+    
+    func canClearTaskDates() -> Bool {
+        !self.isValidated
+    }
+    
+    mutating func clearTaskDates() {
+        if self.canClearTaskDates() {
+            self.tasksByColumn[.todo]!.indices.forEach {
+                self.tasksByColumn[.todo]![$0].expectedDueDate = nil
+            }
+            
+            self.tasksByColumn[.doing]!.indices.forEach {
+                self.tasksByColumn[.doing]![$0].expectedDueDate = nil
+            }
+            
+            // start date
+            self.expectedStartDate = nil
+        }
+    }
+    
+    mutating func validate() {
+        // TODOlt stats for the version?
+        self.isValidated = true
+    }
+    
+    mutating func invalidate() {
+        self.isValidated = false
     }
 }

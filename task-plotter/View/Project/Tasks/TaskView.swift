@@ -39,7 +39,7 @@ struct TaskCostView: View {
 
 struct DueDateView: View {
     let dueDate: Date?
-    let column: Column?
+    let isValidated: Bool
     
     var ҩbackgroundColor: Color {
         let now = Date()
@@ -48,7 +48,7 @@ struct DueDateView: View {
             return Color.clear
         }
         
-        if self.column == .done {
+        if self.isValidated {
             // done
             return Color.green.opacity(0.5)
             
@@ -124,7 +124,7 @@ struct TaskView: View {
                     .frame(height: 2)
                 
                 HStack {
-                    DueDateView(dueDate: self.task.expectedDueDate, column: self.column)
+                    DueDateView(dueDate: self.task.expectedDueDate, isValidated: self.column == .done)
                     Spacer()
                 }
             }

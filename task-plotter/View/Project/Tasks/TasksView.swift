@@ -120,7 +120,7 @@ struct TasksView: View {
                 Spacer()
             }
         }
-        .frame(width: 320)
+        .frame(width: 360)
         .background(RoundedRectangle(cornerRadius: 8)
                         .fillAndStroke(fill: Color(NSColor.underPageBackgroundColor),
                                        stroke: Color.white.opacity(0.1)))

@@ -31,7 +31,7 @@ struct TaskPlotterApp: App {
     
     var body: some Scene {
         WindowGroup {
-//            ContentView(repository: TestRepositories.repository) // TODOt
+//            ContentView(repository: TestRepositories.repository) // TODOt for tests
             ContentView(repository: self.repository)
                 .environmentObject(UserDefaultsConfig.shared)
         }

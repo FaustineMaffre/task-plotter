@@ -22,7 +22,7 @@ class Storage {
             
             print("📁 \(T.self) object stored to \(Self.dataFileUrl) 📁") // INFOlog
         } else {
-            print("⚠️ Error during encoding ⚠️")
+            print("⚠️ Error during encoding ⚠️") // INFOlog
         }
     }
     
@@ -35,7 +35,7 @@ class Storage {
             
             return res
         } else {
-            print("⚠️ Error during decoding ⚠️")
+            print("⚠️ Error during decoding ⚠️") // INFOlog
             
             return nil
         }
