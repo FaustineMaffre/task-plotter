@@ -185,10 +185,10 @@ struct VersionDatesView: View {
                         Text("Start date:")
                         
                         DueDateView(dueDate: expectedStartDate, isValidated: self.version.isValidated)
+                        
+                        Spacer().frame(width: Self.spaceBetweenItems)
                     }
                 }
-                
-                Spacer().frame(width: Self.spaceBetweenItems)
                 
                 Group {
                     // validate/invalidate version
