@@ -163,8 +163,26 @@ struct VersionDatesView: View {
                 Spacer().frame(width: Self.spaceBetweenItems)
                 
                 Group {
+                    if let pointsOngoing = self.version.pointsOngoing,
+                       let pointsOngoingFormatted = Common.pointsStartingNowAndOngoingFormatter.string(from: pointsOngoing) {
+                        // points ongoing
+                        Text("Points ongoing:")
+                        
+                        Text(pointsOngoingFormatted)
+                            .frame(height: 22)
+                            .padding([.horizontal], 3)
+                            .foregroundColor(.black)
+                            .background(RoundedRectangle(cornerRadius: 8).fill(Color.white.opacity(0.8)))
+                        
+                        Spacer().frame(width: Self.spaceBetweenItems)
+                    } else {
+                        EmptyView()
+                    }
+                }
+                
+                Group {
                     if let pointsStartingNow = self.version.pointsStartingNow,
-                       let pointsStartingNowFormatted = Common.pointsStartingNowFormatter.string(from: NSNumber(value: pointsStartingNow)) {
+                       let pointsStartingNowFormatted = Common.pointsStartingNowAndOngoingFormatter.string(from: pointsStartingNow) {
                         // points from now
                         Text("Points from now:")
                         

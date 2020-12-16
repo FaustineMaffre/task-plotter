@@ -39,10 +39,16 @@ class Common {
         return res
     }()
     
-    static let pointsStartingNowFormatter: NumberFormatter = {
+    static let pointsStartingNowAndOngoingFormatter: NumberFormatter = {
         var res = NumberFormatter()
         res.numberStyle = .decimal
         res.maximumFractionDigits = 2
         return res
     }()
+}
+
+extension NumberFormatter {
+    func string(from double: Double) -> String? {
+        self.string(from: NSNumber(value: double))
+    }
 }

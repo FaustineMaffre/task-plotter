@@ -36,6 +36,10 @@ struct Version: Identifiable, Hashable, Equatable, Codable {
         }
     }
     
+    var pointsOngoing: Double? {
+        self.computePointsOngoing()
+    }
+    
     var pointsStartingNow: Double? {
         self.computePointsStartingNow()
     }
@@ -144,6 +148,12 @@ struct Version: Identifiable, Hashable, Equatable, Codable {
         }
         
         return res
+    }
+    
+    func computePointsOngoing() -> Double? {
+        let ongoingTasks = self.tasksByColumn[.todo]! + self.tasksByColumn[.doing]!
+        let res = ongoingTasks.compactMap(\.cost).reduce(0, +) // sum
+        return res <= 0 ? nil : res
     }
     
     func computePointsStartingNow() -> Double? {
