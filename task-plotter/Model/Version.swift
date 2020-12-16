@@ -205,10 +205,17 @@ struct Version: Identifiable, Hashable, Equatable, Codable {
             }
             
             // start date
-            self.expectedStartDate =
-                Self.computeTaskExpectedDueDate(dueDate: dueDate, costsSum: costsSum,
-                                                pointsPerDay: pointsPerDay, workingDays: self.workingDays, workingHours: self.workingHours,
-                                                excludedDates: self.excludedDates)
+            var startDate = Self.computeTaskExpectedDueDate(dueDate: dueDate, costsSum: costsSum,
+                                                            pointsPerDay: pointsPerDay, workingDays: self.workingDays, workingHours: self.workingHours,
+                                                            excludedDates: self.excludedDates)
+            
+            if startDate.gettingHoursAndMinutes().hours == self.workingHours.endHour {
+                // if start date is at the end of a day, set it to the start of the next day
+                startDate = Self.nextWorkedDay(date: startDate, workingDays: self.workingDays, excludedDates: self.excludedDates)
+                startDate = startDate.setting(hours: self.workingHours.startHour, minutes: 0)
+            }
+            
+            self.expectedStartDate = startDate
         }
     }
     
@@ -223,17 +230,34 @@ struct Version: Identifiable, Hashable, Equatable, Codable {
         
         // substract full days
         (0..<fullDaysCount).forEach { _ in
-            res = res.substractingOneDay()
-            
-            // avoid excluded dates and non-working days
-            while excludedDates.contains(where: { res.isSameDay(than: $0) }) || !workingDays.contains(res.day()) {
-                res = res.substractingOneDay()
-            }
+            res = Self.previousWorkedDay(date: res, workingDays: workingDays, excludedDates: excludedDates)
         }
         
         // substract partial day
         let (ratioHours, ratioMinutes) = workingHours.ratioToHours(1 - partialDayRatio)
         res = res.setting(hours: ratioHours, minutes: ratioMinutes)
+        
+        return res
+    }
+    
+    static func previousWorkedDay(date: Date, workingDays: Set<Day>, excludedDates: Set<Date>) -> Date {
+        var res = date
+        
+        repeat {
+            res = res.substractingOneDay()
+        } while excludedDates.contains(where: { res.isSameDay(than: $0) }) || !workingDays.contains(res.day())
+        
+        return res
+    }
+    
+    static func nextWorkedDay(date: Date, workingDays: Set<Day>, excludedDates: Set<Date>) -> Date {
+        var res = date
+        
+        // avoid excluded dates and non-working days
+        // (assumes there are working days)
+        repeat {
+            res = res.addingOneDay()
+        } while excludedDates.contains(where: { res.isSameDay(than: $0) }) || !workingDays.contains(res.day())
         
         return res
     }
