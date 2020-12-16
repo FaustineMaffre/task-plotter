@@ -15,15 +15,6 @@ struct Version: Identifiable, Hashable, Equatable, Codable {
     
     var number: String
     
-    var dueDate: Date? {
-        didSet {
-            if let dueDate = self.dueDate {
-                // set hour to 23h59
-                self.dueDate = dueDate.setting(hours: 23, minutes: 59)
-            }
-        }
-    }
-    
     var pointsPerDay: Double? {
         didSet {
             // if negative, then nil
@@ -35,6 +26,19 @@ struct Version: Identifiable, Hashable, Equatable, Codable {
     var workingDays: Set<Day>
     var workingHours: HourInterval
     var excludedDates: Set<Date>
+    
+    var dueDate: Date? {
+        didSet {
+            if let dueDate = self.dueDate {
+                // set hour to 23h59
+                self.dueDate = dueDate.setting(hours: 23, minutes: 59)
+            }
+        }
+    }
+    
+    var pointsStartingNow: Double? {
+        self.computePointsStartingNow()
+    }
     
     var expectedStartDate: Date? = nil
     var isValidated: Bool = false
@@ -48,9 +52,9 @@ struct Version: Identifiable, Hashable, Equatable, Codable {
     
     init(id: VersionID = UUID(),
          number: String,
-         dueDate: Date? = nil,
          pointsPerDay: Double? = nil,
-         workingDays: Set<Day> = Day.allDays, workingHours: HourInterval = HourInterval.allHours, excludedDates: Set<Date> = []) {
+         workingDays: Set<Day> = Day.allDays, workingHours: HourInterval = HourInterval.allHours, excludedDates: Set<Date> = [],
+         dueDate: Date? = nil) {
         self.id = id
         self.number = number
         self.dueDate = dueDate
@@ -142,15 +146,46 @@ struct Version: Identifiable, Hashable, Equatable, Codable {
         return res
     }
     
+    func computePointsStartingNow() -> Double? {
+        let now = Date()
+        
+        guard let pointsPerDay = self.pointsPerDay,
+              !self.workingDays.isEmpty,
+              let dueDate = self.dueDate,
+              dueDate > now,
+              !self.isValidated else {
+            return nil
+        }
+        
+        var currentDate = dueDate
+        var res: Double = 0
+        
+        // full days
+        while !currentDate.isSameDay(than: now) {
+            // count non-excluded dates and working days only
+            if !self.excludedDates.contains(where: { currentDate.isSameDay(than: $0) }) && self.workingDays.contains(currentDate.day()) {
+                res += pointsPerDay
+            }
+            
+            currentDate = currentDate.substractingOneDay()
+        }
+        
+        // partial day
+        let (nowHours, nowMinutes) = now.gettingHoursAndMinutes()
+        res += self.workingHours.hoursToRatio(hours: nowHours, minutes: nowMinutes) * pointsPerDay
+        
+        return res
+    }
+    
     func canComputeTaskDates() -> Bool {
-        self.dueDate != nil && self.pointsPerDay != nil && !self.workingDays.isEmpty && !self.isValidated
+        self.pointsPerDay != nil && !self.workingDays.isEmpty && self.dueDate != nil && !self.isValidated
     }
     
     mutating func computeTaskDates() {
         if self.canComputeTaskDates(),
-           let dueDate = self.dueDate,
            let pointsPerDay = self.pointsPerDay,
-           !self.workingDays.isEmpty {
+           !self.workingDays.isEmpty,
+           let dueDate = self.dueDate {
             let tasksLatestFirst: [(Column, Int)] =
                 self.tasksByColumn[.todo]!.indices.reversed().map { (.todo, $0) } +
                 self.tasksByColumn[.doing]!.indices.reversed().map { (.doing, $0) }
@@ -197,7 +232,7 @@ struct Version: Identifiable, Hashable, Equatable, Codable {
         }
         
         // substract partial day
-        let (ratioHours, ratioMinutes) = workingHours.ratio(1 - partialDayRatio)
+        let (ratioHours, ratioMinutes) = workingHours.ratioToHours(1 - partialDayRatio)
         res = res.setting(hours: ratioHours, minutes: ratioMinutes)
         
         return res

@@ -162,6 +162,24 @@ struct VersionDatesView: View {
                 
                 Spacer().frame(width: Self.spaceBetweenItems)
                 
+                Group {
+                    if let pointsStartingNow = self.version.pointsStartingNow,
+                       let pointsStartingNowFormatted = Common.pointsStartingNowFormatter.string(from: NSNumber(value: pointsStartingNow)) {
+                        // points from now
+                        Text("Points from now:")
+                        
+                        Text(pointsStartingNowFormatted)
+                            .frame(height: 22)
+                            .padding([.horizontal], 3)
+                            .foregroundColor(.black)
+                            .background(RoundedRectangle(cornerRadius: 8).fill(Color.white.opacity(0.8)))
+                        
+                        Spacer().frame(width: Self.spaceBetweenItems)
+                    } else {
+                        EmptyView()
+                    }
+                }
+                
                 // compute dates
                 Button("Compute tasks dates") {
                     self.version.computeTaskDates()
@@ -181,7 +199,7 @@ struct VersionDatesView: View {
             HStack(spacing: 6) {
                 Group {
                     if let expectedStartDate = self.version.expectedStartDate {
-                        // due date
+                        // start date
                         Text("Start date:")
                         
                         DueDateView(dueDate: expectedStartDate, isValidated: self.version.isValidated)

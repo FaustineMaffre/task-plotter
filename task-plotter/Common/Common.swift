@@ -38,4 +38,11 @@ class Common {
         res.timeStyle = .none
         return res
     }()
+    
+    static let pointsStartingNowFormatter: NumberFormatter = {
+        var res = NumberFormatter()
+        res.numberStyle = .decimal
+        res.maximumFractionDigits = 2
+        return res
+    }()
 }

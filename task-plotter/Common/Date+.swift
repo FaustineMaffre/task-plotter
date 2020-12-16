@@ -20,6 +20,12 @@ extension Date {
         Calendar.current.compare(self, to: other, toGranularity: .day) == .orderedSame
     }
     
+    func gettingHoursAndMinutes() -> (hours: Int, minutes: Int) {
+        let hours = Calendar.current.component(.hour, from: self)
+        let minutes = Calendar.current.component(.minute, from: self)
+        return (hours, minutes)
+    }
+    
     func setting(hours: Int, minutes: Int) -> Date {
         Calendar.current.date(bySettingHour: hours, minute: minutes, second: 0, of: self)!
     }
