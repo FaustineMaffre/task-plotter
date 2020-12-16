@@ -232,7 +232,7 @@ extension LabelsListView where BottomContent == EmptyView, TapContent == EmptyVi
 
 // MARK: - Project
 
-let projectModalSize = CGSize(width: 320, height: 540)
+let projectModalSize = CGSize(width: 360, height: 540)
 
 struct AvailableLabelColorsSelector: View {
     @Binding var selectedColor: String
@@ -510,7 +510,7 @@ struct VersionEditionModal: View {
 
 // MARK: - Task
 
-let taskModalSize = CGSize(width: 500, height: 720)
+let taskModalSize = CGSize(width: 600, height: 720)
 
 struct TaskLabelSelector: View {
     @Binding var selectedLabelIds: [LabelID]
