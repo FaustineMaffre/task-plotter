@@ -96,9 +96,12 @@ struct TasksView: View {
                                 self.taskToCreateOrEditColumn = column
                                 self.taskCreationOrEditionSheetItem = .edition
                             },
-                            onInsert: { index, str in
-                                if let taskId = UUID(uuidString: str) {
-                                    self.moveTask(taskId: taskId, newColumn: column, index: index)
+                            dragItem: { DraggedElement.toItemProvider(task: $0, column: column) },
+                            onDropAction: { item, index in
+                                DraggedElement.toTask(itemProvider: item, version: self.version) {
+                                    if let (taskColumn, task) = $0 {
+                                        self.moveTask(oldColumn: taskColumn, task: task, newColumn: column, index: index)
+                                    }
                                 }
                             },
                             taskContentMenu: { taskIndex in
@@ -147,13 +150,10 @@ struct TasksView: View {
 
     }
     
-    func moveTask(taskId: TaskID, newColumn: Column, index: Int) {
+    func moveTask(oldColumn: Column, task: Task, newColumn: Column, index: Int) {
         DispatchQueue.main.async {
             // find old column
-            if let oldColumn = self.version.findColumnOfTask(id: taskId),
-               let taskOldIndex = self.version.tasksByColumn[oldColumn]!.firstIndex(where: { $0.id == taskId }) {
-                let task = self.version.tasksByColumn[oldColumn]![taskOldIndex]
-                
+            if let taskOldIndex = self.version.tasksByColumn[oldColumn]!.firstIndex(where: { $0.id == task.id }) {
                 if oldColumn != newColumn {
                     // change column
                     self.version.tasksByColumn[oldColumn]!.remove(at: taskOldIndex)

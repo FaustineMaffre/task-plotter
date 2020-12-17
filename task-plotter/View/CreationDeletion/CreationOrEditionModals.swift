@@ -123,7 +123,7 @@ struct LabelsListView<BottomContent: View, TapContent: View, ContextContent: Vie
     let labelIds: [LabelID]
     let projectLabels: [Label]
     
-    let onDropAction: (LabelID, Int) -> Void
+    let onDropAction: (Label, Int) -> Void
     let onTapContent: (Int) -> TapContent
     let contextMenuContent: (Int) -> ContextContent
     
@@ -134,7 +134,7 @@ struct LabelsListView<BottomContent: View, TapContent: View, ContextContent: Vie
     init(title: String? = nil,
          labelIds: [LabelID],
          projectLabels: [Label],
-         onDropAction: @escaping (LabelID, Int) -> Void,
+         onDropAction: @escaping (Label, Int) -> Void,
          onTapContent: @escaping (Int) -> TapContent,
          contextMenuContent: @escaping (Int) -> ContextContent,
          bottomContent: @escaping () -> BottomContent) {
@@ -142,9 +142,11 @@ struct LabelsListView<BottomContent: View, TapContent: View, ContextContent: Vie
         self.title = title
         self.labelIds = labelIds
         self.projectLabels = projectLabels
+        
         self.onDropAction = onDropAction
         self.onTapContent = onTapContent
         self.contextMenuContent = contextMenuContent
+        
         self.bottomContent = bottomContent
     }
     
@@ -179,7 +181,7 @@ struct LabelsListView<BottomContent: View, TapContent: View, ContextContent: Vie
                                         self.isOnTapPopoverPresentedIndex = labelIndex
                                     }
                                 }
-                                .onDrag { NSItemProvider(object: label.id.uuidString as NSString) }
+                                .onDrag { DraggedElement.toItemProvider(label: label) }
                                 .contextMenu { self.contextMenuContent(labelIndex) }
                                 .popover(isPresented: self.generateIsOnTapPopoverPresented(labelIndex: labelIndex), content: { self.onTapContent(labelIndex) })
                                 .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
@@ -188,10 +190,9 @@ struct LabelsListView<BottomContent: View, TapContent: View, ContextContent: Vie
                     }
                     .onInsert(of: [UTType.plainText]) { index, items in
                         items.forEach { item in
-                            _ = item.loadObject(ofClass: String.self) { str, _ in
-                                if let labelIdStr = str,
-                                   let labelId = UUID(uuidString: labelIdStr) {
-                                    self.onDropAction(labelId, index)
+                            DraggedElement.toLabel(itemProvider: item, labels: self.projectLabels) {
+                                if let label = $0 {
+                                    self.onDropAction(label, index)
                                 }
                             }
                         }
@@ -218,7 +219,7 @@ extension LabelsListView where BottomContent == EmptyView, TapContent == EmptyVi
     init(title: String? = nil,
          labelIds: [LabelID],
          projectLabels: [Label],
-         onDropAction: @escaping (LabelID, Int) -> Void) {
+         onDropAction: @escaping (Label, Int) -> Void) {
         
         self.init(title: title,
                   labelIds: labelIds,
@@ -348,9 +349,9 @@ struct ProjectFormContent: View {
         self.projectLabels.append(Label.nextAvailableLabel(labels: self.projectLabels))
     }
     
-    func moveLabel(id: LabelID, to index: Int) {
+    func moveLabel(label: Label, to index: Int) {
         DispatchQueue.main.async {
-            if let taskLabelIndex = self.projectLabels.firstIndex(where: { $0.id == id }) {
+            if let taskLabelIndex = self.projectLabels.firstIndex(where: { $0.id == label.id }) {
                 self.projectLabels.move(fromOffsets: IndexSet(arrayLiteral: taskLabelIndex), toOffset: index)
             }
         }
@@ -529,7 +530,7 @@ struct TaskLabelSelector: View {
             LabelsListView(title: "Available",
                            labelIds: self.ҩavailableLabels,
                            projectLabels: self.projectLabels,
-                           onDropAction: { labelId, _ in self.removeLabel(id: labelId) })
+                           onDropAction: { label, _ in self.removeLabel(label: label) })
             
             // added
             LabelsListView(title: "Selected",
@@ -539,9 +540,9 @@ struct TaskLabelSelector: View {
         }
     }
     
-    func addLabel(id: LabelID, at index: Int) {
+    func addLabel(label: Label, at index: Int) {
         DispatchQueue.main.async {
-            if let availableLabel = self.ҩavailableLabels.first(where: { $0 == id }) {
+            if let availableLabel = self.ҩavailableLabels.first(where: { $0 == label.id }) {
                 // inserting available label
                 if self.selectedLabelIds.isEmpty {
                     // in case index would be outside bounds (because of empty labels)
@@ -549,16 +550,16 @@ struct TaskLabelSelector: View {
                 } else {
                     self.selectedLabelIds.insert(availableLabel, at: index)
                 }
-            } else if let taskLabelIndex = self.selectedLabelIds.firstIndex(where: { $0 == id }) {
+            } else if let taskLabelIndex = self.selectedLabelIds.firstIndex(where: { $0 == label.id }) {
                 // label not available, we are moving a label in the same list
                 self.selectedLabelIds.move(fromOffsets: IndexSet(arrayLiteral: taskLabelIndex), toOffset: index)
             }
         }
     }
     
-    func removeLabel(id: LabelID) {
+    func removeLabel(label: Label) {
         DispatchQueue.main.async {
-            self.selectedLabelIds.remove(id)
+            self.selectedLabelIds.remove(label.id)
         }
     }
 }

@@ -15,7 +15,9 @@ struct TasksColumnView<MenuItems: View>: View {
     let projectLabels: [Label]
     
     let onTap: (Int) -> Void
-    let onInsert: (Int, String) -> Void
+    
+    let dragItem: (Task) -> NSItemProvider
+    let onDropAction: (NSItemProvider, Int) -> Void
     
     let taskContentMenu: (Int) -> MenuItems
     
@@ -36,7 +38,7 @@ struct TasksColumnView<MenuItems: View>: View {
                         .onTapGesture {
                             self.onTap(taskIndex)
                         }
-                        .onDrag { NSItemProvider(object: tasks[taskIndex].id.uuidString as NSString) }
+                        .onDrag { self.dragItem(self.tasks[taskIndex]) }
                         .contextMenu {
                             self.taskContentMenu(taskIndex)
                         }
@@ -45,11 +47,7 @@ struct TasksColumnView<MenuItems: View>: View {
             }
             .onInsert(of: [UTType.plainText]) { index, items in
                 items.forEach { item in
-                    _ = item.loadObject(ofClass: String.self) { optionalStr, _ in
-                        if let str = optionalStr {
-                            self.onInsert(index, str)
-                        }
-                    }
+                    self.onDropAction(item, index)
                 }
             }
         }
