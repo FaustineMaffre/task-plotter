@@ -14,6 +14,8 @@ The algorithm assumes you will work on **Doing** tasks first (top to bottom), th
 
 It will also give you an **estimated date to start** (which is simply the due date of the first task to do minus its estimation).
 
+![alt text](github-previews/main.png)
+
 ## Secondary features 
 
 - Allows to create labels for a project and assign them, in any order, to tasks.
