@@ -53,16 +53,20 @@ extension View {
             }
     }
     
-    func deleteTaskAlert(isPresented: Binding<Bool>, version: Binding<Version>, column: Column, taskToDeleteIndex: Int) -> some View {
+    func deleteTaskAlert(isPresented: Binding<Bool>,
+                         project: Binding<Project>, version: Binding<Version>,
+                         column: Column?, taskToDeleteIndex: Int) -> some View {
+        let column = Column.columnTasksBinding(project: project, version: version, column: column)
+        
         let taskTitle: String
-        if version.wrappedValue.tasksByColumn[column]!.indices.contains(taskToDeleteIndex) {
-            taskTitle = version.wrappedValue.tasksByColumn[column]![taskToDeleteIndex].title
+        if column.wrappedValue.indices.contains(taskToDeleteIndex) {
+            taskTitle = column.wrappedValue[taskToDeleteIndex].title
         } else {
             taskTitle = ""
         }
         
         let deleteAction: () -> Void = {
-            version.wrappedValue.tasksByColumn[column]!.remove(at: taskToDeleteIndex)
+            column.wrappedValue.remove(at: taskToDeleteIndex)
         }
         
         return self

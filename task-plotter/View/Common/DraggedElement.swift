@@ -39,42 +39,11 @@ extension Project {
     }
 }
 
-// MARK: - Task list (either a column or the tasks pool)
-
-enum DraggedTaskList {
-    case column(_ column: Column),
-         pool
-    
-    func toItemProviderPrefix() -> String {
-        switch self {
-        case .column(let column): return column.rawValue
-        case .pool: return "pool"
-        }
-    }
-    
-    static func fromItemProviderPrefix(str: String) -> DraggedTaskList? {
-        if let column = Column(rawValue: str) {
-            return .column(column)
-        } else if str == "pool" {
-            return .pool
-        } else {
-            return nil
-        }
-    }
-    
-    func toColumn() -> Column? {
-        switch self {
-        case .column(let column): return column
-        case .pool: return nil
-        }
-    }
-}
-
 // MARK: - Dragged element
 
 enum DraggedElement {
     case label(id: LabelID),
-         task(list: DraggedTaskList, id: TaskID)
+         task(column: Column?, id: TaskID) // column nil for tasks pool
     
     // MARK: To item provider/string
     
@@ -83,7 +52,7 @@ enum DraggedElement {
         
         switch self {
         case .label(let id): str = "label:\(id)"
-        case .task(let list, let id): str = "task-\(list.toItemProviderPrefix()):\(id)"
+        case .task(let column, let id): str = "task-\(column?.rawValue ?? "pool"):\(id)"
         }
         
         return NSItemProvider(object: str as NSString)
@@ -93,12 +62,8 @@ enum DraggedElement {
         DraggedElement.label(id: label.id).elementToItemProvider()
     }
     
-    static func toItemProvider(task: Task, column: Column) -> NSItemProvider {
-        DraggedElement.task(list: .column(column), id: task.id).elementToItemProvider()
-    }
-    
-    static func toItemProvider(poolTask: Task) -> NSItemProvider {
-        DraggedElement.task(list: .pool, id: poolTask.id).elementToItemProvider()
+    static func toItemProvider(task: Task, column: Column?) -> NSItemProvider {
+        DraggedElement.task(column: column, id: task.id).elementToItemProvider()
     }
     
     // MARK: From item provider/string
@@ -117,9 +82,10 @@ enum DraggedElement {
                     res = .label(id: id)
                     
                 } else if prefix.starts(with: "task-"),
-                          let dashIndex = prefix.firstIndex(of: "-"),
-                          let list = DraggedTaskList.fromItemProviderPrefix(str: String(prefix[prefix.index(after: dashIndex)...])) {
-                    res = .task(list: list, id: id)
+                          let dashIndex = prefix.firstIndex(of: "-") {
+                    let columnStr = String(prefix[prefix.index(after: dashIndex)...])
+                    let column = Column(rawValue: columnStr) // nil for tasks pool
+                    res = .task(column: column, id: id)
                 }
             }
         }
@@ -155,14 +121,13 @@ enum DraggedElement {
         }
     }
     
-    static func toTask(itemProvider: NSItemProvider, tasks: [Task], completionHandler: @escaping ((Column, Task)?) -> Void) {
+    static func toTask(itemProvider: NSItemProvider, tasks: [Task], completionHandler: @escaping ((Column?, Task)?) -> Void) {
         _ = itemProvider.loadObject(ofClass: String.self) { optionalStr, _ in
-            var res: (Column, Task)? = nil
+            var res: (Column?, Task)? = nil
             
             if let str = optionalStr,
                let element = Self.elementFromString(str: str),
-               case .task(let list, let taskId) = element,
-               let column = list.toColumn(),
+               case .task(let column, let taskId) = element,
                let task = tasks.find(by: taskId) {
                 res = (column, task)
             }
@@ -171,31 +136,25 @@ enum DraggedElement {
         }
     }
     
-    static func toTask(itemProvider: NSItemProvider, version: Version, completionHandler: @escaping ((Column, Task)?) -> Void) {
+    static func toTask(itemProvider: NSItemProvider, project: Project, version: Version, completionHandler: @escaping ((Column?, Task)?) -> Void) {
         _ = itemProvider.loadObject(ofClass: String.self) { optionalStr, _ in
-            var res: (Column, Task)? = nil
+            var res: (Column?, Task)? = nil
             
             if let str = optionalStr,
                let element = Self.elementFromString(str: str),
-               case .task(let list, let taskId) = element,
-               case .column(let column) = list,
-               let task = version.findTask(in: column, by: taskId) {
-                res = (column, task)
-            }
-            
-            completionHandler(res)
-        }
-    }
-    
-    static func toPoolTask(itemProvider: NSItemProvider, project: Project, completionHandler: @escaping (Task?) -> Void) {
-        _ = itemProvider.loadObject(ofClass: String.self) { optionalStr, _ in
-            var res: Task? = nil
-            
-            if let str = optionalStr,
-               let element = Self.elementFromString(str: str),
-               case .task(let list, let taskId) = element,
-               case .pool = list {
-                res = project.findPoolTask(by: taskId)
+               case .task(let column, let taskId) = element {
+                let optionalTask: Task?
+                
+                if let column = column {
+                    optionalTask = version.findTask(in: column, by: taskId)
+                } else {
+                    // tasks pool
+                    optionalTask = project.findPoolTask(by: taskId)
+                }
+                
+                if let task = optionalTask {
+                    res = (column, task)
+                }
             }
             
             completionHandler(res)

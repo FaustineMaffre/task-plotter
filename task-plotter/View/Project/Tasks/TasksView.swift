@@ -8,6 +8,18 @@
 import SwiftUI
 import UniformTypeIdentifiers
 
+extension View {
+    func background<Background: View>(isBackground: Bool, _ background: Background) -> some View {
+        Group {
+            if isBackground {
+                self.background(background)
+            } else {
+                self
+            }
+        }
+    }
+}
+
 struct TasksView: View {
     @Binding var project: Project
     
@@ -17,11 +29,11 @@ struct TasksView: View {
     @State var isTasksPoolPresented: Bool = false
     
     @State var taskCreationOrEditionSheetItem: CreationOrEditionMode? = nil
-    @State var taskToCreateOrEditColumn: Column = .todo
+    @State var taskToCreateOrEditColumn: Column? = nil // nil for tasks pool
     @State var taskToEditIndex: Int = 0
     
     @State var isTaskDeletionAlertPresented: Bool = false
-    @State var taskToDeleteColumn: Column = .todo
+    @State var taskToDeleteColumn: Column? = nil // nil for tasks pool
     @State var taskToDeleteIndex: Int = -1
     
     var body: some View {
@@ -50,7 +62,7 @@ struct TasksView: View {
                 
                 HStack(spacing: 8) {
                     ForEach(self.version.ҩtasksByColumnArray, id: \.0) { column, tasks in
-                        self.columView(column: column, tasks: self.generateTasksBinding(column: column))
+                        self.columnView(column: column)
                     }
                 }
                 .padding(10)
@@ -58,34 +70,41 @@ struct TasksView: View {
             .sheet(item: self.$taskCreationOrEditionSheetItem) { mode in
                 switch mode {
                 case .creation:
-                    TaskCreationModal(version: self.$version,
+                    TaskCreationModal(project: self.$project,
+                                      version: self.$version,
                                       projectLabels: self.project.labels,
                                       column: self.taskToCreateOrEditColumn)
                 case .edition:
-                    TaskEditionModal(version: self.$version,
+                    TaskEditionModal(project: self.$project,
+                                     version: self.$version,
                                      projectLabels: self.project.labels,
                                      column: self.taskToCreateOrEditColumn,
                                      taskIndex: self.taskToEditIndex)
                 }
             }
             .deleteTaskAlert(isPresented: self.$isTaskDeletionAlertPresented,
+                             project: self.$project,
                              version: self.$version,
                              column: self.taskToDeleteColumn,
                              taskToDeleteIndex: self.taskToDeleteIndex)
         } sideContent: {
-            Text("Pool")
-                .frame(width: 360)
+            // tasks pool
+            self.columnView(column: nil)
         }
     }
     
-    func columView(column: Column, tasks: Binding<[Task]>) -> some View {
-        VStack(spacing: 0) {
+    func columnView(column: Column?) -> some View { // pool if column nil
+        let tasks = Column.columnTasksBinding(project: self.$project, version: self.$version, column: column)
+        
+        return VStack(spacing: 0) {
             HStack {
-                Text(column.rawValue)
+                Text(column?.rawValue ?? "Tasks pool")
                     .smallTitleStyle()
                     .padding(10)
                 
                 Spacer()
+                
+                // TODOq filter (labels) and sort (cost)
             }
             
             TasksColumnView(tasks: tasks,
@@ -98,7 +117,7 @@ struct TasksView: View {
                             },
                             dragItem: { DraggedElement.toItemProvider(task: $0, column: column) },
                             onDropAction: { item, index in
-                                DraggedElement.toTask(itemProvider: item, version: self.version) {
+                                DraggedElement.toTask(itemProvider: item, project: self.project, version: self.version) {
                                     if let (taskColumn, task) = $0 {
                                         self.moveTask(oldColumn: taskColumn, task: task, newColumn: column, index: index)
                                     }
@@ -106,14 +125,16 @@ struct TasksView: View {
                             },
                             taskContentMenu: { taskIndex in
                                 HStack {
-                                    Menu("Move to") {
-                                        ForEach(self.project.versions.indices, id: \.self) { otherVersionIndex in
-                                            if otherVersionIndex != self.versionIndex {
-                                                Button(self.project.versions[otherVersionIndex].number) {
-                                                    self.project.moveTaskTo(taskCurrentVersionIndex: self.versionIndex,
-                                                                            taskCurrentColumn: column,
-                                                                            taskIndex: taskIndex,
-                                                                            destinationVersionIndex: otherVersionIndex)
+                                    if let column = column { // if in tasks pool, use drag and drop instead of menu
+                                        Menu("Move to") {
+                                            ForEach(self.project.versions.indices, id: \.self) { otherVersionIndex in
+                                                if otherVersionIndex != self.versionIndex {
+                                                    Button(self.project.versions[otherVersionIndex].number) {
+                                                        self.project.moveTaskTo(taskCurrentVersionIndex: self.versionIndex,
+                                                                                taskCurrentColumn: column,
+                                                                                taskIndex: taskIndex,
+                                                                                destinationVersionIndex: otherVersionIndex)
+                                                    }
                                                 }
                                             }
                                         }
@@ -136,37 +157,31 @@ struct TasksView: View {
             }
         }
         .frame(width: 360)
-        .background(RoundedRectangle(cornerRadius: 8)
+        .background(isBackground: column != nil, // no background in tasks pool
+                    RoundedRectangle(cornerRadius: 8)
                         .fillAndStroke(fill: Color(NSColor.underPageBackgroundColor),
                                        stroke: Color.white.opacity(0.1)))
     }
     
-    func generateTasksBinding(column: Column) -> Binding<[Task]> {
-        Binding {
-            self.version.tasksByColumn[column]!
-        } set: {
-            self.version.tasksByColumn[column] = $0
-        }
-
-    }
-    
-    func moveTask(oldColumn: Column, task: Task, newColumn: Column, index: Int) {
+    func moveTask(oldColumn: Column?, task: Task, newColumn: Column?, index: Int) {
         DispatchQueue.main.async {
-            // find old column
-            if let taskOldIndex = self.version.tasksByColumn[oldColumn]!.firstIndex(where: { $0.id == task.id }) {
+            let oldTasks = Column.columnTasksBinding(project: self.$project, version: self.$version, column: oldColumn)
+            let newTasks = Column.columnTasksBinding(project: self.$project, version: self.$version, column: newColumn)
+            
+            if let taskOldIndex = oldTasks.wrappedValue.firstIndex(where: { $0.id == task.id }) {
                 if oldColumn != newColumn {
                     // change column
-                    self.version.tasksByColumn[oldColumn]!.remove(at: taskOldIndex)
+                    oldTasks.wrappedValue.remove(at: taskOldIndex)
                     
-                    if self.version.tasksByColumn[newColumn]!.isEmpty {
+                    if newTasks.wrappedValue.isEmpty {
                         // in case index would be outside bounds (because of empty tasks)
-                        self.version.tasksByColumn[newColumn]!.append(task)
+                        newTasks.wrappedValue.append(task)
                     } else {
-                        self.version.tasksByColumn[newColumn]!.insert(task, at: index)
+                        newTasks.wrappedValue.insert(task, at: index)
                     }
                 } else {
                     // move within same column
-                    self.version.tasksByColumn[newColumn]!.move(fromOffsets: IndexSet(arrayLiteral: taskOldIndex), toOffset: index)
+                    newTasks.wrappedValue.move(fromOffsets: IndexSet(arrayLiteral: taskOldIndex), toOffset: index)
                 }
             }
         }

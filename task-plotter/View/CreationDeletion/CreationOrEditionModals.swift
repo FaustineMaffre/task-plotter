@@ -611,10 +611,11 @@ struct TaskFormContent: View {
 }
 
 struct TaskCreationModal: View {
+    @Binding var project: Project
     @Binding var version: Version
     
     let projectLabels: [Label]
-    let column: Column
+    let column: Column? // nil for tasks pool
     
     @State var taskTitle: String = ""
     @State var taskLabels: [LabelID] = []
@@ -635,11 +636,12 @@ struct TaskCreationModal: View {
             }, modalSize: taskModalSize,
             createOrEditCondition: !self.taskTitle.isEmpty) {
             // create
+            let column = Column.columnTasksBinding(project: self.$project, version: self.$version, column: self.column)
             let newTask = Task(title: self.taskTitle,
                                labelIds: self.taskLabels,
                                description: self.taskDescription,
                                cost: self.taskCost)
-            self.version.addTask(column: self.column, newTask)
+            column.wrappedValue.append(newTask)
             
         } resetAction: {
             // reset task title, labels, description, cost
@@ -652,10 +654,11 @@ struct TaskCreationModal: View {
 }
 
 struct TaskEditionModal: View {
+    @Binding var project: Project
     @Binding var version: Version
     
     let projectLabels: [Label]
-    let column: Column
+    let column: Column?
     
     let taskIndex: Int
     
@@ -664,14 +667,15 @@ struct TaskEditionModal: View {
     @State var taskDescription: String
     @State var taskCost: Double?
     
-    init(version: Binding<Version>, projectLabels: [Label], column: Column, taskIndex: Int) {
+    init(project: Binding<Project>, version: Binding<Version>, projectLabels: [Label], column: Column?, taskIndex: Int) {
         self._version = version
+        self._project = project
         
         self.projectLabels = projectLabels
         self.column = column
         self.taskIndex = taskIndex
         
-        let task = version.wrappedValue.tasksByColumn[column]![taskIndex]
+        let task = Column.columnTasksBinding(project: project, version: version, column: column).wrappedValue[taskIndex]
         self._taskTitle = State(initialValue: task.title)
         self._taskLabelIds = State(initialValue: task.labelIds)
         self._taskDescription = State(initialValue: task.description)
@@ -692,10 +696,11 @@ struct TaskEditionModal: View {
             }, modalSize: taskModalSize,
             createOrEditCondition: !self.taskTitle.isEmpty) {
             // edit
-            self.version.tasksByColumn[self.column]![self.taskIndex].title = self.taskTitle
-            self.version.tasksByColumn[self.column]![self.taskIndex].labelIds = self.taskLabelIds
-            self.version.tasksByColumn[self.column]![self.taskIndex].description = self.taskDescription
-            self.version.tasksByColumn[self.column]![self.taskIndex].cost = self.taskCost
+            let column = Column.columnTasksBinding(project: self.$project, version: self.$version, column: self.column)
+            column.wrappedValue[self.taskIndex].title = self.taskTitle
+            column.wrappedValue[self.taskIndex].labelIds = self.taskLabelIds
+            column.wrappedValue[self.taskIndex].description = self.taskDescription
+            column.wrappedValue[self.taskIndex].cost = self.taskCost
             
         } resetAction: {
             // reset task title, labels, description, cost

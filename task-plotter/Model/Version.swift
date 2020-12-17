@@ -80,12 +80,6 @@ struct Version: Identifiable, Hashable, Equatable, Codable {
         self.tasksByColumn[column]![taskIndex]
     }
     
-    mutating func addTask(column: Column, _ task: Task) {
-        if !task.title.isEmpty {
-            self.tasksByColumn[column]!.append(task)
-        }
-    }
-    
     mutating func deleteTask(column: Column, task: Task) {
         self.tasksByColumn[column]!.remove(task)
     }

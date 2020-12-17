@@ -75,6 +75,6 @@ struct SideMenu<MainContent: View, SideContent: View>: View {
             
             Spacer()
         }
-        .background(Color(NSColor.windowBackgroundColor))
+        .background(Color(NSColor.underPageBackgroundColor))
     }
 }
