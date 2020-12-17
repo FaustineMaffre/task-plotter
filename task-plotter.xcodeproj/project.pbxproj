@@ -33,6 +33,7 @@
 		9D7B80872583B844003FC735 /* CreateDeleteEditButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D7B80862583B844003FC735 /* CreateDeleteEditButton.swift */; };
 		9D7B808A2583B9B4003FC735 /* CreationOrEditionModals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D7B80892583B9B4003FC735 /* CreationOrEditionModals.swift */; };
 		9DA4DF152585844900E8D62F /* Binding+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DA4DF142585844900E8D62F /* Binding+.swift */; };
+		9DB8E027258B7EAD006E4FFF /* TasksColumnView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DB8E026258B7EAD006E4FFF /* TasksColumnView.swift */; };
 		9DC0F192257FB4CA00C80701 /* TitleStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC0F191257FB4CA00C80701 /* TitleStyle.swift */; };
 		9DC0F196257FB59600C80701 /* VersionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC0F195257FB59600C80701 /* VersionsView.swift */; };
 		9DC0F19B257FC3D400C80701 /* TasksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DC0F19A257FC3D400C80701 /* TasksView.swift */; };
@@ -73,6 +74,7 @@
 		9D7B80862583B844003FC735 /* CreateDeleteEditButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateDeleteEditButton.swift; sourceTree = "<group>"; };
 		9D7B80892583B9B4003FC735 /* CreationOrEditionModals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreationOrEditionModals.swift; sourceTree = "<group>"; };
 		9DA4DF142585844900E8D62F /* Binding+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Binding+.swift"; sourceTree = "<group>"; };
+		9DB8E026258B7EAD006E4FFF /* TasksColumnView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasksColumnView.swift; sourceTree = "<group>"; };
 		9DC0F191257FB4CA00C80701 /* TitleStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleStyle.swift; sourceTree = "<group>"; };
 		9DC0F195257FB59600C80701 /* VersionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VersionsView.swift; sourceTree = "<group>"; };
 		9DC0F19A257FC3D400C80701 /* TasksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasksView.swift; sourceTree = "<group>"; };
@@ -205,6 +207,7 @@
 			children = (
 				9DD08F8B258645330031C6E1 /* VersionDatesView.swift */,
 				9DC0F19E257FC67900C80701 /* TaskView.swift */,
+				9DB8E026258B7EAD006E4FFF /* TasksColumnView.swift */,
 				9DC0F19A257FC3D400C80701 /* TasksView.swift */,
 			);
 			path = Tasks;
@@ -342,6 +345,7 @@
 				9D5B98B525880F7F0084AF44 /* HStackWrap.swift in Sources */,
 				9D5709CA257EBF2C00B5C5B7 /* ProjectMenu.swift in Sources */,
 				9D0C2BEE257E4091006F3D89 /* Project.swift in Sources */,
+				9DB8E027258B7EAD006E4FFF /* TasksColumnView.swift in Sources */,
 				9DC0F196257FB59600C80701 /* VersionsView.swift in Sources */,
 				9D0C2BF1257E51FF006F3D89 /* Repository.swift in Sources */,
 				9DC0F19F257FC67900C80701 /* TaskView.swift in Sources */,

@@ -87,7 +87,8 @@ struct DueDateView: View {
 
 struct TaskView: View {
     @Binding var task: Task
-    let column: Column
+    let isValidated: Bool
+    
     let projectLabels: [Label]
     
     @State var isTaskEditionSheetPresented: Bool = false
@@ -124,7 +125,7 @@ struct TaskView: View {
                     .frame(height: 2)
                 
                 HStack {
-                    DueDateView(dueDate: self.task.expectedDueDate, isValidated: self.column == .done)
+                    DueDateView(dueDate: self.task.expectedDueDate, isValidated: self.isValidated)
                     Spacer()
                 }
             }

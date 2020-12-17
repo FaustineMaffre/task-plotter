@@ -36,12 +36,16 @@ struct Project: Identifiable, Hashable, Equatable, Codable {
         }
     }
     
+    var tasksPool: [Task]
+    
     init(id: ProjectID = UUID(),
          name: String,
-         labels: [Label]) {
+         labels: [Label],
+         tasksPool: [Task] = []) {
         self.id = id
         self.name = name
         self.labels = labels
+        self.tasksPool = tasksPool
     }
     
     func hash(into hasher: inout Hasher) {

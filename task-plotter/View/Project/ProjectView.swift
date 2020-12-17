@@ -22,7 +22,9 @@ struct ProjectView: View {
             // tasks on the right
             if let projectIndex = self.repository.ҩselectedProjectIndex,
                let versionIndex = self.repository.projects[projectIndex].ҩselectedVersionIndex {
-                TasksView(project: self.generateProjectBinding(projectIndex: projectIndex), versionIndex: versionIndex)
+                TasksView(project: self.generateProjectBinding(projectIndex: projectIndex),
+                          version: self.generateVersionBinding(projectIndex: projectIndex, versionIndex: versionIndex),
+                          versionIndex: versionIndex)
             } else {
                 Spacer()
             }
@@ -40,6 +42,22 @@ struct ProjectView: View {
         } set: {
             if self.repository.projects.indices.contains(projectIndex) {
                 self.repository.projects[projectIndex] = $0
+            }
+        }
+    }
+    
+    func generateVersionBinding(projectIndex: Int, versionIndex: Int) -> Binding<Version> {
+        Binding {
+            if self.repository.projects.indices.contains(projectIndex),
+               self.repository.projects[projectIndex].versions.indices.contains(versionIndex) {
+                return self.repository.projects[projectIndex].versions[versionIndex]
+            } else {
+                return Version(number: "Oops")
+            }
+        } set: {
+            if self.repository.projects.indices.contains(projectIndex),
+               self.repository.projects[projectIndex].versions.indices.contains(versionIndex) {
+                self.repository.projects[projectIndex].versions[versionIndex] = $0
             }
         }
     }
