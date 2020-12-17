@@ -12,6 +12,8 @@ struct TasksView: View {
     @Binding var project: Project
     let versionIndex: Int
     
+    @State var isTasksPoolPresented: Bool = false
+    
     @State var taskCreationOrEditionSheetItem: CreationOrEditionMode? = nil
     @State var taskToCreateOrEditColumn: Column = .todo
     @State var taskToEditIndex: Int = 0
@@ -21,42 +23,57 @@ struct TasksView: View {
     @State var taskToDeleteIndex: Int = -1
     
     var body: some View {
-        VStack(spacing: 0) {
-            HStack {
-                Text("Tasks")
-                    .titleStyle()
-                    .padding(10)
+        SideMenu(side: .trailing, isPresented: self.$isTasksPoolPresented) {
+            VStack(spacing: 0) {
+                HStack {
+                    Text("Tasks")
+                        .titleStyle()
+                    
+                    Spacer()
+                    
+                    // pool menu button
+                    Button {
+                        withAnimation {
+                            self.isTasksPoolPresented.toggle()
+                        }
+                    } label: {
+                        Image(systemName: "archivebox")
+                            .imageScale(.large)
+                    }
+                }
+                .padding(10)
                 
-                Spacer()
+                VersionDatesView(version: self.generateVersionBinding())
+                    .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
+                
+                HStack(spacing: 8) {
+                    ForEach(self.project.versions[self.versionIndex].ҩtasksByColumnArray, id: \.0) { column, tasks in
+                        self.columView(column: column, tasks: tasks)
+                    }
+                }
+                .padding(10)
             }
-            
-            VersionDatesView(version: self.generateVersionBinding())
-                .padding(EdgeInsets(top: 0, leading: 10, bottom: 0, trailing: 10))
-            
-            HStack(spacing: 8) {
-                ForEach(self.project.versions[self.versionIndex].ҩtasksByColumnArray, id: \.0) { column, tasks in
-                    self.columView(column: column, tasks: tasks)
+            .sheet(item: self.$taskCreationOrEditionSheetItem) { mode in
+                switch mode {
+                case .creation:
+                    TaskCreationModal(version: self.generateVersionBinding(),
+                                      projectLabels: self.project.labels,
+                                      column: self.taskToCreateOrEditColumn)
+                case .edition:
+                    TaskEditionModal(version: self.generateVersionBinding(),
+                                     projectLabels: self.project.labels,
+                                     column: self.taskToCreateOrEditColumn,
+                                     taskIndex: self.taskToEditIndex)
                 }
             }
-            .padding(10)
+            .deleteTaskAlert(isPresented: self.$isTaskDeletionAlertPresented,
+                             version: self.generateVersionBinding(),
+                             column: self.taskToDeleteColumn,
+                             taskToDeleteIndex: self.taskToDeleteIndex)
+        } sideContent: {
+            Text("Pool")
+                .frame(width: 360)
         }
-        .sheet(item: self.$taskCreationOrEditionSheetItem) { mode in
-            switch mode {
-            case .creation:
-                TaskCreationModal(version: self.generateVersionBinding(),
-                                  projectLabels: self.project.labels,
-                                  column: self.taskToCreateOrEditColumn)
-            case .edition:
-                TaskEditionModal(version: self.generateVersionBinding(),
-                                 projectLabels: self.project.labels,
-                                 column: self.taskToCreateOrEditColumn,
-                                 taskIndex: self.taskToEditIndex)
-            }
-        }
-        .deleteTaskAlert(isPresented: self.$isTaskDeletionAlertPresented,
-                         version: self.generateVersionBinding(),
-                         column: self.taskToDeleteColumn,
-                         taskToDeleteIndex: self.taskToDeleteIndex)
     }
     
     func columView(column: Column, tasks: [Task]) -> some View {
