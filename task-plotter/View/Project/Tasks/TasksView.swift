@@ -21,12 +21,12 @@ extension View {
 }
 
 struct TasksView: View {
+    @EnvironmentObject var userDefaultsConfig: UserDefaultsConfig
+    
     @Binding var project: Project
     
     @Binding var version: Version
     let versionIndex: Int
-    
-    @State var isTasksPoolPresented: Bool = false
     
     @State var taskCreationOrEditionSheetItem: CreationOrEditionMode? = nil
     @State var taskToCreateOrEditColumn: Column? = nil // nil for tasks pool
@@ -37,7 +37,7 @@ struct TasksView: View {
     @State var taskToDeleteIndex: Int = -1
     
     var body: some View {
-        SideMenu(side: .trailing, isPresented: self.$isTasksPoolPresented) {
+        SideMenu(side: .trailing, isPresented: self.$userDefaultsConfig.isTasksPoolVisible) {
             VStack(spacing: 0) {
                 HStack {
                     Text("Tasks")
@@ -48,7 +48,7 @@ struct TasksView: View {
                     // pool menu button
                     Button {
                         withAnimation {
-                            self.isTasksPoolPresented.toggle()
+                            self.userDefaultsConfig.isTasksPoolVisible.toggle()
                         }
                     } label: {
                         Image(systemName: "archivebox")
@@ -100,12 +100,10 @@ struct TasksView: View {
             HStack {
                 Text(column?.rawValue ?? "Tasks pool")
                     .smallTitleStyle()
-                    .padding(10)
                 
                 Spacer()
-                
-                // TODOq filter (labels) and sort (cost)
             }
+            .padding(10)
             
             TasksColumnView(tasks: tasks,
                             isValidated: column == .done,

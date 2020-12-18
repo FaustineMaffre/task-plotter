@@ -77,12 +77,14 @@ final class Repository: ObservableObject, Codable {
     }
     
     // MARK: - Codable
+    
     enum CodingKeys: CodingKey {
         case projects, selectedProjectId
     }
     
     convenience init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
+        
         let projects = try container.decode([Project].self, forKey: .projects)
         let selectedProjectId = try container.decode(ProjectID?.self, forKey: .selectedProjectId)
         
@@ -91,6 +93,7 @@ final class Repository: ObservableObject, Codable {
     
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
+        
         try container.encode(self.projects, forKey: .projects)
         try container.encode(self.selectedProjectId, forKey: .selectedProjectId)
     }

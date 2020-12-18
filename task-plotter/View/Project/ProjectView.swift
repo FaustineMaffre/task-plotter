@@ -37,7 +37,7 @@ struct ProjectView: View {
             if self.repository.projects.indices.contains(projectIndex) {
                 return self.repository.projects[projectIndex]
             } else {
-                return Project(name: "Oops", labels: [])
+                return Project(name: "Oops")
             }
         } set: {
             if self.repository.projects.indices.contains(projectIndex) {

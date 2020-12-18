@@ -89,17 +89,23 @@ struct TaskView: View {
     @Binding var task: Task
     let isValidated: Bool
     
-    let projectLabels: [Label]
+    let projectLabels: IndexedArray<Label, LabelID>
     
     @State var isTaskEditionSheetPresented: Bool = false
     
     var body: some View {
-        HStack {
+        // TODOq0 clean those somewhere (at start?)
+        let deletedLabels = self.task.labelIds.filter { self.projectLabels.find(by: $0) == nil }
+        if !deletedLabels.isEmpty {
+            print("Task \(self.task.title): \(deletedLabels.count) deleted label(s)")
+        }
+        
+        return HStack {
             VStack(spacing: 4) {
                 if !self.task.labelIds.isEmpty {
                     HStackWrap(elements: self.task.labelIds, horizontalSpacing: 3, verticalSpacing: 2) { _, labelId in
                         Group {
-                            if let label = Label.findLabel(id: labelId, among: self.projectLabels) {
+                            if let label = self.projectLabels.find(by: labelId) {
                                 TaskLabelView(label: label)
                             } else {
                                 EmptyView()

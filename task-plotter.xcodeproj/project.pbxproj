@@ -43,6 +43,7 @@
 		9DD08F8C258645330031C6E1 /* VersionDatesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DD08F8B258645330031C6E1 /* VersionDatesView.swift */; };
 		9DD08F902586BF3B0031C6E1 /* Date+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DD08F8F2586BF3B0031C6E1 /* Date+.swift */; };
 		9DD08F942586C60E0031C6E1 /* HourInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DD08F932586C60E0031C6E1 /* HourInterval.swift */; };
+		9DE141A5258EA31700884C82 /* IndexedArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DE141A4258EA31700884C82 /* IndexedArray.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -85,6 +86,7 @@
 		9DD08F8B258645330031C6E1 /* VersionDatesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VersionDatesView.swift; sourceTree = "<group>"; };
 		9DD08F8F2586BF3B0031C6E1 /* Date+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+.swift"; sourceTree = "<group>"; };
 		9DD08F932586C60E0031C6E1 /* HourInterval.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HourInterval.swift; sourceTree = "<group>"; };
+		9DE141A4258EA31700884C82 /* IndexedArray.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndexedArray.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -169,6 +171,7 @@
 				9D7850682581663600D5F485 /* Collection+.swift */,
 				9D2B316A25802332001280AD /* Color+.swift */,
 				9DA4DF142585844900E8D62F /* Binding+.swift */,
+				9DE141A4258EA31700884C82 /* IndexedArray.swift */,
 				9D0C2BF6257E5363006F3D89 /* UserDefaults.swift */,
 				9D0C2BFF257E6AF8006F3D89 /* TestRepositories.swift */,
 				9D7850642581638800D5F485 /* Common.swift */,
@@ -329,6 +332,7 @@
 				9D7850652581638800D5F485 /* Common.swift in Sources */,
 				9D6545FB258A96BE0058AB73 /* SideMenu.swift in Sources */,
 				9D2B316B25802332001280AD /* Color+.swift in Sources */,
+				9DE141A5258EA31700884C82 /* IndexedArray.swift in Sources */,
 				9D0C2BCB257E3CCE006F3D89 /* TaskPlotterApp.swift in Sources */,
 				9D7B80872583B844003FC735 /* CreateDeleteEditButton.swift in Sources */,
 				9DA4DF152585844900E8D62F /* Binding+.swift in Sources */,

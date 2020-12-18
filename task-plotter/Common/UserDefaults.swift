@@ -39,8 +39,25 @@ struct UserDefault<Value, StoredValue> {
     }
 }
 
+extension UserDefault where Value == StoredValue {
+    init(_ key: String, defaultValue: Value) {
+        // no conversion required initializer
+        self.init(key, defaultValue: defaultValue,
+                  toValue: { $0 }, toStoredValue: { $0 })
+    }
+}
+
 class UserDefaultsConfig: ObservableObject {
     /// Singleton.
     static let shared: UserDefaultsConfig = UserDefaultsConfig()
     private init() { }
+    
+    @UserDefault("is_tasks_pool_visible", defaultValue: false)
+    var isTasksPoolVisible: Bool {
+        willSet {
+            if newValue != self.isTasksPoolVisible {
+                self.objectWillChange.send()
+            }
+        }
+    }
 }

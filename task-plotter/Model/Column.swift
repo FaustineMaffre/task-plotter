@@ -12,19 +12,18 @@ enum Column: String, CaseIterable, Codable {
          doing = "Doing",
          done = "Done"
     
-    static func columnTasksBinding(project: Binding<Project>, version: Binding<Version>,
-                            column: Column?) -> Binding<[Task]> {
+    static func columnTasksBinding(project: Binding<Project>, version: Binding<Version>, column: Column?) -> Binding<[Task]> {
         Binding<[Task]> {
             if let column = column {
                 return version.wrappedValue.tasksByColumn[column]!
             } else {
-                return project.wrappedValue.tasksPool
+                return project.wrappedValue.tasksPool.elements
             }
         } set: {
             if let column = column {
                 version.wrappedValue.tasksByColumn[column] = $0
             } else {
-                project.wrappedValue.tasksPool = $0
+                project.wrappedValue.tasksPool.elements = $0
             }
         }
     }

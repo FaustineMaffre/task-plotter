@@ -51,7 +51,7 @@ struct Label: Identifiable, Hashable, Equatable, Codable {
         return brightness > 190 ? .black : .white
     }
     
-    static func nextAvailableLabel(labels: [Label]) -> Label {
+    static func nextAvailableLabel(labels: IndexedArray<Label, LabelID>) -> Label {
         // name
         let availableName: String
         
@@ -71,9 +71,5 @@ struct Label: Identifiable, Hashable, Equatable, Codable {
             } ?? availableColors[0]
         
         return Label(name: availableName, color: availableColor)
-    }
-    
-    static func findLabel(id: LabelID, among labels: [Label]) -> Label? {
-        labels.first { $0.id == id }
     }
 }

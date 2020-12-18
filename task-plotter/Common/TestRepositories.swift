@@ -37,7 +37,7 @@ class TestRepositories {
         project1.versions = [version10, version11]
         project1.selectedVersionId = version10.id
         
-        var project2 = Project(name: "Project 2", labels: [])
+        var project2 = Project(name: "Project 2")
         
         let repository = Repository(projects: [project1, project2])
         repository.selectedProjectId = project1.id

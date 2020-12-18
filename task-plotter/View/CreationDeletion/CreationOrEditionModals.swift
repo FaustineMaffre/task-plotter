@@ -121,7 +121,7 @@ struct LabelSelectorLabelView: View {
 struct LabelsListView<BottomContent: View, TapContent: View, ContextContent: View>: View {
     let title: String?
     let labelIds: [LabelID]
-    let projectLabels: [Label]
+    let projectLabels: IndexedArray<Label, LabelID>
     
     let onDropAction: (Label, Int) -> Void
     let onTapContent: (Int) -> TapContent
@@ -133,7 +133,7 @@ struct LabelsListView<BottomContent: View, TapContent: View, ContextContent: Vie
     
     init(title: String? = nil,
          labelIds: [LabelID],
-         projectLabels: [Label],
+         projectLabels: IndexedArray<Label, LabelID>,
          onDropAction: @escaping (Label, Int) -> Void,
          onTapContent: @escaping (Int) -> TapContent,
          contextMenuContent: @escaping (Int) -> ContextContent,
@@ -168,7 +168,7 @@ struct LabelsListView<BottomContent: View, TapContent: View, ContextContent: Vie
                                 Spacer()
                             }
                         } else {
-                            if let label = Label.findLabel(id: self.labelIds[labelIndex], among: self.projectLabels) {
+                            if let label = self.projectLabels.find(by: self.labelIds[labelIndex]) {
                                 HStack {
                                     Spacer()
                                     LabelSelectorLabelView(label: label)
@@ -218,7 +218,7 @@ struct LabelsListView<BottomContent: View, TapContent: View, ContextContent: Vie
 extension LabelsListView where BottomContent == EmptyView, TapContent == EmptyView, ContextContent == EmptyView {
     init(title: String? = nil,
          labelIds: [LabelID],
-         projectLabels: [Label],
+         projectLabels: IndexedArray<Label, LabelID>,
          onDropAction: @escaping (Label, Int) -> Void) {
         
         self.init(title: title,
@@ -276,7 +276,7 @@ struct AvailableLabelColorsSelector: View {
 
 struct ProjectFormContent: View {
     @Binding var projectName: String
-    @Binding var projectLabels: [Label]
+    @Binding var projectLabels: IndexedArray<Label, LabelID>
     
     static let labelsWidth: CGFloat = 60
     
@@ -366,7 +366,7 @@ struct ProjectCreationModal: View {
     let repository: Repository
     
     @State var projectName: String = ""
-    @State var projectLabels: [Label] = []
+    @State var projectLabels: IndexedArray<Label, LabelID> = IndexedArray<Label, LabelID>(id: \.id)
     
     var body: some View {
         CreationOrEditionModal(
@@ -378,8 +378,7 @@ struct ProjectCreationModal: View {
             }, modalSize: projectModalSize,
             createOrEditCondition: !self.projectName.isEmpty) {
             // create
-            let newProject = Project(name: self.projectName,
-                                     labels: self.projectLabels) 
+            let newProject = Project(name: self.projectName, labels: self.projectLabels.elements) 
             self.repository.addProject(newProject, selectIt: true)
             
         } resetAction: {
@@ -394,7 +393,7 @@ struct ProjectEditionModal: View {
     let projectIndex: Int
     
     @State var projectName: String
-    @State var projectLabels: [Label]
+    @State var projectLabels: IndexedArray<Label, LabelID>
     
     init(repository: Repository, projectIndex: Int) {
         self.repository = repository
@@ -515,7 +514,7 @@ let taskModalSize = CGSize(width: 600, height: 720)
 
 struct TaskLabelSelector: View {
     @Binding var selectedLabelIds: [LabelID]
-    let projectLabels: [Label]
+    let projectLabels: IndexedArray<Label, LabelID>
     
     var ҩavailableLabels: [LabelID] {
         self.projectLabels.map(\.id).substracting(other: self.selectedLabelIds)
@@ -565,7 +564,7 @@ struct TaskLabelSelector: View {
 }
 
 struct TaskFormContent: View {
-    let projectLabels: [Label]
+    let projectLabels: IndexedArray<Label, LabelID>
     
     @Binding var taskTitle: String
     @Binding var taskLabels: [LabelID]
@@ -614,7 +613,7 @@ struct TaskCreationModal: View {
     @Binding var project: Project
     @Binding var version: Version
     
-    let projectLabels: [Label]
+    let projectLabels: IndexedArray<Label, LabelID>
     let column: Column? // nil for tasks pool
     
     @State var taskTitle: String = ""
@@ -657,7 +656,7 @@ struct TaskEditionModal: View {
     @Binding var project: Project
     @Binding var version: Version
     
-    let projectLabels: [Label]
+    let projectLabels: IndexedArray<Label, LabelID>
     let column: Column?
     
     let taskIndex: Int
@@ -667,7 +666,7 @@ struct TaskEditionModal: View {
     @State var taskDescription: String
     @State var taskCost: Double?
     
-    init(project: Binding<Project>, version: Binding<Version>, projectLabels: [Label], column: Column?, taskIndex: Int) {
+    init(project: Binding<Project>, version: Binding<Version>, projectLabels: IndexedArray<Label, LabelID>, column: Column?, taskIndex: Int) {
         self._version = version
         self._project = project
         

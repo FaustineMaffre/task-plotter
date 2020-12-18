@@ -9,12 +9,6 @@ import Foundation
 
 // MARK: - Extension with helper functions
 
-extension Array where Element == Label {
-    func find(by id: LabelID) -> Label? {
-        self.first { $0.id == id }
-    }
-}
-
 extension Project {
     func findLabel(by id: LabelID) -> Label? {
         self.labels.find(by: id)
@@ -93,7 +87,7 @@ enum DraggedElement {
         return res
     }
     
-    static func toLabel(itemProvider: NSItemProvider, labels: [Label], completionHandler: @escaping (Label?) -> Void) {
+    static func toLabel(itemProvider: NSItemProvider, labels: IndexedArray<Label, LabelID>, completionHandler: @escaping (Label?) -> Void) {
         _ = itemProvider.loadObject(ofClass: String.self) { optionalStr, _ in
             var res: Label? = nil
             

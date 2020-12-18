@@ -12,7 +12,7 @@ struct TasksColumnView<MenuItems: View>: View {
     @Binding var tasks: [Task]
     let isValidated: Bool
     
-    let projectLabels: [Label]
+    let projectLabels: IndexedArray<Label, LabelID>
     
     let onTap: (Int) -> Void
     
