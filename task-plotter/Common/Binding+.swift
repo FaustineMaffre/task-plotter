@@ -8,6 +8,10 @@
 import SwiftUI
 
 extension Binding where Value == Double? {
+    /// Returns a string binding to an optional double value.
+    ///
+    /// (This is a workaround because number formatter (in a TextField for example) on an optional value seem to cause
+    /// issues.)
     func stringBinding(formatter: NumberFormatter) -> Binding<String> {
         Binding<String> {
             formatter.string(for: self.wrappedValue) ?? ""
@@ -25,6 +29,7 @@ extension Binding where Value == Double? {
 }
 
 extension Binding where Value == Int {
+    /// Returns a double binding to an integer value.
     func doubleBinding(rounding: Bool = false) -> Binding<Double> {
         Binding<Double> {
             Double(self.wrappedValue)

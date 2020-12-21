@@ -9,6 +9,8 @@ import Foundation
 
 typealias ProjectID = UUID
 
+
+/// A project, containing versions.
 struct Project: Identifiable, Hashable, Equatable, Codable {
     
     let id: ProjectID
@@ -16,10 +18,13 @@ struct Project: Identifiable, Hashable, Equatable, Codable {
     var name: String
     var versions: [Version] = []
     
+    /// Labels available in this project.
     var labels: IndexedArray<Label, LabelID>
     
+    /// ID of the currently selected version, if one is selected.
     var selectedVersionId: VersionID? = nil
     
+    /// Index of the currently selected version, if one is selected.
     var ҩselectedVersionIndex: Int? {
         if let selectedVersionId = self.selectedVersionId {
             return self.versions.firstIndex { $0.id == selectedVersionId }
@@ -28,6 +33,7 @@ struct Project: Identifiable, Hashable, Equatable, Codable {
         }
     }
     
+    /// Currently selected version, if one is selected.
     var ҩselectedVersion: Version? {
         if let selectedVersionId = self.selectedVersionId {
             return self.versions.first { $0.id == selectedVersionId }
@@ -36,10 +42,10 @@ struct Project: Identifiable, Hashable, Equatable, Codable {
         }
     }
     
+    /// Pool containing tasks not associated with a version.
     var tasksPool: IndexedArray<Task, TaskID>
     
     init(id: ProjectID = UUID(), name: String, labels: [Label] = [], tasksPool: [Task] = []) {
-        
         self.id = id
         self.name = name
         self.labels = IndexedArray<Label, LabelID>(elements: labels, id: \.id)
@@ -54,6 +60,7 @@ struct Project: Identifiable, Hashable, Equatable, Codable {
         lhs.id == rhs.id
     }
     
+    /// Adds a version, if its number is not empty, and sets it as selected version if required.
     mutating func addVersion(_ version: Version, selectIt: Bool) {
         if !version.number.isEmpty {
             self.versions.append(version)
@@ -65,16 +72,20 @@ struct Project: Identifiable, Hashable, Equatable, Codable {
         }
     }
     
+    /// Deletes the given version.
     mutating func deleteVersion(version: Version) {
         self.versions.remove(version)
     }
     
+    /// Deletes the selected version.
     mutating func deleteSelectedVersion() {
         if let selectedVersionIndex = self.ҩselectedVersionIndex {
             self.versions.remove(at: selectedVersionIndex)
         }
     }
     
+    /// Moves the task at the given idnex from the given column of the version at the given index to the end of to do
+    /// column of the version at the given index.
     mutating func moveTaskTo(taskCurrentVersionIndex: Int, taskCurrentColumn: Column, taskIndex: Int, destinationVersionIndex: Int) {
         if let task = self.versions[taskCurrentVersionIndex].tasksByColumn[taskCurrentColumn]?.remove(at: taskIndex) {
             self.versions[destinationVersionIndex].tasksByColumn[.todo]?.append(task)

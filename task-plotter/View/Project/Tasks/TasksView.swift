@@ -20,6 +20,7 @@ extension View {
     }
 }
 
+/// View of tasks in a version, along with the common tasks pool of the project.
 struct TasksView: View {
     @EnvironmentObject var userDefaultsConfig: UserDefaultsConfig
     
@@ -93,7 +94,8 @@ struct TasksView: View {
         }
     }
     
-    func columnView(column: Column?) -> some View { // pool if column nil
+    /// View of a column or the tasks pool (if the given column is nil).
+    func columnView(column: Column?) -> some View {
         let columnTasks = Column.columnTasksBinding(project: self.$project, version: self.$version, column: column)
         
         return VStack(spacing: 0) {
@@ -121,7 +123,7 @@ struct TasksView: View {
                                     }
                                 }
                             },
-                            taskContentMenu: { taskIndex in
+                            taskContextMenu: { taskIndex in
                                 HStack {
                                     if let column = column { // if in tasks pool, use drag and drop instead of menu
                                         Menu("Move to") {
@@ -161,6 +163,7 @@ struct TasksView: View {
                                        stroke: Color.white.opacity(0.1)))
     }
     
+    /// Moves a task to a column at the given index. A nil column indicates the tasks pool. 
     func moveTask(oldColumn: Column?, task: Task, newColumn: Column?, index: Int) {
         DispatchQueue.main.async {
             let oldColumnTasks = Column.columnTasksBinding(project: self.$project, version: self.$version, column: oldColumn)

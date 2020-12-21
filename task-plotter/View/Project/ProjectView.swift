@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// View of a project, with the list of versions on the left and tasks on the right. 
 struct ProjectView: View {
     @ObservedObject var repository: Repository
     

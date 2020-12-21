@@ -9,6 +9,7 @@ import SwiftUI
 
 enum SideMenuSide { case leading, trailing }
 
+/// Side menu that can be opened or closed.
 struct SideMenu<MainContent: View, SideContent: View>: View {
     let side: SideMenuSide
     

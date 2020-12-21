@@ -35,6 +35,7 @@ extension Project {
 
 // MARK: - Dragged element
 
+/// A dragged element in the app (either a label or a task). 
 enum DraggedElement {
     case label(id: LabelID),
          task(column: Column?, id: TaskID) // column nil for tasks pool

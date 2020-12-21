@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// View of the label of a task. 
 struct TaskLabelView: View {
     let label: Label
     
@@ -22,6 +23,7 @@ struct TaskLabelView: View {
     }
 }
 
+/// View of the cost of a task.
 struct TaskCostView: View {
     @Binding var task: Task
     
@@ -37,8 +39,11 @@ struct TaskCostView: View {
     }
 }
 
+/// View of a due date, with a background depending on the current date.
 struct DueDateView: View {
     let dueDate: Date?
+    
+    /// True if the date should be considered as validated.
     let isValidated: Bool
     
     var ҩbackgroundColor: Color {
@@ -85,6 +90,7 @@ struct DueDateView: View {
     }
 }
 
+/// A view of one task.
 struct TaskView: View {
     @Binding var task: Task
     let isValidated: Bool

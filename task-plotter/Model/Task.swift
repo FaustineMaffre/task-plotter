@@ -9,23 +9,29 @@ import Foundation
 
 typealias TaskID = UUID
 
+/// A task that can be placed in the tasks pool or in a column of a version.
 struct Task: Identifiable, Hashable, Equatable, Codable {
     
     let id: TaskID
     
     var title: String
-    var labelIds: [LabelID]
     var description: String
     
+    /// Project labels assigned to this task.
+    var labelIds: [LabelID]
+    
+    /// Expected cost of this task, if it is given.
+    ///
+    /// Put to nil if set to a negative value.
     var cost: Double? {
         didSet {
-            // if negative, then nil (no cost)
             if let cost = self.cost, cost <= 0 {
                 self.cost = nil
             }
         }
     }
     
+    /// Due date, computed from the version due date and parameters (not set directly by the user). 
     var expectedDueDate: Date? = nil
     
     init(id: TaskID = UUID(),

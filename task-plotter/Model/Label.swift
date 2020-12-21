@@ -10,6 +10,7 @@ import SwiftUI
 
 typealias LabelID = UUID
 
+/// A label with a name and a color, that belongs to a project and can be added to a task.
 struct Label: Identifiable, Hashable, Equatable, Codable {
     
     let id: LabelID
@@ -24,11 +25,13 @@ struct Label: Identifiable, Hashable, Equatable, Codable {
         self.color = color
     }
     
+    /// Generation of available colors for a label.
     static let huesCount = 15
     static let huesShift = 0.05
     static let brightnessShift = 0.1
     static let brightnessOrSaturationCount = 3
     static let brightnessAndSaturationCount = Self.brightnessOrSaturationCount * 2 - 1
+    /// Available colors for a label.
     static let availableColors: [String] =
         (0..<Self.brightnessAndSaturationCount).flatMap { (bas: Int) -> [String] in
             let b = bas < Self.brightnessOrSaturationCount ? Self.brightnessOrSaturationCount : Self.brightnessAndSaturationCount - bas
@@ -45,12 +48,14 @@ struct Label: Identifiable, Hashable, Equatable, Codable {
             } + [Color(hue: 0, saturation: 0, brightness: grayBrightness).ҩhex] // gray
         }
     
+    /// Foreground color (either black or white) that should be shown over the given background color.
     static func foregroundOn(background: String) -> Color {
         let nsColor = NSColor(Color(hex: background))
         let brightness = ((255 * nsColor.redComponent * 299) + (255 * nsColor.greenComponent * 587) + (255 * nsColor.blueComponent * 114)) / 1000
         return brightness > 190 ? .black : .white
     }
     
+    /// New label, with a name of the form "New label [n]" (such that it is not already taken) and a new color.
     static func nextAvailableLabel(labels: IndexedArray<Label, LabelID>) -> Label {
         // name
         let availableName: String

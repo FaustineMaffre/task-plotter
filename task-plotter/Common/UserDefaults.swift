@@ -52,6 +52,7 @@ class UserDefaultsConfig: ObservableObject {
     static let shared: UserDefaultsConfig = UserDefaultsConfig()
     private init() { }
     
+    /// Tasks pool menu presented.
     @UserDefault("is_tasks_pool_visible", defaultValue: false)
     var isTasksPoolVisible: Bool {
         willSet {

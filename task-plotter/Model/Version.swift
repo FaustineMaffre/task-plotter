@@ -9,24 +9,36 @@ import Foundation
 
 typealias VersionID = UUID
 
+/// A version of a project, containing tasks and to which can be assigned points per day and working days/hours along
+/// with a due date to compute its tasks due date.
 struct Version: Identifiable, Hashable, Equatable, Codable {
     
     let id: VersionID
     
+    /// "Number" of this version, that can actually be any string.
     var number: String
     
+    /// Number of cost points done per day, if it is given.
+    ///
+    /// Put to nil if set to a negative value.
     var pointsPerDay: Double? {
         didSet {
-            // if negative, then nil
             if let pointsPerDay = self.pointsPerDay, pointsPerDay <= 0 {
                 self.pointsPerDay = nil
             }
         }
     }
+    
+    /// Normal working days for this version.
     var workingDays: Set<Day>
+    /// Normal working hours for this version.
     var workingHours: HourInterval
+    /// Dates that may normally be worked, but are excluded (e.g. 25 Dec).
     var excludedDates: Set<Date>
     
+    /// Due date of this version, if given.
+    ///
+    /// Only the day should be given, as the hour is automatically set to 23h59.
     var dueDate: Date? {
         didSet {
             if let dueDate = self.dueDate {
@@ -36,19 +48,29 @@ struct Version: Identifiable, Hashable, Equatable, Codable {
         }
     }
     
+    /// Sum of points of to do/doing tasks currently added to this version, or nil if there is none.
     var pointsOngoing: Double? {
         self.computePointsOngoing()
     }
     
+    /// Remaining points until the due date if we start now, if there are points per day, working days, due date and
+    /// the version is not validated.
     var pointsStartingNow: Double? {
         self.computePointsStartingNow()
     }
     
+    /// Expected start date, that is, due date of the first task to do minus its estimation.
+    ///
+    /// Not given, but updated along with tasks dates.
     var expectedStartDate: Date? = nil
+    
+    /// True if this version was validated by the user.
     var isValidated: Bool = false
     
+    /// Tasks in this version, organized by columns.
     var tasksByColumn: [Column: [Task]] = Dictionary(uniqueKeysWithValues: Column.allCases.map { ($0, []) })
     
+    /// Tasks in this version, organized by columns, sorted in the order of columns.
     var ҩtasksByColumnArray: [(Column, [Task])] {
         let columnsOrdered = Dictionary(uniqueKeysWithValues: Column.allCases.enumerated().map { ($0.element, $0.offset) })
         return self.tasksByColumn.sorted { columnsOrdered[$0.key] ?? 0 < columnsOrdered[$1.key] ?? 0 }
@@ -76,18 +98,25 @@ struct Version: Identifiable, Hashable, Equatable, Codable {
         lhs.id == rhs.id
     }
     
+    /// Returns the column the task with the given ID belongs to, or nil if it cannot be found in this version.
     func findColumnOfTask(id: TaskID) -> Column? {
         self.tasksByColumn.first { _, tasks in
-            tasks.contains { $0.id == id }
+            tasks.contains { $0.id == id } // TODOq0 use dictionary of IDs
         }?.key
     }
     
-    func formattedWorkingDays(emptyDaysText: String) -> String {
+    /// Formats the working days of this version to a string.
+    ///
+    /// If `workingDays` is empty, returns "None";
+    /// if it contains all days, returns "All days";
+    /// if it contains Monday to Friday, returns "Week days";
+    /// otherwise returns the list of short names of days.
+    func formattedWorkingDays() -> String {
         var res: String
         
         if self.workingDays.isEmpty {
             // no days
-            res = emptyDaysText
+            res = "None"
             
         } else if self.workingDays == Day.allDays {
             // all days
@@ -114,11 +143,12 @@ struct Version: Identifiable, Hashable, Equatable, Codable {
         return res
     }
     
-    func formattedExcludedDates(emptyDaysText: String) -> String {
+    /// Formats excluded dates of this version to a string.
+    func formattedExcludedDates() -> String {
         var res: String
         
         if self.excludedDates.isEmpty {
-            res = emptyDaysText
+            res = "None"
         } else {
             let dateRanges = self.excludedDates.toRangesOfDays()
             
@@ -168,15 +198,18 @@ struct Version: Identifiable, Hashable, Equatable, Codable {
         
         // partial day
         let (nowHours, nowMinutes) = now.gettingHoursAndMinutes()
-        res += self.workingHours.hoursToRatio(hours: nowHours, minutes: nowMinutes) * pointsPerDay
+        res += self.workingHours.remainingHoursToRatio(hours: nowHours, minutes: nowMinutes) * pointsPerDay
         
         return res
     }
     
+    /// True if tasks due dates can be computed (i.e. there are points per day, working days, a due date and the
+    /// version is not validated).
     func canComputeTaskDates() -> Bool {
         self.pointsPerDay != nil && !self.workingDays.isEmpty && self.dueDate != nil && !self.isValidated
     }
     
+    /// Computes due dates of tasks of this version (and the expected start date) if possible.
     mutating func computeTaskDates() {
         if self.canComputeTaskDates(),
            let pointsPerDay = self.pointsPerDay,
@@ -215,6 +248,8 @@ struct Version: Identifiable, Hashable, Equatable, Codable {
         }
     }
     
+    /// Computes the expected due date of a task, given the version's due date and the sum of costs between the task
+    /// and this due date.
     private static func computeTaskExpectedDueDate(dueDate: Date, costsSum: Double,
                                                    pointsPerDay: Double, workingDays: Set<Day>, workingHours: HourInterval,
                                                    excludedDates: Set<Date>) -> Date {
@@ -236,6 +271,9 @@ struct Version: Identifiable, Hashable, Equatable, Codable {
         return res
     }
     
+    /// Computes the working date at least one day before the given date, given the working days and excluded dates.
+    ///
+    /// Assumes there are working days.
     static func previousWorkedDay(date: Date, workingDays: Set<Day>, excludedDates: Set<Date>) -> Date {
         var res = date
         
@@ -246,11 +284,12 @@ struct Version: Identifiable, Hashable, Equatable, Codable {
         return res
     }
     
+    /// Computes the working date at least one day after the given date, given the working days and excluded dates.
+    ///
+    /// Assumes there are working days.
     static func nextWorkedDay(date: Date, workingDays: Set<Day>, excludedDates: Set<Date>) -> Date {
         var res = date
         
-        // avoid excluded dates and non-working days
-        // (assumes there are working days)
         repeat {
             res = res.addingOneDay()
         } while excludedDates.contains(where: { res.isSameDay(than: $0) }) || !workingDays.contains(res.day())
@@ -258,10 +297,12 @@ struct Version: Identifiable, Hashable, Equatable, Codable {
         return res
     }
     
+    /// True if due dates of tasks of this version can be cleared (i.e. the version is not validated).
     func canClearTaskDates() -> Bool {
         !self.isValidated
     }
     
+    /// Clears due dates of tasks of this version, if possible.
     mutating func clearTaskDates() {
         if self.canClearTaskDates() {
             (self.tasksByColumn[.todo] ?? []).indices.forEach {

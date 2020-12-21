@@ -11,8 +11,10 @@ class Storage {
     static let encoder: JSONEncoder = JSONEncoder()
     static let decoder: JSONDecoder = JSONDecoder()
     
+    /// App data folder.
     static let dataFileUrl: URL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath).appendingPathComponent("data.txt", isDirectory: false)
     
+    /// Stores the given encodable object to the data file.
     static func store<T: Encodable>(_ object: T) {
         // encode data
         if let encoded = try? Self.encoder.encode(object) {
@@ -26,6 +28,7 @@ class Storage {
         }
     }
     
+    /// Decodes an object of the given expected type from the data file.
     static func retrieve<T: Decodable>(as type: T.Type) -> T? {
         // get encoded data from file, then decode data and return it
         if let encoded = FileManager.default.contents(atPath: Self.dataFileUrl.path),

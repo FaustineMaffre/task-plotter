@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// Menu at the top of the window, showing project list and operations. 
 struct ProjectMenu: View {
     @ObservedObject var repository: Repository
     

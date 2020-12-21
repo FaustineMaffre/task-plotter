@@ -7,7 +7,7 @@
 
 import Foundation
 
-/// Array with ordered elements, whose can also be accessed by an ID. 
+/// Collection with ordered elements, whose can also be accessed by an ID. 
 struct IndexedArray<Element: Equatable, ID: Hashable>: MutableCollection, RandomAccessCollection, Equatable {
     
     /// Elements of the array.
@@ -17,13 +17,13 @@ struct IndexedArray<Element: Equatable, ID: Hashable>: MutableCollection, Random
         }
     }
     
+    /// Path to the element's ID.
+    var idPath: KeyPath<Element, ID>
+    
     /// Index of each element of the array, identified by its ID.
     ///
     /// Not modified directly, but re-generated each time element is modified.
     private (set) var elementsIndicesByID: Dictionary<ID, Int>
-    
-    /// Path to the element's ID.
-    var idPath: KeyPath<Element, ID>
     
     var ҩcount: Int {
         self.elements.count

@@ -8,18 +8,26 @@
 import SwiftUI
 import UniformTypeIdentifiers
 
+/// View of a column of a version, containing tasks. 
 struct TasksColumnView<MenuItems: View>: View {
     @Binding var columnTasks: [Task]
+    
+    /// True if the column should be considered as validated.
     let isValidated: Bool
     
+    /// Labels of the project.
     let projectLabels: IndexedArray<Label, LabelID>
     
+    /// Action on tap on the task view.
     let onTap: (Int) -> Void
     
+    /// Item to be returned when drawing the given task in this column.
     let dragItem: (Task) -> NSItemProvider
+    /// Action on drop of the given item in this column at the given index.
     let onDropAction: (NSItemProvider, Int) -> Void
     
-    let taskContentMenu: (Int) -> MenuItems
+    /// Context menu for the item at the given index.
+    let taskContextMenu: (Int) -> MenuItems
     
     var body: some View {
         List {
@@ -40,7 +48,7 @@ struct TasksColumnView<MenuItems: View>: View {
                         }
                         .onDrag { self.dragItem(self.columnTasks[taskIndex]) }
                         .contextMenu {
-                            self.taskContentMenu(taskIndex)
+                            self.taskContextMenu(taskIndex)
                         }
                         .listRowInsets(EdgeInsets(top: 3, leading: 0, bottom: 3, trailing: 0))
                 }

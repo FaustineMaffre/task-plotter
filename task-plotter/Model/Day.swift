@@ -7,6 +7,7 @@
 
 import Foundation
 
+/// A working day in the week.
 enum Day: String, CaseIterable, Codable {
     case monday = "Monday",
          tuesday = "Tuesday",
@@ -19,10 +20,12 @@ enum Day: String, CaseIterable, Codable {
     static let allDays: Set<Day> = Set(Day.allCases)
     static let weekDays: Set<Day> = [.monday, .tuesday, .wednesday, .thursday, .friday]
     
+    /// Full name of the day (with first letter capitalized).
     var ҩlongName: String {
         self.rawValue
     }
     
+    /// Name of the day on three characters (with first letter capitalized), followed by a dot.
     var ҩshortName: String {
         switch self {
         case .monday: return "Mon."
@@ -37,6 +40,7 @@ enum Day: String, CaseIterable, Codable {
 }
 
 extension Date {
+    /// Returns the day (of the week) of this date. 
     func day() -> Day {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "EEEE"

@@ -48,6 +48,9 @@ class Common {
 }
 
 extension NumberFormatter {
+    /// Returns a string containing the formatted value of the provided double.
+    ///
+    /// (Avoids to convert the double to an NSNumber before format.)
     func string(from double: Double) -> String? {
         self.string(from: NSNumber(value: double))
     }

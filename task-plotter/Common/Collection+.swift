@@ -33,6 +33,7 @@ extension Array where Element: Equatable {
 }
 
 extension Set where Element == Date {
+    /// Return a list of ranges of dates, sorted, such that consecutive days are grouped in the same range.
     func toRangesOfDays() -> [ClosedRange<Date>] {
         var res = [ClosedRange<Date>]()
         

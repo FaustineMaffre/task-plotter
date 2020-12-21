@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// View above tasks in a version, showing working days/hours and dates.
 struct VersionDatesView: View {
     @Binding var version: Version
     
@@ -36,7 +37,7 @@ struct VersionDatesView: View {
                     Button {
                         self.isWorkingDaysPopoverPresented = true
                     } label: {
-                        Text(self.version.formattedWorkingDays(emptyDaysText: "None"))
+                        Text(self.version.formattedWorkingDays())
                     }
                     .popover(isPresented: self.$isWorkingDaysPopoverPresented) {
                         VStack(alignment: .leading, spacing: 6) {
@@ -74,7 +75,7 @@ struct VersionDatesView: View {
                         Button {
                             self.isExcludedDatesPopoverPresented = true
                         } label: {
-                            Text(self.version.formattedExcludedDates(emptyDaysText: "None"))
+                            Text(self.version.formattedExcludedDates())
                         }
                         .popover(isPresented: self.$isExcludedDatesPopoverPresented) {
                             VStack(spacing: 6) {

@@ -8,6 +8,7 @@
 import SwiftUI
 import UniformTypeIdentifiers
 
+/// List of versions with operations. 
 struct VersionsView: View {
     @Binding var project: Project
     

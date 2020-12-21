@@ -7,16 +7,19 @@
 
 import Combine
 
+/// Repository, containing projects.
 final class Repository: ObservableObject, Codable {
     
     @Published var projects: [Project]
     
+    /// ID of the currently selected project, if one is selected.
     @Published var selectedProjectId: ProjectID? {
         didSet {
             self.defaultSelect()
         }
     }
     
+    /// Index of the currently selected project, if one is selected.
     var ҩselectedProjectIndex: Int? {
         if let selectedProjectId = self.selectedProjectId {
             return self.projects.firstIndex { $0.id == selectedProjectId }
@@ -25,6 +28,7 @@ final class Repository: ObservableObject, Codable {
         }
     }
     
+    /// Currently selected project, if one is selected.
     var ҩselectedProject: Project? {
         if let selectedProjectId = self.selectedProjectId {
             return self.projects.first { $0.id == selectedProjectId }
@@ -53,12 +57,14 @@ final class Repository: ObservableObject, Codable {
         }
     }
     
+    /// Selects the first project, if there is at least one project and none is currently selected.
     func defaultSelect() {
         if self.selectedProjectId == nil && !self.projects.isEmpty {
             self.selectedProjectId = self.projects[0].id
         }
     }
     
+    /// Adds a project, if its name is not empty, and sets it as selected project if required.
     func addProject(_ project: Project, selectIt: Bool) {
         if !project.name.isEmpty {
             self.projects.append(project)
@@ -70,6 +76,7 @@ final class Repository: ObservableObject, Codable {
         }
     }
     
+    /// Deletes the selected project.
     func deleteSelectedProject() {
         if let selectedProjectIndex = self.ҩselectedProjectIndex {
             self.projects.remove(at: selectedProjectIndex)

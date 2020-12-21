@@ -7,11 +7,15 @@
 
 import SwiftUI
 
+/// A column containing tasks. Its raw value is its title.
 enum Column: String, CaseIterable, Codable {
     case todo = "To do",
          doing = "Doing",
          done = "Done"
     
+    /// Returns the binding on the array of task in the given column:
+    /// - if the column is nil, returns the tasks pool from the given project;
+    /// - if the column is not nil, returns the tasks from this column in the given version.
     static func columnTasksBinding(project: Binding<Project>, version: Binding<Version>, column: Column?) -> Binding<[Task]> {
         Binding<[Task]> {
             if let column = column {
