@@ -21,9 +21,10 @@ It will also give you an **estimated date to start** (which is simply the due da
 - Allows to create labels for a project and assign them, in any order, to tasks.
 - Shows the **points ongoing** (sum of the costs of all **To do**/**Doing** tasks in the current version) and **points from now** (points available until the due date if you start working on it right now).
 - Allows to move a task to another version by right-clicking on it.
+- Allows to put tasks in a "tasks pool" which can be accessed from any version of the project. 
 - Allows to validate a version, which for now, doesn't do much expect showing the start date in green.
 
 ## To do
 
-- Create a pool of tasks that can be filtered/sorted and dragged from/to a version.
+- Filter/sort tasks pool
 - Add stats when validating a version? (Effective points per day, completion rate of short/medium/long tasks, ...)
