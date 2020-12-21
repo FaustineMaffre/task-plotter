@@ -45,6 +45,10 @@ struct IndexedArray<Element: Equatable, ID: Hashable>: MutableCollection, Random
         self.regenerateElementsIndexesByID(from: self.elements, id: self.idPath)
     }
     
+    static func == (lhs: IndexedArray<Element, ID>, rhs: IndexedArray<Element, ID>) -> Bool {
+        lhs.elements == rhs.elements && lhs.idPath == rhs.idPath
+    }
+    
     /// Re-generates the elements with their indexed by ID dictionary from the array of elements and the element's ID.
     private mutating func regenerateElementsIndexesByID(from elements: [Element], id idPath: KeyPath<Element, ID>) {
         self.elementsIndicesByID =
@@ -76,6 +80,10 @@ struct IndexedArray<Element: Equatable, ID: Hashable>: MutableCollection, Random
         } else {
             return nil
         }
+    }
+    
+    func contains(id: ID) -> Bool {
+        self.indexOf(id: id) != nil
     }
     
     /// True iff the element with the first ID is before the element with the second ID in the elements array; nil if
@@ -131,9 +139,5 @@ struct IndexedArray<Element: Equatable, ID: Hashable>: MutableCollection, Random
     
     mutating func move(fromOffsets: IndexSet, toOffset: Int) {
         self.elements.move(fromOffsets: fromOffsets, toOffset: toOffset)
-    }
-    
-    static func == (lhs: IndexedArray<Element, ID>, rhs: IndexedArray<Element, ID>) -> Bool {
-        lhs.elements == rhs.elements && lhs.idPath == rhs.idPath
     }
 }

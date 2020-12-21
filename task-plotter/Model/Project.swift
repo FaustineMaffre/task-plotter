@@ -19,7 +19,24 @@ struct Project: Identifiable, Hashable, Equatable, Codable {
     var versions: [Version] = []
     
     /// Labels available in this project.
-    var labels: IndexedArray<Label, LabelID>
+    var labels: IndexedArray<Label, LabelID> {
+        didSet {
+            // clean labels of tasks
+            // tasks pool
+            self.tasksPool.indices.forEach { taskIndex in
+                self.tasksPool[taskIndex].cleanLabels(projectLabels: self.labels)
+            }
+            
+            // versions
+            self.versions.indices.forEach { versionIndex in
+                self.versions[versionIndex].tasksByColumn.keys.forEach { column in
+                    self.versions[versionIndex].tasksByColumn[column]?.indices.forEach { taskIndex in
+                        self.versions[versionIndex].tasksByColumn[column]?[taskIndex].cleanLabels(projectLabels: self.labels)
+                    }
+                }
+            }
+        }
+    }
     
     /// ID of the currently selected version, if one is selected.
     var selectedVersionId: VersionID? = nil

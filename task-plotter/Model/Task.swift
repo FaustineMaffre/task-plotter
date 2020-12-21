@@ -51,4 +51,16 @@ struct Task: Identifiable, Hashable, Equatable, Codable {
     static func == (lhs: Task, rhs: Task) -> Bool {
         lhs.id == rhs.id
     }
+    
+    /// Removes all labels that are not in the given list from this task. 
+    mutating func cleanLabels(projectLabels: IndexedArray<Label, LabelID>) {
+        let originalLabelsIds = self.labelIds
+        
+        originalLabelsIds.forEach {
+            if !projectLabels.contains(id: $0) {
+                // label was removed from the project labels
+                self.labelIds.remove($0)
+            }
+        }
+    }
 }
