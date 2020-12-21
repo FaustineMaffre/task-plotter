@@ -60,7 +60,16 @@ struct Project: Identifiable, Hashable, Equatable, Codable {
     }
     
     /// Pool containing tasks not associated with a version.
-    var tasksPool: IndexedArray<Task, TaskID>
+    var tasksPool: IndexedArray<Task, TaskID> {
+        didSet {
+            // remove due date from tasks added to tasks pool
+            self.tasksPool.indices.forEach { taskIndex in
+                if self.tasksPool[taskIndex].expectedDueDate != nil {
+                    self.tasksPool[taskIndex].expectedDueDate = nil
+                }
+            }
+        }
+    }
     
     init(id: ProjectID = UUID(), name: String, labels: [Label] = [], tasksPool: [Task] = []) {
         self.id = id
