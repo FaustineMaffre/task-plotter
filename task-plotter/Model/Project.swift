@@ -76,8 +76,9 @@ struct Project: Identifiable, Hashable, Equatable, Codable {
     }
     
     mutating func moveTaskTo(taskCurrentVersionIndex: Int, taskCurrentColumn: Column, taskIndex: Int, destinationVersionIndex: Int) {
-        let task = self.versions[taskCurrentVersionIndex].tasksByColumn[taskCurrentColumn]!.remove(at: taskIndex)
-        self.versions[destinationVersionIndex].tasksByColumn[.todo]!.append(task)
+        if let task = self.versions[taskCurrentVersionIndex].tasksByColumn[taskCurrentColumn]?.remove(at: taskIndex) {
+            self.versions[destinationVersionIndex].tasksByColumn[.todo]?.append(task)
+        }
     }
     
     // MARK: - Codable

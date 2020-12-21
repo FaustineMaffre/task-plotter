@@ -76,14 +76,6 @@ struct Version: Identifiable, Hashable, Equatable, Codable {
         lhs.id == rhs.id
     }
     
-    func getTask(column: Column, taskIndex: Int) -> Task {
-        self.tasksByColumn[column]![taskIndex]
-    }
-    
-    mutating func deleteTask(column: Column, task: Task) {
-        self.tasksByColumn[column]!.remove(task)
-    }
-    
     func findColumnOfTask(id: TaskID) -> Column? {
         self.tasksByColumn.first { _, tasks in
             tasks.contains { $0.id == id }
@@ -145,7 +137,7 @@ struct Version: Identifiable, Hashable, Equatable, Codable {
     }
     
     func computePointsOngoing() -> Double? {
-        let ongoingTasks = self.tasksByColumn[.todo]! + self.tasksByColumn[.doing]!
+        let ongoingTasks = (self.tasksByColumn[.todo] ?? []) + (self.tasksByColumn[.doing] ?? [])
         let res = ongoingTasks.compactMap(\.cost).reduce(0, +) // sum
         return res <= 0 ? nil : res
     }
@@ -191,15 +183,15 @@ struct Version: Identifiable, Hashable, Equatable, Codable {
            !self.workingDays.isEmpty,
            let dueDate = self.dueDate {
             let tasksLatestFirst: [(Column, Int)] =
-                self.tasksByColumn[.todo]!.indices.reversed().map { (.todo, $0) } +
-                self.tasksByColumn[.doing]!.indices.reversed().map { (.doing, $0) }
+                (self.tasksByColumn[.todo] ?? []).indices.reversed().map { (.todo, $0) } +
+                (self.tasksByColumn[.doing] ?? []).indices.reversed().map { (.doing, $0) }
             
             var costsSum: Double = 0
             
             // tasks due dates
             tasksLatestFirst.forEach { column, taskIndex in
-                if let cost = self.tasksByColumn[column]![taskIndex].cost {
-                    self.tasksByColumn[column]![taskIndex].expectedDueDate =
+                if let cost = self.tasksByColumn[column]?[taskIndex].cost {
+                    self.tasksByColumn[column]?[taskIndex].expectedDueDate =
                         Self.computeTaskExpectedDueDate(dueDate: dueDate, costsSum: costsSum,
                                                         pointsPerDay: pointsPerDay, workingDays: self.workingDays, workingHours: self.workingHours,
                                                         excludedDates: self.excludedDates)
@@ -272,12 +264,12 @@ struct Version: Identifiable, Hashable, Equatable, Codable {
     
     mutating func clearTaskDates() {
         if self.canClearTaskDates() {
-            self.tasksByColumn[.todo]!.indices.forEach {
-                self.tasksByColumn[.todo]![$0].expectedDueDate = nil
+            (self.tasksByColumn[.todo] ?? []).indices.forEach {
+                self.tasksByColumn[.todo]?[$0].expectedDueDate = nil
             }
             
-            self.tasksByColumn[.doing]!.indices.forEach {
-                self.tasksByColumn[.doing]![$0].expectedDueDate = nil
+            (self.tasksByColumn[.doing] ?? []).indices.forEach {
+                self.tasksByColumn[.doing]?[$0].expectedDueDate = nil
             }
             
             // start date

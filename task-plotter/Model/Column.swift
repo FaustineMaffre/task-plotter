@@ -15,7 +15,7 @@ enum Column: String, CaseIterable, Codable {
     static func columnTasksBinding(project: Binding<Project>, version: Binding<Version>, column: Column?) -> Binding<[Task]> {
         Binding<[Task]> {
             if let column = column {
-                return version.wrappedValue.tasksByColumn[column]!
+                return version.wrappedValue.tasksByColumn[column] ?? []
             } else {
                 return project.wrappedValue.tasksPool.elements
             }

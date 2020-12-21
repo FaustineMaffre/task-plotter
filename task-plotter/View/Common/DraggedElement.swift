@@ -23,7 +23,7 @@ extension Array where Element == Task {
 
 extension Version {
     func findTask(in column: Column, by id: TaskID) -> Task? {
-        self.tasksByColumn[column]!.find(by: id)
+        self.tasksByColumn[column]?.find(by: id)
     }
 }
 
