@@ -15,12 +15,6 @@ extension Project {
     }
 }
 
-extension Array where Element == Task {
-    func find(by id: TaskID) -> Task? {
-        self.first { $0.id == id }
-    }
-}
-
 extension Version {
     func findTask(in column: Column, by id: TaskID) -> Task? {
         self.tasksByColumn[column]?.find(by: id)
@@ -110,21 +104,6 @@ enum DraggedElement {
                let element = Self.elementFromString(str: str),
                case .label(let labelId) = element {
                 res = project.findLabel(by: labelId)
-            }
-            
-            completionHandler(res)
-        }
-    }
-    
-    static func toTask(itemProvider: NSItemProvider, tasks: [Task], completionHandler: @escaping ((Column?, Task)?) -> Void) {
-        _ = itemProvider.loadObject(ofClass: String.self) { optionalStr, _ in
-            var res: (Column?, Task)? = nil
-            
-            if let str = optionalStr,
-               let element = Self.elementFromString(str: str),
-               case .task(let column, let taskId) = element,
-               let task = tasks.find(by: taskId) {
-                res = (column, task)
             }
             
             completionHandler(res)

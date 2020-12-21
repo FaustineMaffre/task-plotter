@@ -164,7 +164,7 @@ struct VersionDatesView: View {
                 Spacer().frame(width: Self.spaceBetweenItems)
                 
                 Group {
-                    if let pointsOngoing = self.version.pointsOngoing,
+                    if let pointsOngoing = self.version.ҩpointsOngoing,
                        let pointsOngoingFormatted = Common.pointsStartingNowAndOngoingFormatter.string(from: pointsOngoing) {
                         // points ongoing
                         Text("Points ongoing:")
@@ -182,7 +182,7 @@ struct VersionDatesView: View {
                 }
                 
                 Group {
-                    if let pointsStartingNow = self.version.pointsStartingNow,
+                    if let pointsStartingNow = self.version.ҩpointsStartingNow,
                        let pointsStartingNowFormatted = Common.pointsStartingNowAndOngoingFormatter.string(from: pointsStartingNow) {
                         // points from now
                         Text("Points from now:")

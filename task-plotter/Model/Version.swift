@@ -49,13 +49,13 @@ struct Version: Identifiable, Hashable, Equatable, Codable {
     }
     
     /// Sum of points of to do/doing tasks currently added to this version, or nil if there is none.
-    var pointsOngoing: Double? {
+    var ҩpointsOngoing: Double? {
         self.computePointsOngoing()
     }
     
     /// Remaining points until the due date if we start now, if there are points per day, working days, due date and
     /// the version is not validated.
-    var pointsStartingNow: Double? {
+    var ҩpointsStartingNow: Double? {
         self.computePointsStartingNow()
     }
     
@@ -68,10 +68,10 @@ struct Version: Identifiable, Hashable, Equatable, Codable {
     var isValidated: Bool = false
     
     /// Tasks in this version, organized by columns.
-    var tasksByColumn: [Column: [Task]] = Dictionary(uniqueKeysWithValues: Column.allCases.map { ($0, []) })
+    var tasksByColumn: [Column: IndexedArray<Task, TaskID>] = Dictionary(uniqueKeysWithValues: Column.allCases.map { ($0, IndexedArray(id: \.id)) })
     
     /// Tasks in this version, organized by columns, sorted in the order of columns.
-    var ҩtasksByColumnArray: [(Column, [Task])] {
+    var ҩtasksByColumnArray: [(Column, IndexedArray<Task, TaskID>)] {
         let columnsOrdered = Dictionary(uniqueKeysWithValues: Column.allCases.enumerated().map { ($0.element, $0.offset) })
         return self.tasksByColumn.sorted { columnsOrdered[$0.key] ?? 0 < columnsOrdered[$1.key] ?? 0 }
     }
@@ -96,13 +96,6 @@ struct Version: Identifiable, Hashable, Equatable, Codable {
     
     static func == (lhs: Version, rhs: Version) -> Bool {
         lhs.id == rhs.id
-    }
-    
-    /// Returns the column the task with the given ID belongs to, or nil if it cannot be found in this version.
-    func findColumnOfTask(id: TaskID) -> Column? {
-        self.tasksByColumn.first { _, tasks in
-            tasks.contains { $0.id == id } // TODOq0 use dictionary of IDs
-        }?.key
     }
     
     /// Formats the working days of this version to a string.
@@ -167,7 +160,7 @@ struct Version: Identifiable, Hashable, Equatable, Codable {
     }
     
     func computePointsOngoing() -> Double? {
-        let ongoingTasks = (self.tasksByColumn[.todo] ?? []) + (self.tasksByColumn[.doing] ?? [])
+        let ongoingTasks = (self.tasksByColumn[.todo]?.elements ?? []) + (self.tasksByColumn[.doing]?.elements ?? [])
         let res = ongoingTasks.compactMap(\.cost).reduce(0, +) // sum
         return res <= 0 ? nil : res
     }
@@ -216,8 +209,8 @@ struct Version: Identifiable, Hashable, Equatable, Codable {
            !self.workingDays.isEmpty,
            let dueDate = self.dueDate {
             let tasksLatestFirst: [(Column, Int)] =
-                (self.tasksByColumn[.todo] ?? []).indices.reversed().map { (.todo, $0) } +
-                (self.tasksByColumn[.doing] ?? []).indices.reversed().map { (.doing, $0) }
+                (self.tasksByColumn[.todo]?.elements ?? []).indices.reversed().map { (.todo, $0) } +
+                (self.tasksByColumn[.doing]?.elements ?? []).indices.reversed().map { (.doing, $0) }
             
             var costsSum: Double = 0
             
@@ -305,11 +298,11 @@ struct Version: Identifiable, Hashable, Equatable, Codable {
     /// Clears due dates of tasks of this version, if possible.
     mutating func clearTaskDates() {
         if self.canClearTaskDates() {
-            (self.tasksByColumn[.todo] ?? []).indices.forEach {
+            (self.tasksByColumn[.todo]?.elements ?? []).indices.forEach {
                 self.tasksByColumn[.todo]?[$0].expectedDueDate = nil
             }
             
-            (self.tasksByColumn[.doing] ?? []).indices.forEach {
+            (self.tasksByColumn[.doing]?.elements ?? []).indices.forEach {
                 self.tasksByColumn[.doing]?[$0].expectedDueDate = nil
             }
             
@@ -325,5 +318,54 @@ struct Version: Identifiable, Hashable, Equatable, Codable {
     
     mutating func invalidate() {
         self.isValidated = false
+    }
+    
+    // MARK: - Codable
+    
+    enum CodingKeys: CodingKey {
+        case id,
+             number,
+             pointsPerDay, workingDays, workingHours, excludedDates,
+             dueDate,
+             expectedStartDate, isValidated,
+             tasksByColumn
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        let id = try container.decode(VersionID.self, forKey: .id)
+        let number = try container.decode(String.self, forKey: .number)
+        let pointsPerDay = try container.decode(Double?.self, forKey: .pointsPerDay)
+        let workingDays = try container.decode(Set<Day>.self, forKey: .workingDays)
+        let workingHours = try container.decode(HourInterval.self, forKey: .workingHours)
+        let excludedDates = try container.decode(Set<Date>.self, forKey: .excludedDates)
+        let dueDate = try container.decode(Date?.self, forKey: .dueDate)
+        let expectedStartDate = try container.decode(Date?.self, forKey: .expectedStartDate)
+        let isValidated = try container.decode(Bool.self, forKey: .isValidated)
+        let tasksByColumn = try container.decode([Column: [Task]].self, forKey: .tasksByColumn)
+        
+        self.init(id: id, number: number,
+                  pointsPerDay: pointsPerDay, workingDays: workingDays, workingHours: workingHours, excludedDates: excludedDates,
+                  dueDate: dueDate)
+        self.expectedStartDate = expectedStartDate
+        self.isValidated = isValidated
+        self.tasksByColumn = Dictionary(uniqueKeysWithValues: tasksByColumn.map { ($0.key, IndexedArray(elements: $0.value, id: \.id)) })
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(self.id, forKey: .id)
+        try container.encode(self.number, forKey: .number)
+        try container.encode(self.pointsPerDay, forKey: .pointsPerDay)
+        try container.encode(self.workingDays, forKey: .workingDays)
+        try container.encode(self.workingHours, forKey: .workingHours)
+        try container.encode(self.excludedDates, forKey: .excludedDates)
+        try container.encode(self.dueDate, forKey: .dueDate)
+        try container.encode(self.expectedStartDate, forKey: .expectedStartDate)
+        try container.encode(self.isValidated, forKey: .isValidated)
+        let tasksByColumn = Dictionary(uniqueKeysWithValues: self.tasksByColumn.map { ($0.key, $0.value.elements) })
+        try container.encode(tasksByColumn, forKey: .tasksByColumn)
     }
 }

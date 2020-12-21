@@ -10,7 +10,7 @@ import UniformTypeIdentifiers
 
 /// View of a column of a version, containing tasks. 
 struct TasksColumnView<MenuItems: View>: View {
-    @Binding var columnTasks: [Task]
+    @Binding var columnTasks: IndexedArray<Task, TaskID>
     
     /// True if the column should be considered as validated.
     let isValidated: Bool

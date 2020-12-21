@@ -30,7 +30,8 @@ class TestRepositories {
         tasks[Column.done]?[0].expectedDueDate = Date() - TimeInterval(60*60*55) // 55 hours before now
         
         var version10 = Version(number: "1.0", pointsPerDay: 4, workingDays: Day.allDays.subtracting([Day.friday]), excludedDates: [])
-        version10.tasksByColumn = tasks
+        let indexedTasks = Dictionary(uniqueKeysWithValues: tasks.map { ($0.key, IndexedArray(elements: $0.value, id: \.id)) })
+        version10.tasksByColumn = indexedTasks
         let version11 = Version(number: "1.1")
         
         var project1 = Project(name: "Ardoise", labels: labels)
