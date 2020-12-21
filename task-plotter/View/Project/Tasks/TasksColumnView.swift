@@ -9,7 +9,7 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 struct TasksColumnView<MenuItems: View>: View {
-    @Binding var tasks: [Task]
+    @Binding var columnTasks: [Task]
     let isValidated: Bool
     
     let projectLabels: IndexedArray<Label, LabelID>
@@ -23,7 +23,7 @@ struct TasksColumnView<MenuItems: View>: View {
     
     var body: some View {
         List {
-            ForEach(self.tasks.isEmpty ? [-1] : Array(self.tasks.indices), id: \.self) { taskIndex in
+            ForEach(self.columnTasks.isEmpty ? [-1] : Array(self.columnTasks.indices), id: \.self) { taskIndex in
                 if taskIndex < 0 {
                     HStack {
                         Spacer()
@@ -38,7 +38,7 @@ struct TasksColumnView<MenuItems: View>: View {
                         .onTapGesture {
                             self.onTap(taskIndex)
                         }
-                        .onDrag { self.dragItem(self.tasks[taskIndex]) }
+                        .onDrag { self.dragItem(self.columnTasks[taskIndex]) }
                         .contextMenu {
                             self.taskContentMenu(taskIndex)
                         }
@@ -56,14 +56,14 @@ struct TasksColumnView<MenuItems: View>: View {
     
     func generateTaskBinding(taskIndex: Int) -> Binding<Task> {
         Binding {
-            if self.tasks.indices.contains(taskIndex) {
-                return self.tasks[taskIndex]
+            if self.columnTasks.indices.contains(taskIndex) {
+                return self.columnTasks[taskIndex]
             } else {
                 return Task(title: "Oops")
             }
         } set: {
-            if tasks.indices.contains(taskIndex) {
-                self.tasks[taskIndex] = $0
+            if columnTasks.indices.contains(taskIndex) {
+                self.columnTasks[taskIndex] = $0
             }
         }
     }

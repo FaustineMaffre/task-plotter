@@ -94,7 +94,7 @@ struct TasksView: View {
     }
     
     func columnView(column: Column?) -> some View { // pool if column nil
-        let tasks = Column.columnTasksBinding(project: self.$project, version: self.$version, column: column)
+        let columnTasks = Column.columnTasksBinding(project: self.$project, version: self.$version, column: column)
         
         return VStack(spacing: 0) {
             HStack {
@@ -105,7 +105,7 @@ struct TasksView: View {
             }
             .padding(10)
             
-            TasksColumnView(tasks: tasks,
+            TasksColumnView(columnTasks: columnTasks,
                             isValidated: column == .done,
                             projectLabels: self.project.labels,
                             onTap: { taskIndex in
@@ -163,23 +163,23 @@ struct TasksView: View {
     
     func moveTask(oldColumn: Column?, task: Task, newColumn: Column?, index: Int) {
         DispatchQueue.main.async {
-            let oldTasks = Column.columnTasksBinding(project: self.$project, version: self.$version, column: oldColumn)
-            let newTasks = Column.columnTasksBinding(project: self.$project, version: self.$version, column: newColumn)
+            let oldColumnTasks = Column.columnTasksBinding(project: self.$project, version: self.$version, column: oldColumn)
+            let newColumnTasks = Column.columnTasksBinding(project: self.$project, version: self.$version, column: newColumn)
             
-            if let taskOldIndex = oldTasks.wrappedValue.firstIndex(where: { $0.id == task.id }) {
+            if let taskOldIndex = oldColumnTasks.wrappedValue.firstIndex(where: { $0.id == task.id }) {
                 if oldColumn != newColumn {
                     // change column
-                    oldTasks.wrappedValue.remove(at: taskOldIndex)
+                    oldColumnTasks.wrappedValue.remove(at: taskOldIndex)
                     
-                    if newTasks.wrappedValue.isEmpty {
+                    if newColumnTasks.wrappedValue.isEmpty {
                         // in case index would be outside bounds (because of empty tasks)
-                        newTasks.wrappedValue.append(task)
+                        newColumnTasks.wrappedValue.append(task)
                     } else {
-                        newTasks.wrappedValue.insert(task, at: index)
+                        newColumnTasks.wrappedValue.insert(task, at: index)
                     }
                 } else {
                     // move within same column
-                    newTasks.wrappedValue.move(fromOffsets: IndexSet(arrayLiteral: taskOldIndex), toOffset: index)
+                    newColumnTasks.wrappedValue.move(fromOffsets: IndexSet(arrayLiteral: taskOldIndex), toOffset: index)
                 }
             }
         }

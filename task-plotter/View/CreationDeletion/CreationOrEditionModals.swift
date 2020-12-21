@@ -378,7 +378,7 @@ struct ProjectCreationModal: View {
             }, modalSize: projectModalSize,
             createOrEditCondition: !self.projectName.isEmpty) {
             // create
-            let newProject = Project(name: self.projectName, labels: self.projectLabels.elements) 
+            let newProject = Project(name: self.projectName, labels: self.projectLabels.elements)
             self.repository.addProject(newProject, selectIt: true)
             
         } resetAction: {
@@ -635,12 +635,12 @@ struct TaskCreationModal: View {
             }, modalSize: taskModalSize,
             createOrEditCondition: !self.taskTitle.isEmpty) {
             // create
-            let column = Column.columnTasksBinding(project: self.$project, version: self.$version, column: self.column)
+            let columnTasks = Column.columnTasksBinding(project: self.$project, version: self.$version, column: self.column)
             let newTask = Task(title: self.taskTitle,
                                labelIds: self.taskLabels,
                                description: self.taskDescription,
                                cost: self.taskCost)
-            column.wrappedValue.append(newTask)
+            columnTasks.wrappedValue.append(newTask)
             
         } resetAction: {
             // reset task title, labels, description, cost
@@ -695,11 +695,11 @@ struct TaskEditionModal: View {
             }, modalSize: taskModalSize,
             createOrEditCondition: !self.taskTitle.isEmpty) {
             // edit
-            let column = Column.columnTasksBinding(project: self.$project, version: self.$version, column: self.column)
-            column.wrappedValue[self.taskIndex].title = self.taskTitle
-            column.wrappedValue[self.taskIndex].labelIds = self.taskLabelIds
-            column.wrappedValue[self.taskIndex].description = self.taskDescription
-            column.wrappedValue[self.taskIndex].cost = self.taskCost
+            let columnTasks = Column.columnTasksBinding(project: self.$project, version: self.$version, column: self.column)
+            columnTasks.wrappedValue[self.taskIndex].title = self.taskTitle
+            columnTasks.wrappedValue[self.taskIndex].labelIds = self.taskLabelIds
+            columnTasks.wrappedValue[self.taskIndex].description = self.taskDescription
+            columnTasks.wrappedValue[self.taskIndex].cost = self.taskCost
             
         } resetAction: {
             // reset task title, labels, description, cost
