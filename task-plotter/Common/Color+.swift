@@ -8,6 +8,8 @@
 import SwiftUI
 
 extension Color {
+    static let selectedContentBackgroundColor: Color = Color(NSColor.selectedContentBackgroundColor)
+    
     init(hex: String) {
         let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
         var int: UInt64 = 0

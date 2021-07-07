@@ -41,7 +41,7 @@ struct VersionsView: View {
                         }
                     } else {
                         self.versionView(versionIndex: versionIndex)
-                            .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+                            .listRowInsets(EdgeInsets())
                     }
                 }
             }
@@ -91,8 +91,9 @@ struct VersionsView: View {
             Spacer()
         }
         .padding(EdgeInsets(top: 6, leading: 10, bottom: 6, trailing: 10))
-        .background(RoundedRectangle(cornerRadius: 8)
-                        .fill(self.project.ҩselectedVersionIndex == versionIndex ? Color.accentColor : Color.clear))
+        .background(RoundedRectangle(cornerRadius: 8).fill(self.project.ҩselectedVersionIndex == versionIndex ?
+                                                           Color.selectedContentBackgroundColor :
+                                                            Color.clear))
         .contentShape(Rectangle())
         .onTapGesture {
             self.project.selectedVersionId = self.project.versions[versionIndex].id
